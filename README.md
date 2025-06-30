@@ -9,6 +9,7 @@
 - Download the latest [release](/../../releases) of the mod from the releases tab.
 - Put it in your `.minecraft/mods` folder where you have installed Meteor.
 - Open the ClickGUI, go to "GUI" tab and select "Catpuccin" theme from the dropdown box.
+- Change the font in the "Config" tab to Arial or something that supports multiple styles for the best experience.
 
 ## Features
 - Epic rounded corners (kinda wonky, but that can be fixed later if I find a better way to do it).
