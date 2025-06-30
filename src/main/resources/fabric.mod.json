@@ -1,24 +1,24 @@
 {
   "schemaVersion": 1,
-  "id": "addon-template",
+  "id": "catpuccin-addon",
   "version": "${version}",
-  "name": "Addon Template",
-  "description": "An addon template for Meteor Client addons.",
+  "name": "Catpuccin Addon",
+  "description": "Meteor Client theme based on Catpuccin.",
   "authors": [
-    "seasnail"
+    "Pindour (XC0)"
   ],
   "contact": {
-    "sources": "https://github.com/MeteorDevelopment/meteor-addon-template"
+    "sources": "https://github.com/X-C-0/Catpuccin-Addon"
   },
-  "icon": "assets/template/icon.png",
+  "icon": "assets/catpuccin-addon/icon.png",
   "environment": "client",
   "entrypoints": {
     "meteor": [
-      "com.example.addon.AddonTemplate"
+      "me.pindour.catpuccin.CatpuccinAddon"
     ]
   },
   "mixins": [
-    "addon-template.mixins.json"
+    "catpuccin.mixins.json"
   ],
   "custom": {
     "meteor-client:color": "225,25,25"
