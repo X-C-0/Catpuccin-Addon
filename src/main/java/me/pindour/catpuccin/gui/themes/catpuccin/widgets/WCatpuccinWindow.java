@@ -101,19 +101,8 @@ public class WCatpuccinWindow extends WWindow implements CatpuccinWidget {
         if (header != null && header instanceof WChlamydieHeader chlamydieHeader)
             chlamydieHeader.setIndicator(expanded);
 
-        if (animation == null) return;
-
-        if (expanded) {
-            if (animation.isFinished() && !animation.isRunning())
-                animation.start(); // Animation hasn't started or is finished and isn't running - start it
-            else
-                animation.reverse(); // Animation has started or is running - reverse it
-
-        } else animation.reverse();
-    }
-
-    public boolean isExpanded() {
-        return expanded;
+        if (animation != null)
+            animation.reverse();
     }
 
     @Override
@@ -197,7 +186,7 @@ public class WCatpuccinWindow extends WWindow implements CatpuccinWidget {
         @Override
         public boolean render(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
             boolean render = super.render(renderer, mouseX, mouseY, delta);
-            animProgress = 1; // Fuck you meteor
+            animProgress = 1; // Small hack to cancel out WWindow scissors, so we can use our animation
             return render;
         }
 

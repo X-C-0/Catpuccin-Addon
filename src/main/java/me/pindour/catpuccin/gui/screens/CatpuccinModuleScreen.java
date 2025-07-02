@@ -47,7 +47,7 @@ public class CatpuccinModuleScreen extends WindowScreen {
 
     @Override
     public void initWidgets() {
-        int pad = 6;
+        double pad = theme.pad();
 
         // Description
         WVerticalList description = add(theme.verticalList()).padHorizontal(pad).padBottom(pad).widget();
@@ -71,7 +71,7 @@ public class CatpuccinModuleScreen extends WindowScreen {
         WButton reset = bind.add(theme.button(CatpuccinIcons.RESET.texture())).right().widget();
         reset.action = keybind::resetBind;
 
-        add(theme.horizontalSeparator()).padVertical(4).expandX();
+        add(theme.horizontalSeparator()).padVertical(pad).expandX();
 
         // Settings
         if (!module.settings.groups.isEmpty()) {
@@ -83,13 +83,13 @@ public class CatpuccinModuleScreen extends WindowScreen {
         WWidget widget = module.getWidget(theme);
 
         if (widget != null) {
-            add(theme.horizontalSeparator()).expandX();
+            add(theme.horizontalSeparator()).padVertical(pad).expandX();
             Cell<WWidget> cell = add(widget);
             if (widget instanceof WContainer) cell.expandX();
         }
 
         if (!module.settings.groups.isEmpty() || widget != null)
-            add(theme.horizontalSeparator()).padVertical(4).expandX();
+            add(theme.horizontalSeparator()).padVertical(pad).expandX();
 
         // Bottom
         WHorizontalList bottom = add(theme.horizontalList()).padHorizontal(pad).expandX().widget();

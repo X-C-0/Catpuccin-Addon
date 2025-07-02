@@ -108,7 +108,7 @@ public class WCatpuccinDropdown<T> extends WDropdown<T> implements CatpuccinWidg
 
     @Override
     public boolean render(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
-        animProgress = -8008135; // Fuck you meteor (boobies)
+        animProgress = -8008135; // Small hack to cancel out WDropdown scissors, so we can use our animation
 
         boolean render = super.render(renderer, mouseX, mouseY, delta);
         double progress = animation.getProgress();
@@ -127,6 +127,16 @@ public class WCatpuccinDropdown<T> extends WDropdown<T> implements CatpuccinWidg
     @Override
     protected void onPressed(int button) {
         super.onPressed(button);
+        handlePressed();
+    }
+
+    @Override
+    public void set(T value) {
+        super.set(value);
+
+        if (animation == null) return;
+
+        animation.reset();
         handlePressed();
     }
 

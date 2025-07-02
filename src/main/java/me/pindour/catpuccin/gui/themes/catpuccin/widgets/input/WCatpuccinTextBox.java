@@ -74,9 +74,21 @@ public class WCatpuccinTextBox extends WTextBox implements CatpuccinWidget {
     }
 
     @Override
+    protected double getOverflowWidthForRender() {
+        return dynamicWidth ? 0 : super.getOverflowWidthForRender();
+    }
+
+    @Override
     public void set(String text) {
         super.set(text);
         onCalculateSize();
+    }
+
+    @Override
+    public boolean onCharTyped(char c) {
+        boolean typed = super.onCharTyped(c);
+        onCalculateSize();
+        return typed;
     }
 
     private static class CompletionItem extends WCatpuccinLabel implements ICompletionItem {
@@ -139,7 +151,7 @@ public class WCatpuccinTextBox extends WTextBox implements CatpuccinWidget {
             renderer.scissorStart(x, y + height - bottomSize, width, bottomSize);
 
             // Bottom highlight
-            catpuccinRenderer().roundedRect(x, y, width, height, smallCornerRadius, theme.accentColor(), CornerStyle.BOTTOM);
+            catpuccinRenderer().roundedRect(x, y, width, height, smallCornerRadius, focused ? theme.accentColor() : theme.surface0Color(), CornerStyle.BOTTOM);
 
             renderer.scissorEnd();
         }

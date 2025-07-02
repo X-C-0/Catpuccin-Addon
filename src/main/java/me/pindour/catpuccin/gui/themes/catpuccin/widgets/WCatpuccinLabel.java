@@ -16,7 +16,7 @@ public class WCatpuccinLabel extends WLabel implements CatpuccinWidget {
     @Override
     protected void onCalculateSize() {
         width = theme().textWidth(richText);
-        height = theme.textHeight(title);
+        height = theme().textHeight(richText);
     }
 
     @Override

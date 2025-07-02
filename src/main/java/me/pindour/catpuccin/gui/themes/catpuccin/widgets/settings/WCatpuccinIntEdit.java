@@ -1,5 +1,7 @@
 package me.pindour.catpuccin.gui.themes.catpuccin.widgets.settings;
 
+import me.pindour.catpuccin.gui.text.RichText;
+import me.pindour.catpuccin.gui.text.TextSize;
 import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinWidget;
 import me.pindour.catpuccin.gui.themes.catpuccin.widgets.input.WCatpuccinTextBox;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
@@ -15,7 +17,6 @@ public class WCatpuccinIntEdit extends WVerticalList implements CatpuccinWidget 
     public final int min, max;
     private final int sliderMin, sliderMax;
     public boolean noSlider = false;
-    public boolean small = false;
 
     public Runnable action;
     public Runnable actionOnRelease;
@@ -40,7 +41,7 @@ public class WCatpuccinIntEdit extends WVerticalList implements CatpuccinWidget 
         WHorizontalList list = add(theme.horizontalList()).expandX().padHorizontal(8).widget();
 
         // Title
-        list.add(theme.label(title, true)).centerY().expandCellX().widget().tooltip = description;
+        list.add(theme().label(RichText.bold(title))).centerY().expandCellX().widget().tooltip = description;
 
         // Value
         textBox = (WCatpuccinTextBox) list.add(theme.textBox(Integer.toString(value), this::filter)).right().widget();
@@ -56,9 +57,22 @@ public class WCatpuccinIntEdit extends WVerticalList implements CatpuccinWidget 
         else {
             WHorizontalList sliderList = add(theme.horizontalList()).expandX().padHorizontal(8).padBottom(6).widget();
 
-            sliderList.add(theme.label(String.valueOf(sliderMin)).color(theme().textSecondaryColor()));
-            slider = sliderList.add(theme.slider(value, sliderMin, sliderMax)).padHorizontal(6).minWidth(200).expandX().widget();
-            sliderList.add(theme.label(String.valueOf(sliderMax)).color(theme().textSecondaryColor()));
+            // Min label
+            RichText minText = RichText
+                    .of(String.valueOf(sliderMin))
+                    .scale(TextSize.SMALL.get());
+
+            sliderList.add(theme().label(minText).color(theme().textSecondaryColor())).padLeft(pad());
+
+            // Slider
+            slider = sliderList.add(theme.slider(value, sliderMin, sliderMax)).padHorizontal(6).minWidth(250).expandX().widget();
+
+            // Max label
+            RichText maxText = RichText
+                    .of(String.valueOf(sliderMax))
+                    .scale(TextSize.SMALL.get());
+
+            sliderList.add(theme().label(maxText).color(theme().textSecondaryColor()));
         }
 
         textBox.actionOnUnfocused = () -> {
@@ -100,7 +114,6 @@ public class WCatpuccinIntEdit extends WVerticalList implements CatpuccinWidget 
     protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
         renderBackground(this, false, false);
     }
-
 
     private boolean filter(String text, char c) {
         boolean good;

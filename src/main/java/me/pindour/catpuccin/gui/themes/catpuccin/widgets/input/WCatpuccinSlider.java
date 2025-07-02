@@ -18,7 +18,7 @@ public class WCatpuccinSlider extends WSlider implements CatpuccinWidget {
     public void init() {
         super.init();
         handlePadding = theme().scale(1);
-        handleTextureSize = handleSize() * 0.7;
+        handleTextureSize = handleSize() * 0.6;
     }
 
     @Override

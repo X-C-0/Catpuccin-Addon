@@ -1,5 +1,7 @@
 package me.pindour.catpuccin.gui.themes.catpuccin.widgets.settings;
 
+import me.pindour.catpuccin.gui.text.RichText;
+import me.pindour.catpuccin.gui.text.TextSize;
 import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinWidget;
 import me.pindour.catpuccin.gui.themes.catpuccin.widgets.input.WCatpuccinTextBox;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
@@ -7,7 +9,8 @@ import meteordevelopment.meteorclient.gui.widgets.containers.WHorizontalList;
 import meteordevelopment.meteorclient.gui.widgets.containers.WVerticalList;
 import meteordevelopment.meteorclient.gui.widgets.input.WSlider;
 
-import java.util.Locale;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class WCatpuccinDoubleEdit extends WVerticalList implements CatpuccinWidget {
     private final String title;
@@ -60,9 +63,22 @@ public class WCatpuccinDoubleEdit extends WVerticalList implements CatpuccinWidg
         else {
             WHorizontalList sliderList = add(theme.horizontalList()).expandX().padHorizontal(8).padBottom(6).widget();
 
-            sliderList.add(theme.label(String.valueOf(sliderMin)));
-            slider = sliderList.add(theme.slider(value, sliderMin, sliderMax)).padHorizontal(6).minWidth(200).expandX().widget();
-            sliderList.add(theme.label(String.valueOf(sliderMax)));
+            // Min label
+            RichText minText = RichText
+                .of(String.valueOf(sliderMin))
+                .scale(TextSize.SMALL.get());
+
+            sliderList.add(theme().label(minText).color(theme().textSecondaryColor())).padLeft(pad());
+
+            // Slider
+            slider = sliderList.add(theme.slider(value, sliderMin, sliderMax)).padHorizontal(6).minWidth(250).expandX().widget();
+
+            // Max label
+            RichText maxText = RichText
+                .of(String.valueOf(sliderMax))
+                .scale(TextSize.SMALL.get());
+
+            sliderList.add(theme().label(maxText).color(theme().textSecondaryColor()));
         }
 
         textBox.actionOnUnfocused = () -> {
@@ -165,6 +181,13 @@ public class WCatpuccinDoubleEdit extends WVerticalList implements CatpuccinWidg
     }
 
     private String valueString() {
-        return String.format(Locale.US, "%." + decimalPlaces + "f", value);
+        BigDecimal bd = BigDecimal.valueOf(value)
+            .setScale(decimalPlaces, RoundingMode.HALF_UP)
+            .stripTrailingZeros();
+
+        // Ensures the number has at least one decimal digit (e.g. 3 → 3.0) so it doesn't look stupid
+        if (bd.scale() < 1) bd = bd.setScale(1);
+
+        return bd.toPlainString();
     }
 }

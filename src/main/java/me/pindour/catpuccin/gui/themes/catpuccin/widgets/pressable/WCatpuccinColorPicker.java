@@ -3,6 +3,7 @@ package me.pindour.catpuccin.gui.themes.catpuccin.widgets.pressable;
 import me.pindour.catpuccin.gui.renderer.CornerStyle;
 import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinWidget;
 import me.pindour.catpuccin.gui.widgets.pressable.WColorPicker;
+import me.pindour.catpuccin.utils.ColorUtils;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.renderer.packer.GuiTexture;
 import meteordevelopment.meteorclient.utils.render.color.Color;
@@ -15,7 +16,7 @@ public class WCatpuccinColorPicker extends WColorPicker implements CatpuccinWidg
 
     @Override
     protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
-        catpuccinRenderer().roundedRect(x, y, width, height, 4, color, CornerStyle.ALL);
+        catpuccinRenderer().roundedRect(x, y, width, height, smallCornerRadius, mouseOver ? ColorUtils.darker(color) : color, CornerStyle.ALL);
 
         if (mouseOver) {
             double s = theme.textHeight();

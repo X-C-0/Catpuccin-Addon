@@ -56,7 +56,7 @@ public class WCatpuccinSection extends WSection implements CatpuccinWidget {
         boolean isAnimationRunning = animation.isRunning();
         double progress = animation.getProgress();
 
-        animProgress = expanded ? 1 : 0; // Fuck you yet again meteor
+        animProgress = expanded ? 1 : 0; // Small hack to cancel out WSection scissors, so we can use our animation
 
         if (isAnimationRunning) {
             forcedHeight = (actualHeight - header.height) * progress + header.height;
