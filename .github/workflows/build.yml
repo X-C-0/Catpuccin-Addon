@@ -26,7 +26,7 @@ jobs:
       - name: Read version from gradle.properties
         id: version
         run: |
-          VERSION=$(grep "^version" gradle.properties | cut -d '=' -f2 | tr -d ' ')
+          VERSION=$(grep "^mod_version" gradle.properties | cut -d '=' -f2 | tr -d ' ')
           MC_VERSION=$(grep "^minecraft_version" gradle.properties | cut -d '=' -f2 | tr -d ' ')
           TAG_NAME="mc-${MC_VERSION}-v${VERSION}"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
