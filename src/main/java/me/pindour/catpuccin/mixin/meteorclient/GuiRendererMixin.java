@@ -23,18 +23,26 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.List;
 
 @Mixin(value = GuiRenderer.class, remap = false)
-public class GuiRendererMixin {
+public abstract class GuiRendererMixin {
+    @Unique
+    private static CatpuccinRenderer catpuccinRenderer = CatpuccinRenderer.get();
 
-    @Unique private static CatpuccinRenderer catpuccinRenderer = CatpuccinRenderer.get();
+    @Shadow
+    private static Texture TEXTURE;
 
-    @Shadow private static Texture TEXTURE;
+    @Shadow
+    @Final
+    private Renderer2D r;
+    @Shadow
+    @Final
+    private Renderer2D rTex;
 
-    @Shadow @Final private Renderer2D r;
-    @Shadow @Final private Renderer2D rTex;
+    @Shadow
+    @Final
+    private List<TextOperation> texts;
 
-    @Shadow @Final private List<TextOperation> texts;
-
-    @Shadow public GuiTheme theme;
+    @Shadow
+    public GuiTheme theme;
 
     @Inject(method = "init", at = @At("HEAD"))
     private static void onPreInit(CallbackInfo ci) {
@@ -53,12 +61,16 @@ public class GuiRendererMixin {
         catpuccinRenderer.begin();
     }
 
-    @Inject(method = "endRender(Lmeteordevelopment/meteorclient/gui/renderer/Scissor;)V", at = @At(
-                    value = "INVOKE",
-                    target = "Lmeteordevelopment/meteorclient/renderer/Renderer2D;end()V",
-                    ordinal = 1,
-                    shift = At.Shift.AFTER), cancellable = true)
-
+    @Inject(
+        method = "endRender(Lmeteordevelopment/meteorclient/gui/renderer/Scissor;)V",
+        at = @At(
+            value = "INVOKE",
+            target = "Lmeteordevelopment/meteorclient/renderer/Renderer2D;end()V",
+            ordinal = 1,
+            shift = At.Shift.AFTER
+        ),
+        cancellable = true
+    )
     private void onEndRender(Scissor scissor, CallbackInfo ci) {
         if (!(theme instanceof CatpuccinGuiTheme)) return;
 
