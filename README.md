@@ -5,6 +5,36 @@
   <img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/misc/transparent.png" height="30" width="0px"/>
 </h3>
 
+<div>
+  <img src="assets/preview.png">
+</div>
+
+## Previews
+
+<details>
+<summary>🌻 Latte</summary>
+<br/>
+<img src="assets/latte.png" height="700"/>
+</details>
+
+<details>
+<summary>🪴 Frappé</summary>
+<br/>
+<img src="assets/frappe.png" height="700"/>
+</details>
+
+<details>
+<summary>🌺 Macchiato</summary>
+<br/>
+<img src="assets/macchiato.png" height="700"/>
+</details>
+
+<details>
+<summary>🌿 Mocha</summary>
+<br/>
+<img src="assets/mocha.png" height="700"/>
+</details>
+
 ## How to use
 - Download the latest [release](/../../releases) of the mod from the releases tab.
 - Put it in your `.minecraft/mods` folder where you have installed Meteor.
