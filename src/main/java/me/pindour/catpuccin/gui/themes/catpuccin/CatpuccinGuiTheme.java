@@ -66,47 +66,47 @@ public class CatpuccinGuiTheme extends GuiTheme {
     // General
 
     public final Setting<Double> scale = sgGeneral.add(new DoubleSetting.Builder()
-        .name("scale")
-        .description("Scale of the GUI.")
-        .defaultValue(1)
-        .min(0.75)
-        .sliderRange(0.75, 4)
-        .onSliderRelease()
-        .onChanged(aDouble -> {
-            if (mc.currentScreen instanceof WidgetScreen) ((WidgetScreen) mc.currentScreen).invalidate();
-        })
-        .build()
+            .name("scale")
+            .description("Scale of the GUI.")
+            .defaultValue(1)
+            .min(0.75)
+            .sliderRange(0.75, 4)
+            .onSliderRelease()
+            .onChanged(aDouble -> {
+                if (mc.currentScreen instanceof WidgetScreen) ((WidgetScreen) mc.currentScreen).invalidate();
+            })
+            .build()
     );
 
     public final Setting<AlignmentX> moduleAlignment = sgGeneral.add(new EnumSetting.Builder<AlignmentX>()
-        .name("module-alignment")
-        .description("How module titles are aligned.")
-        .defaultValue(AlignmentX.Center)
-        .build()
+            .name("module-alignment")
+            .description("How module titles are aligned.")
+            .defaultValue(AlignmentX.Center)
+            .build()
     );
 
     public final Setting<Boolean> categoryIcons = sgGeneral.add(new BoolSetting.Builder()
-        .name("category-icons")
-        .description("Adds item icons to module categories.")
-        .defaultValue(true)
-        .build()
+            .name("category-icons")
+            .description("Adds item icons to module categories.")
+            .defaultValue(true)
+            .build()
     );
 
     public final Setting<Boolean> hideHUD = sgGeneral.add(new BoolSetting.Builder()
-        .name("hide-HUD")
-        .description("Hide HUD when in GUI.")
-        .defaultValue(false)
-        .onChanged(v -> {
-            if (mc.currentScreen instanceof WidgetScreen) mc.options.hudHidden = v;
-        })
-        .build()
+            .name("hide-HUD")
+            .description("Hide HUD when in GUI.")
+            .defaultValue(false)
+            .onChanged(v -> {
+                if (mc.currentScreen instanceof WidgetScreen) mc.options.hudHidden = v;
+            })
+            .build()
     );
 
     public final Setting<Boolean> widgetOutline = sgGeneral.add(new BoolSetting.Builder()
-        .name("widget-outline")
-        .description("Renders a small outline around some UI elements for better visibility.")
-        .defaultValue(false)
-        .build()
+            .name("widget-outline")
+            .description("Renders a small outline around some UI elements for better visibility.")
+            .defaultValue(false)
+            .build()
     );
 
     // Animations
@@ -567,6 +567,10 @@ public class CatpuccinGuiTheme extends GuiTheme {
     @Override
     public double textWidth(String text) {
         return textWidth(RichText.of(text));
+    }
+
+    public double textHeight(RichText text) {
+        return scale(richTextRenderer().getHeight(text));
     }
 
     @Override

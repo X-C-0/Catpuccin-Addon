@@ -93,6 +93,11 @@ public class RichTextRenderer implements TextRenderer {
         return 0;
     }
 
+    public double getWidth(RichTextSegment segment, int length) {
+        Font font = getFontForStyle(segment.getStyle());
+        return (font.getWidth(segment.getText(), length) + (segment.hasShadow() ? 1 : 0)) * segment.getScale() / 1.5;
+    }
+
     public double getWidth(RichText text, int length) {
         if (length <= 0) return 0;
 
@@ -125,15 +130,24 @@ public class RichTextRenderer implements TextRenderer {
         return getWidth(text, text.length());
     }
 
-    public double getWidth(RichTextSegment segment, int length) {
-        Font font = getFontForStyle(segment.getStyle());
-        return (font.getWidth(segment.getText(), length) + (segment.hasShadow() ? 1 : 0)) * segment.getScale() / 1.5;
-    }
-
     @Override
     public double getWidth(String text, int length, boolean shadow) {
         if (text.isEmpty()) return 0;
         return getWidth(RichText.of(text).shadowIf(shadow), length);
+    }
+
+    public double getHeight(RichTextSegment segment) {
+        Font font = getFontForStyle(segment.getStyle());
+        return (font.getHeight() + 1 + (segment.hasShadow() ? 1 : 0)) * segment.getScale() / 1.5;
+    }
+
+    public double getHeight(RichText text) {
+        double largestSegment = getHeight(text.getSegments().getFirst());
+
+        for (RichTextSegment segment : text.getSegments())
+            largestSegment = Math.max(largestSegment, getHeight(segment));
+
+        return largestSegment;
     }
 
     @Override

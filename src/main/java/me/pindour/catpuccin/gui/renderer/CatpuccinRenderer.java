@@ -6,7 +6,7 @@ import me.pindour.catpuccin.gui.text.RichTextOperation;
 import me.pindour.catpuccin.gui.text.RichTextSegment;
 import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinGuiTheme;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderOperation;
-import meteordevelopment.meteorclient.gui.renderer.packer.GuiTexture;
+import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.renderer.packer.TextureRegion;
 import meteordevelopment.meteorclient.gui.widgets.WWidget;
 import meteordevelopment.meteorclient.renderer.Renderer2D;
@@ -24,7 +24,9 @@ import java.util.Map;
 public class CatpuccinRenderer {
     private static CatpuccinRenderer INSTANCE;
     private static CatpuccinGuiTheme theme;
+
     private static Texture TEXTURE;
+    private static TextureRegion CIRCLE_TEXTURE;
 
     private final Renderer2D r = new Renderer2D(false);
     private final Renderer2D rTex = new Renderer2D(true);
@@ -143,21 +145,21 @@ public class CatpuccinRenderer {
             return;
         }
 
+        if (CIRCLE_TEXTURE == null) CIRCLE_TEXTURE = GuiRenderer.CIRCLE.get(64, 64);
+
         double maxRadius = Math.min(width, height) / 2;
         radius = Math.min(radius, maxRadius);
 
-        GuiTexture circleTexture = Textures.CIRCLE.texture();
-
-        if (topLeft) texPartialQuad(x, y, radius, radius, 0.0, 0.0, 0.5, 0.5, circleTexture, color);
+        if (topLeft) texPartialCircle(x, y, radius, radius, 0.0, 0.0, 0.5, 0.5, color);
         else r.quad(x, y, radius, radius, color);
 
-        if (topRight) texPartialQuad(x + width - radius, y, radius, radius, 0.5, 0.0, 1.0, 0.5, circleTexture, color);
+        if (topRight) texPartialCircle(x + width - radius, y, radius, radius, 0.5, 0.0, 1.0, 0.5, color);
         else r.quad(x + width - radius, y, radius, radius, color);
 
-        if (bottomRight) texPartialQuad(x + width - radius, y + height - radius, radius, radius, 0.5, 0.5, 1.0, 1.0, circleTexture, color);
+        if (bottomRight) texPartialCircle(x + width - radius, y + height - radius, radius, radius, 0.5, 0.5, 1.0, 1.0, color);
         else r.quad(x + width - radius, y + height - radius, radius, radius, color);
 
-        if (bottomLeft) texPartialQuad(x, y + height - radius, radius, radius, 0.0, 0.5, 0.5, 1.0, circleTexture, color);
+        if (bottomLeft) texPartialCircle(x, y + height - radius, radius, radius, 0.0, 0.5, 0.5, 1.0, color);
         else r.quad(x, y + height - radius, radius, radius, color);
 
         r.quad(x + radius, y + radius, width - 2 * radius, height - 2 * radius, color);
@@ -167,18 +169,16 @@ public class CatpuccinRenderer {
         r.quad(x + width - radius, y + radius, radius, height - 2 * radius, color);
     }
 
-    private void texPartialQuad(double x, double y, double width, double height, double u1, double v1, double u2, double v2, GuiTexture texture, Color color) {
-        int CIRCLE_RESOLUTION = 256;
+    public void texPartialCircle(double x, double y, double width, double height,
+                                 double u1, double v1, double u2, double v2,
+                                 Color color) {
 
-        TextureRegion base = texture.get(CIRCLE_RESOLUTION, CIRCLE_RESOLUTION);
-        TextureRegion partialRegion = new TextureRegion(CIRCLE_RESOLUTION, CIRCLE_RESOLUTION);
+        double texU1 = MathHelper.lerp(u1, CIRCLE_TEXTURE.x1, CIRCLE_TEXTURE.x2);
+        double texV1 = MathHelper.lerp(v1, CIRCLE_TEXTURE.y1, CIRCLE_TEXTURE.y2);
+        double texU2 = MathHelper.lerp(u2, CIRCLE_TEXTURE.x1, CIRCLE_TEXTURE.x2);
+        double texV2 = MathHelper.lerp(v2, CIRCLE_TEXTURE.y1, CIRCLE_TEXTURE.y2);
 
-        partialRegion.x1 = MathHelper.lerp(u1, base.x1, base.x2);
-        partialRegion.y1 = MathHelper.lerp(v1, base.y1, base.y2);
-        partialRegion.x2 = MathHelper.lerp(u2, base.x1, base.x2);
-        partialRegion.y2 = MathHelper.lerp(v2, base.y1, base.y2);
-
-        rTex.texQuad(x, y, width, height, partialRegion, color);
+        rTex.texQuad(x, y, width, height, 0, texU1, texV1, texU2, texV2, color);
     }
 
     private <T extends GuiRenderOperation<T>> T getOperation(Pool<T> pool, double x, double y, Color color) {

@@ -1,7 +1,6 @@
 package me.pindour.catpuccin.mixin.meteorclient;
 
 import me.pindour.catpuccin.gui.renderer.CatpuccinRenderer;
-import me.pindour.catpuccin.gui.renderer.Textures;
 import me.pindour.catpuccin.gui.text.RichText;
 import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinGuiTheme;
 import me.pindour.catpuccin.gui.themes.catpuccin.icons.CatpuccinIcons;
@@ -47,7 +46,6 @@ public abstract class GuiRendererMixin {
     @Inject(method = "init", at = @At("HEAD"))
     private static void onPreInit(CallbackInfo ci) {
         CatpuccinIcons.init();
-        Textures.init();
     }
 
     @Inject(method = "init", at = @At("TAIL"))
