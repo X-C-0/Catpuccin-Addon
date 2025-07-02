@@ -1,6 +1,7 @@
 package me.pindour.catpuccin.gui.themes.catpuccin;
 
 import me.pindour.catpuccin.gui.text.RichText;
+import me.pindour.catpuccin.gui.text.TextSize;
 import me.pindour.catpuccin.gui.themes.catpuccin.icons.CatpuccinIcons;
 import me.pindour.catpuccin.gui.themes.catpuccin.widgets.WCatpuccinLabel;
 import me.pindour.catpuccin.gui.themes.catpuccin.widgets.settings.WCatpuccinDoubleEdit;
@@ -84,9 +85,22 @@ public class CatpuccinSettingsWidgetFactory extends SettingsWidgetFactory {
         factories.put(Vector3dSetting.class, (table, setting) -> vector3dW(table, (Vector3dSetting) setting));
     }
 
+    // Spacings
+
+    private double sectionSpacing() {
+        return theme.textHeight();
+    }
+
+    private double settingSpacing() {
+        return theme.textHeight() / 2;
+    }
+
+    // Setting groups
+
     @Override
     public WWidget create(GuiTheme theme, Settings settings, String filter) {
         WVerticalList list = theme.verticalList();
+        list.spacing = sectionSpacing();
 
         List<RemoveInfo> removeInfoList = new ArrayList<>();
 
@@ -107,12 +121,8 @@ public class CatpuccinSettingsWidgetFactory extends SettingsWidgetFactory {
         return list;
     }
 
-    protected double settingSpacing() {
-        return theme.textHeight() / 3;
-    }
-
     private void group(WVerticalList list, SettingGroup group, String filter, List<RemoveInfo> removeInfoList) {
-        WSection section = list.add(theme.section(group.name, group.sectionExpanded)).padVertical(2).expandX().widget();
+        WSection section = list.add(theme.section(group.name, group.sectionExpanded)).expandX().widget();
         section.action = () -> group.sectionExpanded = section.isExpanded();
 
         WTable table = section.add(theme.table()).expandX().widget();
@@ -170,7 +180,7 @@ public class CatpuccinSettingsWidgetFactory extends SettingsWidgetFactory {
         WCheckbox checkbox = list.add(theme.checkbox(setting.get())).widget();
         checkbox.action = () -> setting.set(checkbox.checked);
 
-        title(list, setting).padLeft(4);
+        title(list, setting).padLeft(theme.pad());
 
         reset(table, setting, () -> checkbox.checked = setting.get());
     }
@@ -201,7 +211,7 @@ public class CatpuccinSettingsWidgetFactory extends SettingsWidgetFactory {
     private void stringW(WTable table, StringSetting setting) {
         WVerticalList verticalList = table.add(theme.verticalList()).expandX().widget();
 
-        title(verticalList, setting);
+        title(verticalList, setting, true);
 
         WHorizontalList horizontalList = verticalList.add(theme.horizontalList()).expandX().widget();
 
@@ -219,9 +229,11 @@ public class CatpuccinSettingsWidgetFactory extends SettingsWidgetFactory {
     private void stringListW(WTable table, StringListSetting setting) {
         WVerticalList verticalList = table.add(theme.verticalList()).expandX().widget();
 
-        title(verticalList, setting);
+        title(verticalList, setting, true);
 
-        WTable wtable = verticalList.add(theme.table()).expandX().widget();
+        WTable wtable = verticalList.add(theme.table()).expandX().padBottom(settingSpacing()).widget();
+        wtable.verticalSpacing = settingSpacing();
+
         StringListSetting.fillTable(theme, wtable, setting);
     }
 
@@ -247,16 +259,16 @@ public class CatpuccinSettingsWidgetFactory extends SettingsWidgetFactory {
         WButton edit = list.add(theme.button(CatpuccinIcons.EDIT.texture())).widget();
         edit.action = () -> mc.setScreen(setting.get().createScreen(theme));
 
-        title(list, setting).padLeft(4);
+        title(list, setting).padLeft(theme.pad());
     }
 
     private void colorW(WTable table, ColorSetting setting) {
         WHorizontalList list = table.add(theme.horizontalList()).expandX().widget();
 
-        title(list, setting);
-
         WColorPicker colorPicker = list.add(theme.colorPicker(setting.get(), CatpuccinIcons.EDIT.texture())).widget();
         colorPicker.action = () -> mc.setScreen(new ColorSettingScreen(theme, setting));
+
+        title(list, setting).padLeft(theme.pad());
 
         reset(list, setting, () -> colorPicker.setColor(setting.get()));
     }
@@ -309,11 +321,9 @@ public class CatpuccinSettingsWidgetFactory extends SettingsWidgetFactory {
     private void itemW(WTable table, ItemSetting setting) {
         WHorizontalList list = table.add(theme.horizontalList()).expandX().widget();
 
-        WItem item = list.add(theme.item(setting.get().asItem().getDefaultStack())).widget();
+        WItem item = theme.item(setting.get().asItem().getDefaultStack());
 
-        title(list, setting);
-
-        WButton select = list.add(theme.button("Select")).right().widget();
+        WButton select = list.add(theme.button("Select")).widget();
         select.minWidth = theme.textWidth(select.getText()) * 2;
         select.action = () -> {
             ItemSettingScreen screen = new ItemSettingScreen(theme, setting);
@@ -321,6 +331,11 @@ public class CatpuccinSettingsWidgetFactory extends SettingsWidgetFactory {
 
             mc.setScreen(screen);
         };
+
+        list.add(item);
+
+        title(list, setting);
+
 
         reset(list, setting, () -> item.set(setting.get().getDefaultStack()));
     }
@@ -375,16 +390,17 @@ public class CatpuccinSettingsWidgetFactory extends SettingsWidgetFactory {
         WButton button = list.add(theme.button(GuiRenderer.EDIT)).widget();
         button.action = () -> mc.setScreen(new BlockDataSettingScreen(theme, setting));
 
-        title(list, setting).padLeft(4);
+        title(list, setting).padLeft(theme.pad());
 
         reset(list, setting, null);
     }
 
     private void potionW(WTable table, PotionSetting setting) {
         WHorizontalList list = table.add(theme.horizontalList()).expandX().widget();
-        WItemWithLabel item = list.add(theme.itemWithLabel(setting.get().potion, I18n.translate(setting.get().potion.getItem().getTranslationKey()))).expandCellX().widget();
 
-        WButton button = list.add(theme.button("Select")).right().widget();
+        WItemWithLabel item = theme.itemWithLabel(setting.get().potion, I18n.translate(setting.get().potion.getItem().getTranslationKey()));
+
+        WButton button = list.add(theme.button("Select")).widget();
         button.minWidth = theme.textWidth(button.getText()) * 2;
         button.action = () -> {
             WidgetScreen screen = new PotionSettingScreen(theme, setting);
@@ -393,32 +409,36 @@ public class CatpuccinSettingsWidgetFactory extends SettingsWidgetFactory {
             mc.setScreen(screen);
         };
 
+        list.add(item).expandCellX();
+
         reset(list, setting, () -> item.set(setting.get().potion));
     }
 
     private void fontW(WTable table, FontFaceSetting setting) {
         WHorizontalList list = table.add(theme.horizontalList()).expandX().widget();
 
-        WCatpuccinLabel label = (WCatpuccinLabel) list.add(theme.label(
-                RichText.bold(setting.title)
-                             .append(" - ")
-                             .append(setting.get().info.family())))
-                .expandCellX().widget();
+        WCatpuccinLabel label = (WCatpuccinLabel) theme.label(getFontLabel(setting, setting.get().info.family()));
 
-        WButton button = list.add(theme.button("Select")).right().widget();
+        WButton button = list.add(theme.button("Select")).widget();
         button.minWidth = theme.textWidth(button.getText()) * 2;
         button.action = () -> {
             WidgetScreen screen = new FontFaceSettingScreen(theme, setting);
 
-            screen.onClosed(() -> label.set(
-                    RichText.bold(setting.title)
-                            .append(" - ")
-                            .append(setting.get().info.family())));
+            screen.onClosed(() -> label.set(getFontLabel(setting, setting.get().info.family())));
 
             mc.setScreen(screen);
         };
 
-        reset(list, setting, () -> label.set(Fonts.DEFAULT_FONT.info.family()));
+        list.add(label).expandCellX().padLeft(theme.pad());
+
+        reset(list, setting, () -> label.set(getFontLabel(setting, Fonts.DEFAULT_FONT.info.family())));
+    }
+
+    private RichText getFontLabel(FontFaceSetting setting, String fontFamily) {
+        return RichText
+            .bold(setting.title)
+            .append(" - ")
+            .append(fontFamily);
     }
 
     private void colorListW(WTable table, ColorListSetting setting) {
@@ -452,24 +472,31 @@ public class CatpuccinSettingsWidgetFactory extends SettingsWidgetFactory {
         for (SettingColor color : setting.get()) {
             int _i = i;
 
-            t.add(theme.label(i + ":"));
+            WHorizontalList list = t.add(theme.horizontalList()).expandX().widget();
 
-            t.add(theme.quad(color)).widget();
+            list.add(theme.label(String.valueOf(_i))).padLeft(theme.pad());
 
-            WButton edit = t.add(theme.button(GuiRenderer.EDIT)).widget();
-            edit.action = () -> {
+            WColorPicker colorPicker = list.add(theme.colorPicker(color, CatpuccinIcons.EDIT.texture())).padHorizontal(theme.pad()).widget();
+            colorPicker.action = () -> {
                 SettingColor defaultValue = WHITE;
-                if (_i < setting.getDefaultValue().size()) defaultValue = setting.getDefaultValue().get(_i);
 
-                ColorSetting set = new ColorSetting(setting.name, setting.description, defaultValue, settingColor -> {
+                if (_i < setting.getDefaultValue().size())
+                    defaultValue = setting.getDefaultValue().get(_i);
+
+                ColorSetting set = new ColorSetting(
+                    setting.name, setting.description, defaultValue, settingColor -> {
                     setting.get().get(_i).set(settingColor);
                     setting.onChanged();
-                }, null, null);
+                }, null, null
+                );
+
                 set.set(setting.get().get(_i));
                 mc.setScreen(new ColorSettingScreen(theme, set));
             };
 
-            WMinus remove = t.add(theme.minus()).expandCellX().right().widget();
+            list.add(theme.label(RichText.of("Example Text").scale(TextSize.SMALL.get())).color(color)).expandX();
+
+            WMinus remove = list.add(theme.minus()).right().widget();
             remove.action = () -> {
                 setting.get().remove(_i);
                 setting.onChanged();
@@ -522,14 +549,13 @@ public class CatpuccinSettingsWidgetFactory extends SettingsWidgetFactory {
 
         WHorizontalList list = c.add(theme.horizontalList()).expandX().widget();
 
-        title(list, setting);
-
-        if (addCount) list.add(new WSelectedCountLabel(setting).color(theme.textSecondaryColor())).right().expandCellX();
-
-
-        WButton button = list.add(theme.button("Select")).right().widget();
+        WButton button = list.add(theme.button("Select")).widget();
         button.minWidth = theme.textWidth(button.getText()) * 2;
         button.action = action;
+
+        title(list, setting).padLeft(theme.pad());
+
+        if (addCount) list.add(new WSelectedCountLabel(setting).color(theme.textSecondaryColor())).right().padRight(theme.pad()).expandCellX();
 
         reset(list, setting, null);
     }
@@ -570,7 +596,11 @@ public class CatpuccinSettingsWidgetFactory extends SettingsWidgetFactory {
             int size = getSize(setting);
 
             if (size != lastSize) {
-                set("(" + size + " selected)");
+                set(RichText
+                        .of("(" + size + " selected)")
+                        .scale(TextSize.SMALL.get())
+                );
+
                 lastSize = size;
             }
 
