@@ -29,7 +29,7 @@ public class WCatpuccinDropdown<T> extends WDropdown<T> implements CatpuccinWidg
         super.init();
 
         animation = new Animation(theme().uiAnimationType(), theme().uiAnimationSpeed());
-        animation.setInitialState(Direction.BACKWARDS);
+        animation.finishedAt(Direction.BACKWARDS);
     }
 
     @Override

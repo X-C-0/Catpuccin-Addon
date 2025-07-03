@@ -16,17 +16,17 @@ public class Animation {
     }
 
     public void start() {
-        start(false);
+        start(Direction.FORWARDS);
     }
 
-    public void start(boolean backwards) {
-        startTime = System.currentTimeMillis();
-        running = true;
-        finished = false;
-        direction = backwards ? Direction.BACKWARDS : Direction.FORWARDS;
+    public void start(Direction direction) {
+        this.startTime = System.currentTimeMillis();
+        this.running = true;
+        this.finished = false;
+        this.direction = direction;
     }
 
-    public void setInitialState(Direction dir) {
+    public void finishedAt(Direction dir) {
         running = false;
         finished = true;
         direction = dir;

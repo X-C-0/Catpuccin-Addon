@@ -29,7 +29,7 @@ public class WCatpuccinSection extends WSection implements CatpuccinWidget {
         super.init();
 
         animation = new Animation(theme().uiAnimationType(), theme().uiAnimationSpeed());
-        animation.setInitialState(expanded ? Direction.FORWARDS : Direction.BACKWARDS);
+        animation.finishedAt(expanded ? Direction.FORWARDS : Direction.BACKWARDS);
     }
 
     @Override

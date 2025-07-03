@@ -29,7 +29,7 @@ public class WCatpuccinWindow extends WWindow implements CatpuccinWidget {
         shadowColor = theme().baseColor().copy().a(80);
 
         animation = new Animation(theme().uiAnimationType(), theme().uiAnimationSpeed());
-        animation.setInitialState(expanded ? Direction.FORWARDS : Direction.BACKWARDS);
+        animation.finishedAt(expanded ? Direction.FORWARDS : Direction.BACKWARDS);
 
         if (header instanceof WChlamydieHeader chlamydieHeader)
             chlamydieHeader.setIndicator(expanded);

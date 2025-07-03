@@ -5,10 +5,12 @@ import me.pindour.catpuccin.gui.animation.Direction;
 import me.pindour.catpuccin.gui.text.RichText;
 import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinGuiTheme;
 import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinWidget;
+import me.pindour.catpuccin.utils.ColorUtils;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.widgets.pressable.WPressable;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.render.color.Color;
+import net.minecraft.util.math.MathHelper;
 
 import static meteordevelopment.meteorclient.MeteorClient.mc;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
@@ -19,9 +21,10 @@ public class WCatpuccinModule extends WPressable implements CatpuccinWidget {
 
     private double titleWidth;
     private boolean wasHovered = false;
+    private boolean wasActive = false;
 
     private Animation glowAnimation;
-    private Animation animation;
+    private Animation hoverAnimation;
 
     private Color highlightedColor;
     private Color semiTransparentColor;
@@ -34,11 +37,13 @@ public class WCatpuccinModule extends WPressable implements CatpuccinWidget {
 
     @Override
     public void init() {
-        glowAnimation = new Animation(theme().uiAnimationType(), theme().uiAnimationSpeed());
-        glowAnimation.setInitialState(module.isActive() ? Direction.FORWARDS : Direction.BACKWARDS);
+        boolean isActive = module.isActive();
+        wasActive = isActive;
 
-        animation = new Animation(theme().uiAnimationType(), theme().uiAnimationSpeed());
-        animation.setInitialState(module.isActive() ? Direction.FORWARDS : Direction.BACKWARDS);
+        glowAnimation = new Animation(theme().uiAnimationType(), theme().uiAnimationSpeed());
+        glowAnimation.finishedAt(isActive ? Direction.FORWARDS : Direction.BACKWARDS);
+
+        hoverAnimation = new Animation(theme().uiAnimationType(), theme().uiAnimationSpeed());
 
         highlightedColor = theme().accentColor().copy();
         transparentColor = highlightedColor.copy().a(10);
@@ -62,11 +67,11 @@ public class WCatpuccinModule extends WPressable implements CatpuccinWidget {
 
     @Override
     protected void onPressed(int button) {
-        if (button == GLFW_MOUSE_BUTTON_LEFT) {
+        if (button == GLFW_MOUSE_BUTTON_LEFT)
             module.toggle();
-            glowAnimation.reverse();
-        }
-        else if (button == GLFW_MOUSE_BUTTON_RIGHT) mc.setScreen(theme.moduleScreen(module));
+
+        else if (button == GLFW_MOUSE_BUTTON_RIGHT)
+            mc.setScreen(theme.moduleScreen(module));
     }
 
     @Override
@@ -75,24 +80,35 @@ public class WCatpuccinModule extends WPressable implements CatpuccinWidget {
         boolean moduleActive = module.isActive();
         double pad = pad();
 
-        // Animation handling
-        if (mouseOver != wasHovered) {
-            if (mouseOver && !moduleActive)
-                animation.start();
+        // Glow animation handling
+        if (moduleActive != wasActive) {
+            wasActive = moduleActive;
 
-            else if (!mouseOver && !moduleActive)
-                animation.reverse();
-
-            wasHovered = mouseOver;
+            glowAnimation.start(moduleActive ? Direction.FORWARDS : Direction.BACKWARDS);
         }
 
-        double progress = animation.getProgress();
-        double glowProgress = glowAnimation.getProgress();
+        // Hover animation handling
+        if (mouseOver != wasHovered) {
+            wasHovered = mouseOver;
 
-        if (progress > 0 || glowProgress > 0) {
+            // Start animation forwards when hovered
+            if (mouseOver) hoverAnimation.start();
+            // Set animation as finished when no longer hovered to prevent mouse tracing effect
+            else hoverAnimation.finishedAt(Direction.BACKWARDS);
+        }
+
+        double hoverProgress = hoverAnimation.getProgress();
+        double glowProgress = glowAnimation.getProgress();
+        double highlightProgress = Math.min(glowProgress + hoverProgress, 1.0);
+
+        if (highlightProgress > 0) {
+
+            // Highlight rectangle when active or hovered
+            int alpha = (int) (255 * highlightProgress);
+            renderer.quad(x, y, width, height, highlightedColor.a(alpha));
 
             // Fake glow effect when active
-            if (moduleActive || glowAnimation.isRunning()) {
+            if (glowProgress > 0) {
                 double glowLength = 6 * glowProgress;
 
                 // Upper glow
@@ -119,37 +135,19 @@ public class WCatpuccinModule extends WPressable implements CatpuccinWidget {
                         transparentColor
                 );
             }
-
-            // Highlight rectangle
-            int alpha = (int) (255 * (mouseOver ? progress : glowProgress));
-            renderer.quad(x, y, width, height, highlightedColor.a(alpha));
         }
 
         // Text alignment
-        double x = this.x + pad;
+        double x = this.x + pad * 2;
         double w = width - pad * 2;
 
         switch (theme.moduleAlignment.get()) {
             case Center -> x += w / 2 - titleWidth / 2;
-            case Right -> x += w - titleWidth;
+            case Right -> x += w - titleWidth - pad * 2;
         }
 
         // Text
-        Color textColor = interpolateColor(theme.textColor(), theme.baseColor(), progress);
+        Color textColor = ColorUtils.interpolateColor(theme.textColor(), theme.baseColor(), highlightProgress);
         catpuccinRenderer().text(RichText.of(module.title), x, y + pad, textColor);
-    }
-
-    private Color interpolateColor(Color from, Color to, double t) {
-        t = Math.max(0, Math.min(1, t));
-
-        if (t == 1) return to;
-        if (t == 0) return from;
-
-        int r = (int) (from.r + (to.r - from.r) * t);
-        int g = (int) (from.g + (to.g - from.g) * t);
-        int b = (int) (from.b + (to.b - from.b) * t);
-        int a = (int) (from.a + (to.a - from.a) * t);
-
-        return new Color(r, g, b, a);
     }
 }

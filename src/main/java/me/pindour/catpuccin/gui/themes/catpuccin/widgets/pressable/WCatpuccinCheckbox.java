@@ -20,7 +20,7 @@ public class WCatpuccinCheckbox extends WCheckbox implements CatpuccinWidget {
         super.init();
 
         animation = new Animation(theme().uiAnimationType(), theme().uiAnimationSpeed());
-        animation.setInitialState(checked ? Direction.FORWARDS : Direction.BACKWARDS);
+        animation.finishedAt(checked ? Direction.FORWARDS : Direction.BACKWARDS);
     }
 
     @Override
