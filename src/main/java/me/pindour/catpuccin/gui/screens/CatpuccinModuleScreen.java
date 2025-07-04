@@ -25,8 +25,6 @@ import meteordevelopment.meteorclient.utils.render.prompts.OkPrompt;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.nbt.NbtCompound;
 
-import java.util.Optional;
-
 import static meteordevelopment.meteorclient.utils.Utils.getWindowWidth;
 
 public class CatpuccinModuleScreen extends WindowScreen {
@@ -150,7 +148,6 @@ public class CatpuccinModuleScreen extends WindowScreen {
         NbtCompound tag = new NbtCompound();
 
         tag.putString("name", module.name);
-
         NbtCompound settingsTag = module.settings.toTag();
         if (!settingsTag.isEmpty()) tag.put("settings", settingsTag);
 
@@ -160,15 +157,15 @@ public class CatpuccinModuleScreen extends WindowScreen {
     @Override
     public boolean fromClipboard() {
         NbtCompound tag = NbtUtils.fromClipboard();
-        if (tag == null) return false;
-        if (!tag.getString("name", "").equals(module.name)) return false;
+        if (tag == null
+                || !tag.contains("name")
+                || !tag.getString("name").equals(module.name)) return false;
 
-        Optional<NbtCompound> settings = tag.getCompound("settings");
+        module.settings.fromTag(tag.getCompound("settings"));
 
-        if (settings.isPresent()) module.settings.fromTag(settings.get());
-        else module.settings.reset();
-
-        if (parent instanceof WidgetScreen p) p.reload();
+        if (parent instanceof WidgetScreen p) {
+            p.reload();
+        }
         reload();
 
         return true;

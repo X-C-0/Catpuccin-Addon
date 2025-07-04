@@ -10,9 +10,9 @@ import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.renderer.packer.TextureRegion;
 import meteordevelopment.meteorclient.gui.widgets.WWidget;
 import meteordevelopment.meteorclient.renderer.Renderer2D;
-import meteordevelopment.meteorclient.renderer.Texture;
 import meteordevelopment.meteorclient.utils.misc.Pool;
 import meteordevelopment.meteorclient.utils.render.color.Color;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.MathHelper;
 
@@ -25,7 +25,6 @@ public class CatpuccinRenderer {
     private static CatpuccinRenderer INSTANCE;
     private static CatpuccinGuiTheme theme;
 
-    private static Texture TEXTURE;
     private static TextureRegion CIRCLE_TEXTURE;
 
     private final Renderer2D r = new Renderer2D(false);
@@ -38,10 +37,6 @@ public class CatpuccinRenderer {
 
     public CatpuccinRenderer() {
         INSTANCE = this;
-    }
-
-    public static void init(Texture texture) {
-        TEXTURE = texture;
     }
 
     public static CatpuccinRenderer get() {
@@ -62,9 +57,12 @@ public class CatpuccinRenderer {
         rTex.end();
     }
 
-    public void render() {
-        r.render();
-        rTex.render(pass -> pass.bindSampler("u_Texture", TEXTURE.getGlTexture()));
+    public void render(MatrixStack matrices) {
+        r.render(matrices);
+    }
+
+    public void renderTexture(MatrixStack matrices) {
+        rTex.render(matrices);
     }
 
     public void renderText() {

@@ -6,11 +6,13 @@ import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinGuiTheme;
 import me.pindour.catpuccin.gui.themes.catpuccin.icons.CatpuccinIcons;
 import meteordevelopment.meteorclient.gui.GuiTheme;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
-import meteordevelopment.meteorclient.gui.renderer.Scissor;
 import meteordevelopment.meteorclient.gui.renderer.operations.TextOperation;
+import meteordevelopment.meteorclient.renderer.GL;
 import meteordevelopment.meteorclient.renderer.Renderer2D;
-import meteordevelopment.meteorclient.renderer.Texture;
+import meteordevelopment.meteorclient.utils.render.ByteTexture;
 import meteordevelopment.meteorclient.utils.render.color.Color;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.util.math.MatrixStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -27,7 +29,10 @@ public abstract class GuiRendererMixin {
     private static CatpuccinRenderer catpuccinRenderer = CatpuccinRenderer.get();
 
     @Shadow
-    private static Texture TEXTURE;
+    private DrawContext drawContext;
+
+    @Shadow
+    private static ByteTexture TEXTURE;
 
     @Shadow
     @Final
@@ -48,11 +53,6 @@ public abstract class GuiRendererMixin {
         CatpuccinIcons.init();
     }
 
-    @Inject(method = "init", at = @At("TAIL"))
-    private static void onPostInit(CallbackInfo ci) {
-        CatpuccinRenderer.init(TEXTURE);
-    }
-
     @Inject(method = "beginRender", at = @At("HEAD"))
     private void onBeginRender(CallbackInfo ci) {
         if (!(theme instanceof CatpuccinGuiTheme)) return;
@@ -60,7 +60,7 @@ public abstract class GuiRendererMixin {
     }
 
     @Inject(
-        method = "endRender(Lmeteordevelopment/meteorclient/gui/renderer/Scissor;)V",
+        method = "endRender()V",
         at = @At(
             value = "INVOKE",
             target = "Lmeteordevelopment/meteorclient/renderer/Renderer2D;end()V",
@@ -69,23 +69,26 @@ public abstract class GuiRendererMixin {
         ),
         cancellable = true
     )
-    private void onEndRender(Scissor scissor, CallbackInfo ci) {
+    private void onEndRender(CallbackInfo ci) {
         if (!(theme instanceof CatpuccinGuiTheme)) return;
 
+        MatrixStack matrices = drawContext.getMatrices();
+
+        // Render catpuccin first to prevent clipping with rounded corners
         catpuccinRenderer.end();
-        catpuccinRenderer.render();
+        catpuccinRenderer.render(matrices);
+
+        GL.bindTexture(TEXTURE.getGlId());
+        catpuccinRenderer.renderTexture(matrices);
 
         // From GuiRenderer
-        r.render();
-        rTex.render(pass -> pass.bindSampler("u_Texture", TEXTURE.getGlTexture()));
-
-        // From GuiRenderer
+        r.render(matrices);
+        rTex.render(matrices);
         texts.clear();
 
+        // Render text last
         catpuccinRenderer.renderText();
 
-        // From GuiRenderer
-        if (scissor != null) scissor.pop();
         ci.cancel();
     }
 
