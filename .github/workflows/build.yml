@@ -2,16 +2,18 @@ name: Build & Release
 
 on:
   push:
-    branches:
-      - '**'
+    branches: [ 1.21.4 ]
     paths-ignore:
       - '*.md'
 
 jobs:
   build:
-    name: Conditional Build & Release
+    name: Build & Release
     runs-on: ubuntu-latest
     permissions: write-all
+
+    env:
+      MAKE_LATEST: false
 
     steps:
       - name: Checkout repository
@@ -28,10 +30,13 @@ jobs:
         run: |
           VERSION=$(grep "^mod_version" gradle.properties | cut -d '=' -f2 | tr -d ' ')
           MC_VERSION=$(grep "^minecraft_version" gradle.properties | cut -d '=' -f2 | tr -d ' ')
-          TAG_NAME="mc-${MC_VERSION}-v${VERSION}"
+          TAG_NAME="mc${MC_VERSION}-v${VERSION}"
+          RELEASE_NAME="${MC_VERSION} build"
+
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "mc_version=$MC_VERSION" >> "$GITHUB_OUTPUT"
           echo "tag=$TAG_NAME" >> "$GITHUB_OUTPUT"
+          echo "release_name=$RELEASE_NAME" >> "$GITHUB_OUTPUT"
 
       - name: Check if tag already exists
         id: tag_check
@@ -55,13 +60,13 @@ jobs:
         if: steps.tag_check.outputs.skip != 'true'
         run: ./gradlew build
 
-      - name: Upload GitHub release
+      - name: Create GitHub Release
         if: steps.tag_check.outputs.skip != 'true'
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.version.outputs.tag }}
-          name: ${{ steps.version.outputs.mc_version }} build
-          files: |
-            build/libs/*.jar
+          name: ${{ steps.version.outputs.release_name }}
+          files: build/libs/*.jar
+          make_latest: ${{ env.MAKE_LATEST }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
