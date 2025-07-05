@@ -78,7 +78,7 @@ public class WCatpuccinDoubleEdit extends WVerticalList implements CatpuccinWidg
                 .of(String.valueOf(sliderMax))
                 .scale(TextSize.SMALL.get());
 
-            sliderList.add(theme().label(maxText).color(theme().textSecondaryColor()));
+            sliderList.add(theme().label(maxText).color(theme().textSecondaryColor())).padRight(pad());
         }
 
         textBox.actionOnUnfocused = () -> {

@@ -49,7 +49,7 @@ public class WCatpuccinCheckbox extends WCheckbox implements CatpuccinWidget {
                     size,
                     size,
                     smallCornerRadius,
-                    theme.accentColor().copy().a(80),
+                    theme.accentColor().copy().a(mouseOver ? 140 : 80),
                     CornerStyle.ALL
             );
 
