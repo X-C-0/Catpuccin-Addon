@@ -125,7 +125,7 @@ public class CatpuccinSettingsWidgetFactory extends SettingsWidgetFactory {
         WSection section = list.add(theme.section(group.name, group.sectionExpanded)).expandX().widget();
         section.action = () -> group.sectionExpanded = section.isExpanded();
 
-        WTable table = section.add(theme.table()).expandX().widget();
+        WTable table = section.add(theme.table()).expandX().padTop(theme.pad()).widget();
         table.verticalSpacing = settingSpacing();
 
         RemoveInfo removeInfo = null;
