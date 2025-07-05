@@ -73,7 +73,7 @@ public class WCatpuccinSlider extends WSlider implements CatpuccinWidget {
                 handleTextureSize,
                 handleTextureSize,
                 GuiRenderer.CIRCLE,
-                theme().baseColor()
+                dragging || handleMouseOver ? theme().surface0Color() : theme().baseColor()
         );
     }
 }
