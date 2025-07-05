@@ -2,7 +2,7 @@ name: Build & Release
 
 on:
   push:
-    branches: [ master ]
+    branches: [ 1.21.5 ]
     paths-ignore:
       - '*.md'
 
@@ -13,7 +13,7 @@ jobs:
     permissions: write-all
 
     env:
-      MAKE_LATEST: true
+      MAKE_LATEST: false
 
     steps:
       - name: Checkout repository
