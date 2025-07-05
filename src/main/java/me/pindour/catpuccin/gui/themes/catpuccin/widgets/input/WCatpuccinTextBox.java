@@ -12,7 +12,10 @@ import meteordevelopment.meteorclient.gui.widgets.containers.WContainer;
 import meteordevelopment.meteorclient.gui.widgets.containers.WVerticalList;
 import meteordevelopment.meteorclient.gui.widgets.input.WTextBox;
 import meteordevelopment.meteorclient.utils.render.color.Color;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.math.MathHelper;
+
+import static org.lwjgl.glfw.GLFW.*;
 
 public class WCatpuccinTextBox extends WTextBox implements CatpuccinWidget {
     private boolean cursorVisible;
@@ -42,6 +45,46 @@ public class WCatpuccinTextBox extends WTextBox implements CatpuccinWidget {
             width = pad + textWidth + pad;
             parent.invalidate();
         }
+    }
+
+    @Override
+    public boolean onMouseClicked(double mouseX, double mouseY, int button, boolean used) {
+        boolean clicked =  super.onMouseClicked(mouseX, mouseY, button, used);
+
+        // Update widget width when text is cleared
+        if (clicked && dynamicWidth && button == GLFW_MOUSE_BUTTON_RIGHT && !text.isEmpty()) onCalculateSize();
+
+        return clicked;
+    }
+
+    @Override
+    public boolean onKeyRepeated(int key, int mods) {
+        boolean repeated = super.onKeyRepeated(key, mods);
+
+        if (repeated && dynamicWidth) {
+            boolean control = MinecraftClient.IS_SYSTEM_MAC ? mods == GLFW_MOD_SUPER : mods == GLFW_MOD_CONTROL;
+
+            // Update widget width when text is updated
+            if ((control && key == GLFW_KEY_V)
+                    || key == GLFW_KEY_BACKSPACE
+                    || key == GLFW_KEY_DELETE)
+                onCalculateSize();
+        }
+
+        return repeated;
+    }
+
+    @Override
+    public boolean onCharTyped(char c) {
+        boolean typed = super.onCharTyped(c);
+        if (dynamicWidth) onCalculateSize();
+        return typed;
+    }
+
+    @Override
+    public void set(String text) {
+        super.set(text);
+        if (dynamicWidth) onCalculateSize();
     }
 
     @Override
@@ -76,19 +119,6 @@ public class WCatpuccinTextBox extends WTextBox implements CatpuccinWidget {
     @Override
     protected double getOverflowWidthForRender() {
         return dynamicWidth ? 0 : super.getOverflowWidthForRender();
-    }
-
-    @Override
-    public void set(String text) {
-        super.set(text);
-        onCalculateSize();
-    }
-
-    @Override
-    public boolean onCharTyped(char c) {
-        boolean typed = super.onCharTyped(c);
-        onCalculateSize();
-        return typed;
     }
 
     private static class CompletionItem extends WCatpuccinLabel implements ICompletionItem {
@@ -144,6 +174,8 @@ public class WCatpuccinTextBox extends WTextBox implements CatpuccinWidget {
 
         if (renderBackground) {
             int bottomSize = 2;
+            Color highlightColor = focused ? theme.accentColor() :
+                    mouseOver ? theme.surface2Color() : theme.surface0Color();
 
             // Background
             catpuccinRenderer().roundedRect(x, y, width, height, smallCornerRadius, theme.mantleColor(), CornerStyle.ALL);
@@ -151,7 +183,7 @@ public class WCatpuccinTextBox extends WTextBox implements CatpuccinWidget {
             renderer.scissorStart(x, y + height - bottomSize, width, bottomSize);
 
             // Bottom highlight
-            catpuccinRenderer().roundedRect(x, y, width, height, smallCornerRadius, focused ? theme.accentColor() : theme.surface0Color(), CornerStyle.BOTTOM);
+            catpuccinRenderer().roundedRect(x, y, width, height, smallCornerRadius, highlightColor, CornerStyle.BOTTOM);
 
             renderer.scissorEnd();
         }
