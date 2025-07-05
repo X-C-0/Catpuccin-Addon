@@ -143,6 +143,14 @@ public class CatpuccinGuiTheme extends GuiTheme {
             .build()
     );
 
+    public final Setting<Integer> windowOpacity = sgColors.add(new IntSetting.Builder()
+            .name("window-opacity")
+            .description("How much opaque the windows should be.")
+            .defaultValue(255)
+            .sliderRange(0, 255)
+            .build()
+    );
+
     // Three state colors
 
     public final ThreeStateColor backgroundColor = new ThreeStateColor(
