@@ -7,7 +7,6 @@ import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinGuiTheme;
 import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinWidget;
 import me.pindour.catpuccin.gui.themes.catpuccin.icons.CatpuccinIcons;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
-import meteordevelopment.meteorclient.gui.utils.Cell;
 import meteordevelopment.meteorclient.gui.widgets.WWidget;
 import meteordevelopment.meteorclient.gui.widgets.containers.WSection;
 import meteordevelopment.meteorclient.utils.render.color.Color;
@@ -42,13 +41,6 @@ public class WCatpuccinSection extends WSection implements CatpuccinWidget {
             forcedHeight = (actualHeight - header.height) * animation.getProgress() + header.height;
             height = forcedHeight;
         }
-    }
-
-    @Override
-    public <T extends WWidget> Cell<T> add(T widget) {
-        // Section header is first, so add padding to the second cell to get a nice space between the cell and the header
-        if (!(widget instanceof WHeader) && cells.size() < 2) return super.add(widget).padTop(8);
-        return super.add(widget);
     }
 
     @Override
