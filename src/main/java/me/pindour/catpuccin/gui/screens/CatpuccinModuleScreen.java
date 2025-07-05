@@ -14,6 +14,7 @@ import meteordevelopment.meteorclient.gui.widgets.WWidget;
 import meteordevelopment.meteorclient.gui.widgets.containers.WContainer;
 import meteordevelopment.meteorclient.gui.widgets.containers.WHorizontalList;
 import meteordevelopment.meteorclient.gui.widgets.containers.WVerticalList;
+import meteordevelopment.meteorclient.gui.widgets.containers.WView;
 import meteordevelopment.meteorclient.gui.widgets.input.WDropdown;
 import meteordevelopment.meteorclient.gui.widgets.pressable.WButton;
 import meteordevelopment.meteorclient.gui.widgets.pressable.WCheckbox;
@@ -49,8 +50,13 @@ public class CatpuccinModuleScreen extends WindowScreen {
     public void initWidgets() {
         double pad = theme.pad();
 
+        // Scrollable view - contains description, keybind, settings and custom widget
+        WView view = add(theme.view()).widget();
+        view.maxHeight = window.view.maxHeight - 100; // Has to be smaller than window's max height to prevent double scrollbars
+        view.spacing = 0;
+
         // Description
-        WVerticalList description = add(theme.verticalList()).padHorizontal(pad).padBottom(pad).widget();
+        WVerticalList description = view.add(theme.verticalList()).padHorizontal(pad).padBottom(pad).widget();
         description.add(theme.label(module.description, getWindowWidth() / 4.0));
 
         if (module.addon != null && module.addon != MeteorClient.ADDON) {
@@ -60,7 +66,7 @@ public class CatpuccinModuleScreen extends WindowScreen {
         }
 
         // Keybind
-        WHorizontalList bind = add(theme.horizontalList()).padHorizontal(pad).expandX().widget();
+        WHorizontalList bind = view.add(theme.horizontalList()).padHorizontal(pad).expandX().widget();
 
         keybind = bind.add(theme.catpuccinKeybind(module.keybind)).expandX().widget();
         keybind.actionOnSet = () -> Modules.get().setModuleToBind(module);
@@ -71,11 +77,11 @@ public class CatpuccinModuleScreen extends WindowScreen {
         WButton reset = bind.add(theme.button(CatpuccinIcons.RESET.texture())).right().widget();
         reset.action = keybind::resetBind;
 
-        add(theme.horizontalSeparator()).padVertical(pad).expandX();
+        view.add(theme.horizontalSeparator()).padVertical(pad).expandX();
 
         // Settings
         if (!module.settings.groups.isEmpty()) {
-            settingsContainer = add(theme.verticalList()).expandX().widget();
+            settingsContainer = view.add(theme.verticalList()).expandX().widget();
             settingsContainer.add(theme.settings(module.settings)).expandX();
         }
 
@@ -83,15 +89,15 @@ public class CatpuccinModuleScreen extends WindowScreen {
         WWidget widget = module.getWidget(theme);
 
         if (widget != null) {
-            add(theme.horizontalSeparator()).padVertical(pad).expandX();
-            Cell<WWidget> cell = add(widget);
+            view.add(theme.horizontalSeparator()).padVertical(pad).expandX();
+            Cell<WWidget> cell = view.add(widget);
             if (widget instanceof WContainer) cell.expandX();
         }
 
         if (!module.settings.groups.isEmpty() || widget != null)
             add(theme.horizontalSeparator()).padVertical(pad).expandX();
 
-        // Bottom
+        // Bottom - isn't added to the view, making it "stick" at the bottom
         WHorizontalList bottom = add(theme.horizontalList()).padHorizontal(pad).expandX().widget();
 
         // Active
