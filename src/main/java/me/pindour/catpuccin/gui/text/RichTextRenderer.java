@@ -206,7 +206,7 @@ public class RichTextRenderer implements TextRenderer {
                     .attachments(MinecraftClient.getInstance().getFramebuffer())
                     .pipeline(MeteorRenderPipelines.UI_TEXT)
                     .mesh(mesh)
-                    .setupCallback(pass -> pass.bindSampler("u_Texture", currentFont.texture.getGlTexture()))
+                    .sampler("u_Texture", currentFont.texture.getGlTextureView())
                     .end();
         }
 

@@ -64,7 +64,7 @@ public class CatpuccinRenderer {
 
     public void render() {
         r.render();
-        rTex.render(pass -> pass.bindSampler("u_Texture", TEXTURE.getGlTexture()));
+        rTex.render("u_Texture", TEXTURE.getGlTextureView());
     }
 
     public void renderText() {
