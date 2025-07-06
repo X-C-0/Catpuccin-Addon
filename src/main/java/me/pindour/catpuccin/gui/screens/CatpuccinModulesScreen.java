@@ -16,7 +16,9 @@ import meteordevelopment.meteorclient.systems.config.Config;
 import meteordevelopment.meteorclient.systems.modules.Category;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.systems.modules.Modules;
+import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.misc.NbtUtils;
+import net.minecraft.client.gui.DrawContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,16 +28,23 @@ import static meteordevelopment.meteorclient.utils.Utils.getWindowHeight;
 import static meteordevelopment.meteorclient.utils.Utils.getWindowWidth;
 
 public class CatpuccinModulesScreen extends TabScreen {
-    private final CatpuccinGuiTheme catpuccinTheme;
+    private final CatpuccinGuiTheme theme;
     private WCategoryController controller;
+
+    private boolean showGrid = false;
+    private boolean shouldSnap;
+    private int gridSize;
 
     public CatpuccinModulesScreen(GuiTheme theme) {
         super(theme, Tabs.get().getFirst());
-        catpuccinTheme = (CatpuccinGuiTheme) theme;
+        this.theme = (CatpuccinGuiTheme) theme;
     }
 
     @Override
     public void initWidgets() {
+        shouldSnap = theme.snapModuleCategories.get();
+        gridSize = theme.snappingGridSize.get();
+
         // Categories
         controller = add(new WCategoryController()).widget();
 
@@ -54,6 +63,25 @@ public class CatpuccinModulesScreen extends TabScreen {
         controller.refresh();
     }
 
+    @Override
+    public void renderBackground(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+        super.renderBackground(context, mouseX, mouseY, deltaTicks);
+
+        if (!showGrid) return;
+
+        int color = theme.overlay0Color().copy().a(60).getPacked();
+        int windowWidth = Utils.getWindowWidth();
+        int windowHeight = Utils.getWindowHeight();
+
+        for (int x = 0; x <= windowWidth; x += gridSize) {
+            context.drawVerticalLine(x, 0, windowHeight, color);
+        }
+
+        for (int y = 0; y <= windowHeight; y += gridSize) {
+            context.drawHorizontalLine(0, windowWidth, y, color);
+        }
+    }
+
     // Category
 
     protected WWindow createCategory(WContainer c, Category category, List<Module> moduleList) {
@@ -62,10 +90,12 @@ public class CatpuccinModulesScreen extends TabScreen {
         w.padding = 0;
         w.spacing = 0;
 
+        if (shouldSnap) w.initSnapping(this, gridSize);
+
         double size = theme.scale(16);
 
         if (theme.categoryIcons()) {
-            w.beforeHeaderInit = wContainer -> wContainer.add(catpuccinTheme.icon(size, getIconForCategory(category))).centerY().pad(4).padHorizontal(10);
+            w.beforeHeaderInit = wContainer -> wContainer.add(theme.icon(size, getIconForCategory(category))).centerY().pad(4).padHorizontal(10);
         }
 
         c.add(w);
@@ -118,13 +148,15 @@ public class CatpuccinModulesScreen extends TabScreen {
     }
 
     protected WWindow createSearch(WContainer c) {
-        WWindow w = theme.window("Search");
+        WCatpuccinWindow w = (WCatpuccinWindow) theme.window("Search");
         w.id = "search";
+
+        if (shouldSnap) w.initSnapping(this, gridSize);
 
         double size = theme.scale(16);
 
         if (theme.categoryIcons()) {
-            w.beforeHeaderInit = wContainer -> wContainer.add(catpuccinTheme.icon(size, CatpuccinIcons.SEARCH)).centerY().pad(4).padLeft(10);
+            w.beforeHeaderInit = wContainer -> wContainer.add(theme.icon(size, CatpuccinIcons.SEARCH)).centerY().pad(4).padLeft(10);
         }
 
         c.add(w);
@@ -153,15 +185,17 @@ public class CatpuccinModulesScreen extends TabScreen {
         boolean hasFavorites = Modules.get().getAll().stream().anyMatch(module -> module.favorite);
         if (!hasFavorites) return null;
 
-        WWindow w = theme.window("Favorites");
+        WCatpuccinWindow w = (WCatpuccinWindow) theme.window("Favorites");
         w.id = "favorites";
         w.padding = 0;
         w.spacing = 0;
 
+        if (shouldSnap) w.initSnapping(this, gridSize);
+
         double size = theme.scale(16);
 
         if (theme.categoryIcons()) {
-            w.beforeHeaderInit = wContainer -> wContainer.add(catpuccinTheme.icon(size, CatpuccinIcons.BOOKMARK_YES)).centerY().pad(4).padLeft(10);
+            w.beforeHeaderInit = wContainer -> wContainer.add(theme.icon(size, CatpuccinIcons.BOOKMARK_YES)).centerY().pad(4).padLeft(10);
         }
 
         Cell<WWindow> cell = c.add(w);
@@ -299,5 +333,13 @@ public class CatpuccinModulesScreen extends TabScreen {
         }
 
         return icon;
+    }
+
+    public void showGrid(boolean show) {
+        showGrid = show;
+    }
+
+    public boolean showGrid() {
+        return showGrid;
     }
 }

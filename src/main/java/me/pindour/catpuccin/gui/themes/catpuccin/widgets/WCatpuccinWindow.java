@@ -3,10 +3,12 @@ package me.pindour.catpuccin.gui.themes.catpuccin.widgets;
 import me.pindour.catpuccin.gui.animation.Animation;
 import me.pindour.catpuccin.gui.animation.Direction;
 import me.pindour.catpuccin.gui.renderer.CornerStyle;
+import me.pindour.catpuccin.gui.screens.CatpuccinModulesScreen;
 import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinWidget;
 import me.pindour.catpuccin.gui.widgets.pressable.WOpenIndicator;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.utils.Cell;
+import meteordevelopment.meteorclient.gui.utils.WindowConfig;
 import meteordevelopment.meteorclient.gui.widgets.WWidget;
 import meteordevelopment.meteorclient.gui.widgets.containers.WHorizontalList;
 import meteordevelopment.meteorclient.gui.widgets.containers.WWindow;
@@ -14,6 +16,13 @@ import meteordevelopment.meteorclient.utils.render.color.Color;
 
 public class WCatpuccinWindow extends WWindow implements CatpuccinWidget {
     private final int shadowOffset = 2;
+
+    private CatpuccinModulesScreen modulesScreen;
+    private boolean shouldSnap = false;
+    private int gridSize;
+
+    private double mouseOffsetX;
+    private double mouseOffsetY;
 
     private Animation animation;
     private Color shadowColor;
@@ -33,6 +42,12 @@ public class WCatpuccinWindow extends WWindow implements CatpuccinWidget {
 
         if (header instanceof WChlamydieHeader chlamydieHeader)
             chlamydieHeader.setIndicator(expanded);
+    }
+
+    public void initSnapping(CatpuccinModulesScreen modulesScreen, int gridSize) {
+        this.modulesScreen = modulesScreen;
+        this.gridSize = gridSize;
+        shouldSnap = true;
     }
 
     @Override
@@ -190,8 +205,54 @@ public class WCatpuccinWindow extends WWindow implements CatpuccinWidget {
             return render;
         }
 
+        @Override
+        public boolean onMouseClicked(double mouseX, double mouseY, int button, boolean used) {
+            boolean clicked = super.onMouseClicked(mouseX, mouseY, button, used);
+
+            if (clicked && shouldSnap) {
+                mouseOffsetX = mouseX - x;
+                mouseOffsetY = mouseY - y;
+            }
+
+            return clicked;
+        }
+
+        @Override
+        public boolean mouseReleased(double mouseX, double mouseY, int button) {
+            if (shouldSnap) modulesScreen.showGrid(false);
+            return super.mouseReleased(mouseX, mouseY, button);
+        }
+
+        @Override
+        public void onMouseMoved(double mouseX, double mouseY, double lastMouseX, double lastMouseY) {
+            if (!dragging) return;
+
+            double deltaX = shouldSnap ? snapToGrid(mouseX - mouseOffsetX) - x : mouseX - lastMouseX;
+            double deltaY = shouldSnap ? snapToGrid(mouseY - mouseOffsetY) - y : mouseY - lastMouseY;
+
+            WCatpuccinWindow.this.move(deltaX, deltaY);
+
+            moved = true;
+            movedX = x;
+            movedY = y;
+
+            if (id != null) {
+                WindowConfig config = theme.getWindowConfig(id);
+
+                config.x = x;
+                config.y = y;
+            }
+
+            if (shouldSnap && !modulesScreen.showGrid()) modulesScreen.showGrid(true);
+            dragged = true;
+        }
+
         public void setIndicator(boolean open) {
             indicator.open = open;
         }
+    }
+
+    private double snapToGrid(double value) {
+        return (Math.round(value / gridSize) * gridSize);
     }
 }

@@ -61,6 +61,7 @@ public class CatpuccinGuiTheme extends GuiTheme {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
     private final SettingGroup sgAnimations = settings.createGroup("Animations");
     private final SettingGroup sgColors = settings.createGroup("Colors");
+    private final SettingGroup sgSnapping = settings.createGroup("Snapping");
     private final SettingGroup sgStarscript = settings.createGroup("Starscript");
 
     // General
@@ -148,6 +149,24 @@ public class CatpuccinGuiTheme extends GuiTheme {
             .description("How much opaque the windows should be.")
             .defaultValue(255)
             .sliderRange(0, 255)
+            .build()
+    );
+
+    // Snapping
+
+    public final Setting<Boolean> snapModuleCategories = sgSnapping.add(new BoolSetting.Builder()
+            .name("snap-module-categories")
+            .description("Makes the category windows snap to the grid.")
+            .defaultValue(true)
+            .build()
+    );
+
+    public final Setting<Integer> snappingGridSize = sgSnapping.add(new IntSetting.Builder()
+            .name("grid-size")
+            .description("How big should the snapping grid be.")
+            .defaultValue(10)
+            .sliderRange(5, 50)
+            .visible(snapModuleCategories::get)
             .build()
     );
 
