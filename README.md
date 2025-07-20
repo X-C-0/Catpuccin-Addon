@@ -35,8 +35,6 @@
 <img src="assets/mocha.png" height="700" alt="Mocha preview"/>
 </details>
 
----
-
 ## 🧰 Installation
 
 > Requires [Meteor Client](https://meteorclient.com) (duh).
@@ -49,8 +47,6 @@
 6. 🡒 (Optional) In the **"Config"** tab, set your font to **Arial** or another one that supports multiple font styles (bold, italic...).
 
 > 💡 *Pro Tip: Use the search bar in the releases tab to find your exact Minecraft version (e.g. "1.21.4 build").*
-
----
 
 ## ✨ Features
 
@@ -75,15 +71,11 @@
 
 > ⚠️ *I used some funny workarounds to make this work (see mixins). If you know a better way – hit me up!*
 
----
-
 ## 🛠️ Planned
 
 - Fix bugs
 - Custom hud elements (Module List, Status bar, Inventory, etc.)
 - im buggin out
-
----
 
 ## 💬 Support
 - You can find me on Meteor's discord (@Pindour) or join our freaky ahh [discord server](https://discord.com/invite/wn8AADqMka).
