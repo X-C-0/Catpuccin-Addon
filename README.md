@@ -6,55 +6,85 @@
 </h3>
 
 <div>
-  <img src="assets/preview.png">
+  <img src="assets/preview.png" alt="Main preview" />
 </div>
 
-## Previews
+## 🖼️ Previews
 
 <details>
 <summary>🌻 Latte</summary>
 <br/>
-<img src="assets/latte.png" height="700"/>
+<img src="assets/latte.png" height="700" alt="Latte preview"/>
 </details>
 
 <details>
 <summary>🪴 Frappé</summary>
 <br/>
-<img src="assets/frappe.png" height="700"/>
+<img src="assets/frappe.png" height="700" alt="Frappé preview"/>
 </details>
 
 <details>
 <summary>🌺 Macchiato</summary>
 <br/>
-<img src="assets/macchiato.png" height="700"/>
+<img src="assets/macchiato.png" height="700" alt="Macchiato preview"/>
 </details>
 
 <details>
 <summary>🌿 Mocha</summary>
 <br/>
-<img src="assets/mocha.png" height="700"/>
+<img src="assets/mocha.png" height="700" alt="Mocha preview"/>
 </details>
 
-## How to use
-- Download the latest [release](/../../releases) of the mod from the releases tab.
-- Put it in your `.minecraft/mods` folder where you have installed Meteor.
-- Open the ClickGUI, go to "GUI" tab and select "Catpuccin" theme from the dropdown box.
-- Change the font in the "Config" tab to Arial or something that supports multiple styles for the best experience.
+---
 
-## Features
-- Epic rounded corners (kinda wonky, but that can be fixed later if I find a better way to do it).
-- Epic flavors with all the accent colors from the [Catpuccin Palette](https://catppuccin.com/palette/).
-- Epic animations with configurable duration and type (Linear, Ease In, Ease Out etc.).
-- Epic font rendering solution, which can render regular, bold and italic font dynamically.
+## 🧰 Installation
 
-*Note: I used some funny workarounds to make this work (see mixins), so if you have a better way to do it, hit me up*
+> Requires [Meteor Client](https://meteorclient.com) (duh).
 
-## Planned
+1. 🡒 Go to the [**Releases tab**](../../releases) and download the latest `.jar` file for your Minecraft version.
+2. 🡒 Move the file into your `mods` folder.
+3. 🡒 Launch Minecraft with Meteor Client.
+4. 🡒 Open the **ClickGUI** (`Right Shift` by default).
+5. 🡒 Go to the **"GUI"** tab and select the **"Catppuccin"** theme from the **"Theme"** dropdown.
+6. 🡒 (Optional) In the **"Config"** tab, set your font to **Arial** or another one that supports multiple font styles (bold, italic...).
+
+> 💡 *Pro Tip: Use the search bar in the releases tab to find your exact Minecraft version (e.g. "1.21.4 build").*
+
+---
+
+## ✨ Features
+
+- 🟣 **Epic rounded corners**  
+  *(Kinda janky, but that can be fixed later if I find a better way to do it)*
+
+
+- 🌈 **Epic flavors** from the [Catppuccin Palette](https://catppuccin.com/palette/)  
+  *(Latte, Frappé, Macchiato, Mocha)*
+
+
+- 🌀 **Epic smooth animations**  
+  *(Configurable duration and type: Linear, Ease In, Ease Out, etc.)*
+
+
+- 🔤 **Epic font rendering**  
+  *(Supports bold, italic, and dynamic font style switching)*
+
+
+- 🧲 **Epic snap-to-grid for Modules Screen**  
+  *(Keeps your GUI very epic looking and organized)*
+
+> ⚠️ *I used some funny workarounds to make this work (see mixins). If you know a better way – hit me up!*
+
+---
+
+## 🛠️ Planned
+
 - Fix bugs
-- Fix more bugs
-- Custom hud elements like Module Array etc.?
+- Custom hud elements (Module List, Status bar, Inventory, etc.)
 - im buggin out
 
-## Support
+---
+
+## 💬 Support
 - You can find me on Meteor's discord (@Pindour) or join our freaky ahh [discord server](https://discord.com/invite/wn8AADqMka).
 - Or use GitHub issues, but I have no clue how those work so glhf
