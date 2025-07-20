@@ -10,9 +10,10 @@ import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.renderer.packer.TextureRegion;
 import meteordevelopment.meteorclient.gui.widgets.WWidget;
 import meteordevelopment.meteorclient.renderer.Renderer2D;
-import meteordevelopment.meteorclient.renderer.Texture;
 import meteordevelopment.meteorclient.utils.misc.Pool;
+import meteordevelopment.meteorclient.utils.render.ByteTexture; // CHANGED IMPORT
 import meteordevelopment.meteorclient.utils.render.color.Color;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.MathHelper;
 
@@ -25,7 +26,7 @@ public class CatpuccinRenderer {
     private static CatpuccinRenderer INSTANCE;
     private static CatpuccinGuiTheme theme;
 
-    private static Texture TEXTURE;
+    private static ByteTexture TEXTURE; // CHANGED TYPE
     private static TextureRegion CIRCLE_TEXTURE;
 
     private final Renderer2D r = new Renderer2D(false);
@@ -36,11 +37,14 @@ public class CatpuccinRenderer {
 
     private final Map<Pair<FontStyle, Double>, List<RichTextOperation>> textsByStyleAndScale = new HashMap<>();
 
+    // Store MatrixStack for rendering
+    private MatrixStack matrices;
+
     public CatpuccinRenderer() {
         INSTANCE = this;
     }
 
-    public static void init(Texture texture) {
+    public static void init(ByteTexture texture) {
         TEXTURE = texture;
     }
 
@@ -57,14 +61,31 @@ public class CatpuccinRenderer {
         rTex.begin();
     }
 
+    public void begin(MatrixStack matrices) {
+        this.matrices = matrices;
+        r.begin();
+        rTex.begin();
+    }
+
     public void end() {
         r.end();
         rTex.end();
     }
 
+    public void render(MatrixStack matrices) {
+        r.render(matrices);
+        // Bind the texture before rendering - ByteTexture extends AbstractTexture which has bind()
+        TEXTURE.bindTexture();
+        rTex.render(matrices);
+    }
+
     public void render() {
-        r.render();
-        rTex.render("u_Texture", TEXTURE.getGlTextureView());
+        if (matrices != null) {
+            render(matrices);
+        } else {
+            // Fallback: create a new MatrixStack if none was provided
+            render(new MatrixStack());
+        }
     }
 
     public void renderText() {

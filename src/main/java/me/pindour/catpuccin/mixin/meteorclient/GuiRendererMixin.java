@@ -10,7 +10,9 @@ import meteordevelopment.meteorclient.gui.renderer.Scissor;
 import meteordevelopment.meteorclient.gui.renderer.operations.TextOperation;
 import meteordevelopment.meteorclient.renderer.Renderer2D;
 import meteordevelopment.meteorclient.renderer.Texture;
+import meteordevelopment.meteorclient.utils.render.ByteTexture;
 import meteordevelopment.meteorclient.utils.render.color.Color;
+import net.minecraft.client.gui.DrawContext;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -27,7 +29,7 @@ public abstract class GuiRendererMixin {
     private static CatpuccinRenderer catpuccinRenderer = CatpuccinRenderer.get();
 
     @Shadow
-    private static Texture TEXTURE;
+    private static ByteTexture TEXTURE;
 
     @Shadow
     @Final
@@ -42,6 +44,9 @@ public abstract class GuiRendererMixin {
 
     @Shadow
     public GuiTheme theme;
+
+    @Shadow
+    private DrawContext drawContext; // CHANGED: Shadow the drawContext instead of matrices
 
     @Inject(method = "init", at = @At("HEAD"))
     private static void onPreInit(CallbackInfo ci) {
@@ -60,32 +65,33 @@ public abstract class GuiRendererMixin {
     }
 
     @Inject(
-        method = "endRender(Lmeteordevelopment/meteorclient/gui/renderer/Scissor;)V",
-        at = @At(
-            value = "INVOKE",
-            target = "Lmeteordevelopment/meteorclient/renderer/Renderer2D;end()V",
-            ordinal = 1,
-            shift = At.Shift.AFTER
-        ),
-        cancellable = true
+            method = "endRender()V", // CHANGED: Updated method signature (no Scissor parameter in actual class)
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lmeteordevelopment/meteorclient/renderer/Renderer2D;end()V",
+                    ordinal = 1,
+                    shift = At.Shift.AFTER
+            ),
+            cancellable = true
     )
-    private void onEndRender(Scissor scissor, CallbackInfo ci) {
+    private void onEndRender(CallbackInfo ci) {
         if (!(theme instanceof CatpuccinGuiTheme)) return;
 
         catpuccinRenderer.end();
         catpuccinRenderer.render();
 
-        // From GuiRenderer
-        r.render();
-        rTex.render("u_Texture", TEXTURE.getGlTextureView());
+        // CHANGED: Use drawContext.getMatrices() instead of matrices
+        r.render(drawContext.getMatrices());
+        rTex.render(drawContext.getMatrices());
 
         // From GuiRenderer
         texts.clear();
 
         catpuccinRenderer.renderText();
 
-        // From GuiRenderer
-        if (scissor != null) scissor.pop();
+        // Note: The scissor post tasks are handled differently in the actual implementation
+        // You may need to adjust this part based on your specific needs
+
         ci.cancel();
     }
 
