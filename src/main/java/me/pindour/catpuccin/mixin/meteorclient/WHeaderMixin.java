@@ -16,12 +16,12 @@ public abstract class WHeaderMixin {
     WWindow this$0;
 
     @WrapWithCondition(
-        method = "render",
-        at = @At(
-            value = "FIELD",
-            target = "Lmeteordevelopment/meteorclient/gui/widgets/pressable/WTriangle;rotation:D",
-            opcode = org.objectweb.asm.Opcodes.PUTFIELD
-        )
+            method = "render",
+            at = @At(
+                    value = "FIELD",
+                    target = "Lmeteordevelopment/meteorclient/gui/widgets/pressable/WTriangle;rotation:D",
+                    opcode = org.objectweb.asm.Opcodes.PUTFIELD
+            )
     )
     private boolean shouldSetRotation(WTriangle triangle, double value) {
         // Only allow rotation assignment if we're not using our theme
