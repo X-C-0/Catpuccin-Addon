@@ -13,7 +13,7 @@ jobs:
     permissions: write-all
 
     env:
-      MAKE_LATEST: true
+      MAKE_LATEST: false
 
     steps:
       - name: Checkout repository
