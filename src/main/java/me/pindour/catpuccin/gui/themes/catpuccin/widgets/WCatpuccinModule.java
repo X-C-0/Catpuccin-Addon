@@ -10,7 +10,6 @@ import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.widgets.pressable.WPressable;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.render.color.Color;
-import net.minecraft.util.math.MathHelper;
 
 import static meteordevelopment.meteorclient.MeteorClient.mc;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
