@@ -110,6 +110,13 @@ public class CatpuccinGuiTheme extends GuiTheme {
             .build()
     );
 
+    public final Setting<Boolean> roundedCorners = sgGeneral.add(new BoolSetting.Builder()
+            .name("rounded-corners")
+            .description("Makes the corners of most UI elements rounded.")
+            .defaultValue(true)
+            .build()
+    );
+
     // Animations
 
     public final Setting<AnimationType> guiAnimation = sgAnimations.add(new EnumSetting.Builder<AnimationType>()
