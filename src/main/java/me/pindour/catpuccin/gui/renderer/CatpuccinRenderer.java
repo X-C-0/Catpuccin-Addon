@@ -161,7 +161,7 @@ public class CatpuccinRenderer {
      * @param bottomRight Round bottom right corner
      */
     public void roundedRect(double x, double y, double width, double height, double radius, Color color, boolean topLeft, boolean topRight, boolean bottomLeft, boolean bottomRight) {
-        if (radius <= 0) {
+        if (radius <= 0 || !theme.roundedCorners.get()) {
             r.quad(x, y, width, height, color);
             return;
         }
@@ -171,23 +171,37 @@ public class CatpuccinRenderer {
         double maxRadius = Math.min(width, height) / 2;
         radius = Math.min(radius, maxRadius);
 
+        double topQuadX = x + radius;
+        double topQuadWidth = width - 2 * radius;
+        double bottomQuadX = x + radius;
+        double bottomQuadWidth = width - 2 * radius;
+
         if (topLeft) texPartialCircle(x, y, radius, radius, 0.0, 0.0, 0.5, 0.5, color);
-        else r.quad(x, y, radius, radius, color);
+        else {
+            topQuadX -= radius;
+            topQuadWidth += radius;
+        }
 
         if (topRight) texPartialCircle(x + width - radius, y, radius, radius, 0.5, 0.0, 1.0, 0.5, color);
-        else r.quad(x + width - radius, y, radius, radius, color);
-
-        if (bottomRight) texPartialCircle(x + width - radius, y + height - radius, radius, radius, 0.5, 0.5, 1.0, 1.0, color);
-        else r.quad(x + width - radius, y + height - radius, radius, radius, color);
+        else topQuadWidth += radius;
 
         if (bottomLeft) texPartialCircle(x, y + height - radius, radius, radius, 0.0, 0.5, 0.5, 1.0, color);
-        else r.quad(x, y + height - radius, radius, radius, color);
+        else {
+            bottomQuadX -= radius;
+            bottomQuadWidth += radius;
+        }
 
-        r.quad(x + radius, y + radius, width - 2 * radius, height - 2 * radius, color);
-        r.quad(x + radius, y, width - 2 * radius, radius, color);
-        r.quad(x + radius, y + height - radius, width - 2 * radius, radius, color);
-        r.quad(x, y + radius, radius, height - 2 * radius, color);
-        r.quad(x + width - radius, y + radius, radius, height - 2 * radius, color);
+        if (bottomRight) texPartialCircle(x + width - radius, y + height - radius, radius, radius, 0.5, 0.5, 1.0, 1.0, color);
+        else bottomQuadWidth += radius;
+
+        // Top quad
+        r.quad(topQuadX, y, topQuadWidth, radius, color);
+
+        // Center quad
+        r.quad(x, y + radius, width, height - 2 * radius, color);
+
+        // Bottom quad
+        r.quad(bottomQuadX, y + height - radius, bottomQuadWidth, radius, color);
     }
 
     public void texPartialCircle(double x, double y, double width, double height,
