@@ -1,14 +1,19 @@
 package me.pindour.catpuccin.gui.themes.catpuccin.widgets.input;
 
+import me.pindour.catpuccin.gui.animation.Animation;
+import me.pindour.catpuccin.gui.animation.Direction;
 import me.pindour.catpuccin.gui.renderer.CornerStyle;
 import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinGuiTheme;
 import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinWidget;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.widgets.input.WSlider;
+import meteordevelopment.meteorclient.utils.render.color.Color;
 
 public class WCatpuccinSlider extends WSlider implements CatpuccinWidget {
     private double handlePadding;
     private double handleTextureSize;
+
+    private Animation animation;
 
     public WCatpuccinSlider(double value, double min, double max) {
         super(value, min, max);
@@ -19,6 +24,8 @@ public class WCatpuccinSlider extends WSlider implements CatpuccinWidget {
         super.init();
         handlePadding = theme().scale(1);
         handleTextureSize = handleSize() * 0.6;
+
+        animation = new Animation(theme().uiAnimationType(), theme().uiAnimationSpeed());
     }
 
     @Override
@@ -27,11 +34,25 @@ public class WCatpuccinSlider extends WSlider implements CatpuccinWidget {
     }
 
     @Override
+    public boolean onMouseClicked(double mouseX, double mouseY, int button, boolean used) {
+        boolean clicked = super.onMouseClicked(mouseX, mouseY, button, used);
+        if (clicked) animation.start(Direction.FORWARDS);
+        return clicked;
+    }
+
+    @Override
+    public boolean onMouseReleased(double mouseX, double mouseY, int button) {
+        boolean released = super.onMouseReleased(mouseX, mouseY, button);
+        if (released) animation.start(Direction.BACKWARDS);
+        return released;
+    }
+
+    @Override
     protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
         double valueWidth = valueWidth();
 
         renderBar(valueWidth);
-        renderHandle(renderer, valueWidth);
+        if (dragging || handleMouseOver) renderHandle(renderer, valueWidth);
     }
 
     private void renderBar(double valueWidth) {
@@ -67,13 +88,13 @@ public class WCatpuccinSlider extends WSlider implements CatpuccinWidget {
     }
 
     private void renderHandle(GuiRenderer renderer, double valueWidth) {
-        renderer.quad(
-                x + valueWidth + handlePadding,
-                y + height / 2 - handleTextureSize / 2,
-                handleTextureSize,
-                handleTextureSize,
-                GuiRenderer.CIRCLE,
-                dragging || handleMouseOver ? theme().surface0Color() : theme().baseColor()
-        );
+        double size = handleTextureSize * animation.getProgress();
+        Color color = theme().baseColor();
+
+        double handleX = x + valueWidth + handlePadding + handleTextureSize / 2 - size / 2;
+        double handleY = y + height / 2 - size / 2;
+
+        if (theme().roundedCorners.get()) renderer.quad(handleX, handleY, size, size, GuiRenderer.CIRCLE, color);
+        else renderer.quad(handleX, handleY, size, size, color);
     }
 }
