@@ -159,6 +159,14 @@ public class CatpuccinGuiTheme extends GuiTheme {
             .build()
     );
 
+    public final Setting<Integer> backgroundOpacity = sgColors.add(new IntSetting.Builder()
+            .name("background-opacity")
+            .description("How much opaque the backgrounds should be.")
+            .defaultValue(255)
+            .sliderRange(0, 255)
+            .build()
+    );
+
     // Snapping
 
     public final Setting<Boolean> snapModuleCategories = sgSnapping.add(new BoolSetting.Builder()
@@ -485,6 +493,16 @@ public class CatpuccinGuiTheme extends GuiTheme {
 
     public Color textHighlightColor() {
         return colorCache.get(CatppuccinColor.Blue);
+    }
+
+    // Opacity
+
+    public int windowOpacity() {
+        return windowOpacity.get();
+    }
+
+    public int backgroundOpacity() {
+        return backgroundOpacity.get();
     }
 
     // Starscript
