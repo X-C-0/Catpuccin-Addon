@@ -110,7 +110,7 @@ public class WCatpuccinSection extends WSection implements CatpuccinWidget {
             catpuccinRenderer().roundedRect(
                     this,
                     smallCornerRadius,
-                    theme.backgroundColor.get(mouseOver),
+                    theme.backgroundColor.get(mouseOver).copy().a(theme.backgroundOpacity()),
                     expanded || animation.isRunning() ? CornerStyle.TOP : CornerStyle.ALL
             );
 

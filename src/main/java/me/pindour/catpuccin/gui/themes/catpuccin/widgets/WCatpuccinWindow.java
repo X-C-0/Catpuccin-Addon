@@ -70,7 +70,7 @@ public class WCatpuccinWindow extends WWindow implements CatpuccinWidget {
                     width,
                     height - header.height,
                     cornerRadius - shadowOffset,
-                    theme().baseColor().copy().a(theme().windowOpacity.get()),
+                    theme().baseColor().copy().a(theme().windowOpacity()),
                     CornerStyle.BOTTOM
             );
     }

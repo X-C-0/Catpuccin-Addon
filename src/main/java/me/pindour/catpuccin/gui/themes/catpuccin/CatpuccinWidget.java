@@ -4,6 +4,7 @@ import me.pindour.catpuccin.gui.renderer.CatpuccinRenderer;
 import me.pindour.catpuccin.gui.renderer.CornerStyle;
 import meteordevelopment.meteorclient.gui.utils.BaseWidget;
 import meteordevelopment.meteorclient.gui.widgets.WWidget;
+import meteordevelopment.meteorclient.utils.render.color.Color;
 
 public interface CatpuccinWidget extends BaseWidget {
     int cornerRadius = 10;
@@ -38,7 +39,7 @@ public interface CatpuccinWidget extends BaseWidget {
                 widget.width - s * 2,
                 widget.height - s * 2,
                 smallCornerRadius - s,
-                theme.backgroundColor.get(pressed, mouseOver),
+                theme.backgroundColor.get(pressed, mouseOver).copy().a(theme.backgroundOpacity()),
                 CornerStyle.ALL
         );
     }
