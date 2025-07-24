@@ -178,7 +178,7 @@ public class WCatpuccinTextBox extends WTextBox implements CatpuccinWidget {
                     mouseOver ? theme.surface2Color() : theme.surface0Color();
 
             // Background
-            catpuccinRenderer().roundedRect(x, y, width, height, smallCornerRadius, theme.mantleColor(), CornerStyle.ALL);
+            catpuccinRenderer().roundedRect(x, y, width, height, smallCornerRadius, theme.mantleColor().copy().a(theme.backgroundOpacity()), CornerStyle.ALL);
 
             renderer.scissorStart(x, y + height - bottomSize, width, bottomSize);
 
