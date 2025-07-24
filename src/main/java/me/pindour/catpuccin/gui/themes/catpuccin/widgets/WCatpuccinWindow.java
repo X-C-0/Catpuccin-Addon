@@ -25,7 +25,6 @@ public class WCatpuccinWindow extends WWindow implements CatpuccinWidget {
     private double mouseOffsetY;
 
     private Animation animation;
-    private Color shadowColor;
 
     public WCatpuccinWindow(WWidget icon, String title) {
         super(icon, title);
@@ -34,8 +33,6 @@ public class WCatpuccinWindow extends WWindow implements CatpuccinWidget {
     @Override
     public void init() {
         super.init();
-
-        shadowColor = theme().baseColor().copy().a(80);
 
         animation = new Animation(theme().uiAnimationType(), theme().uiAnimationSpeed());
         animation.finishedAt(expanded ? Direction.FORWARDS : Direction.BACKWARDS);
@@ -52,6 +49,8 @@ public class WCatpuccinWindow extends WWindow implements CatpuccinWidget {
 
     @Override
     protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
+        Color shadowColor = theme().baseColor().copy().a(80);
+
         // Shadow rectangle
         catpuccinRenderer().roundedRect(
                 x - shadowOffset,
@@ -129,9 +128,6 @@ public class WCatpuccinWindow extends WWindow implements CatpuccinWidget {
         private WHorizontalList list;
         private WOpenIndicator indicator;
 
-        private Color semiTransparentColor;
-        private Color transparentColor;
-
         public WChlamydieHeader(WWidget icon) {
             super(icon);
         }
@@ -153,9 +149,6 @@ public class WCatpuccinWindow extends WWindow implements CatpuccinWidget {
 
             indicator = add(theme().openIndicator(expanded)).pad(4).right().centerY().widget();
             indicator.action = () -> setExpanded(!expanded);
-
-            transparentColor = theme().crustColor().copy().a(0);
-            semiTransparentColor = theme().crustColor().copy().a(120);
         }
 
         private void createList() {
@@ -185,7 +178,10 @@ public class WCatpuccinWindow extends WWindow implements CatpuccinWidget {
             );
 
             // Shadow under the header
-            if (expanded || animation.isRunning())
+            if (expanded || animation.isRunning()) {
+                Color transparentColor = theme().crustColor().copy().a(0);
+                Color semiTransparentColor = theme().crustColor().copy().a(120);
+
                 renderer.quad(
                         x,
                         y + height,
@@ -196,6 +192,7 @@ public class WCatpuccinWindow extends WWindow implements CatpuccinWidget {
                         transparentColor,
                         transparentColor
                 );
+            }
         }
 
         @Override
