@@ -82,8 +82,6 @@ public class WCatpuccinSection extends WSection implements CatpuccinWidget {
     }
 
     protected class WChlamydieHeader extends WHeader {
-        private Color semiTransparentColor;
-        private Color transparentColor;
 
         public WChlamydieHeader(String title) {
             super(title);
@@ -94,9 +92,6 @@ public class WCatpuccinSection extends WSection implements CatpuccinWidget {
             add(theme.horizontalSeparator(title)).expandX();
 
             if (headerWidget != null) add(headerWidget);
-
-            transparentColor = theme().mantleColor().copy().a(0);
-            semiTransparentColor = theme().mantleColor().copy().a(160);
         }
 
         @Override
@@ -120,7 +115,10 @@ public class WCatpuccinSection extends WSection implements CatpuccinWidget {
             );
 
             // Shadow under the header
-            if (expanded || animation.getProgress() > 0)
+            if (expanded || animation.getProgress() > 0) {
+                Color semiTransparentColor = theme().mantleColor().copy().a(160);
+                Color transparentColor = theme().mantleColor().copy().a(0);
+
                 renderer.quad(
                         x,
                         y + height,
@@ -131,6 +129,7 @@ public class WCatpuccinSection extends WSection implements CatpuccinWidget {
                         transparentColor,
                         transparentColor
                 );
+            }
 
             // Expanded indicator
             renderer.rotatedQuad(
