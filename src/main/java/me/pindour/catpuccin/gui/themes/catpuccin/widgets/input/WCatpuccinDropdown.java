@@ -88,7 +88,7 @@ public class WCatpuccinDropdown<T> extends WDropdown<T> implements CatpuccinWidg
                 width - outlineWidth * 2,
                 height - outlineWidth * 2,
                 smallCornerRadius - outlineWidth,
-                theme.backgroundColor.get(pressed, mouseOver),
+                theme.backgroundColor.get(pressed, mouseOver).copy().a(theme.backgroundOpacity()),
                 expanded || animation.isRunning() ? CornerStyle.TOP : CornerStyle.ALL
         );
 
