@@ -41,6 +41,11 @@ public class WCatpuccinSection extends WSection implements CatpuccinWidget {
             forcedHeight = (actualHeight - header.height) * animation.getProgress() + header.height;
             height = forcedHeight;
         }
+
+        if (headerWidget != null) {
+            headerWidget.height = header.height * 0.8;
+            headerWidget.width = header.height * 0.8;
+        }
     }
 
     @Override
@@ -97,7 +102,7 @@ public class WCatpuccinSection extends WSection implements CatpuccinWidget {
         @Override
         protected void onCalculateSize() {
             super.onCalculateSize();
-            height = theme().textHeight() * 1.5;
+            height = theme.textHeight() * 1.5;
         }
 
         @Override
@@ -116,8 +121,8 @@ public class WCatpuccinSection extends WSection implements CatpuccinWidget {
 
             // Shadow under the header
             if (expanded || animation.getProgress() > 0) {
-                Color semiTransparentColor = theme().mantleColor().copy().a(160);
-                Color transparentColor = theme().mantleColor().copy().a(0);
+                Color semiTransparentColor = theme.mantleColor().copy().a(160);
+                Color transparentColor = theme.mantleColor().copy().a(0);
 
                 renderer.quad(
                         x,
@@ -130,6 +135,8 @@ public class WCatpuccinSection extends WSection implements CatpuccinWidget {
                         transparentColor
                 );
             }
+
+            if (headerWidget != null) return;
 
             // Expanded indicator
             renderer.rotatedQuad(
