@@ -9,7 +9,10 @@ import me.pindour.catpuccin.utils.ColorUtils;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.widgets.pressable.WPressable;
 import meteordevelopment.meteorclient.systems.modules.Module;
+import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.utils.render.color.Color;
+
+import java.util.List;
 
 import static meteordevelopment.meteorclient.MeteorClient.mc;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
@@ -21,6 +24,8 @@ public class WCatpuccinModule extends WPressable implements CatpuccinWidget {
     private double titleWidth;
     private boolean wasHovered = false;
     private boolean wasActive = false;
+    private boolean isFirstInCategory = false;
+    private boolean isLastInCategory = false;
 
     private Animation glowAnimation;
     private Animation hoverAnimation;
@@ -47,6 +52,10 @@ public class WCatpuccinModule extends WPressable implements CatpuccinWidget {
         highlightedColor = theme().accentColor().copy();
         transparentColor = highlightedColor.copy().a(10);
         semiTransparentColor = highlightedColor.copy().a(80);
+
+        List<Module> modules = Modules.get().getGroup(module.category);
+        isFirstInCategory = modules.getFirst().equals(module);
+        isLastInCategory = modules.getLast().equals(module);
     }
 
     @Override
@@ -101,38 +110,43 @@ public class WCatpuccinModule extends WPressable implements CatpuccinWidget {
         double highlightProgress = Math.min(glowProgress + hoverProgress, 1.0);
 
         if (highlightProgress > 0) {
+            int alpha = (int) (255 * highlightProgress);
 
             // Highlight rectangle when active or hovered
-            int alpha = (int) (255 * highlightProgress);
-            renderer.quad(x, y, width, height, highlightedColor.a(alpha));
+            // Note: Should be rounded at the bottom when module is last in the category,
+            // but the corners from window background are clipping into this rectangle,
+            // so for now we will have to live with sharp corners until I find a way to fix the clipping.
+            renderer.quad(x, y, width, height, highlightedColor.copy().a(alpha));
 
             // Fake glow effect when active
             if (glowProgress > 0) {
                 double glowLength = 6 * glowProgress;
 
                 // Upper glow
-                renderer.quad(
-                        x,
-                        y - glowLength,
-                        width,
-                        glowLength,
-                        transparentColor,
-                        transparentColor,
-                        semiTransparentColor,
-                        semiTransparentColor
-                );
+                if (!isFirstInCategory)
+                    renderer.quad(
+                            x,
+                            y - glowLength,
+                            width,
+                            glowLength,
+                            transparentColor,
+                            transparentColor,
+                            semiTransparentColor,
+                            semiTransparentColor
+                    );
 
                 // Lower glow
-                renderer.quad(
-                        x,
-                        y + height,
-                        width,
-                        glowLength,
-                        semiTransparentColor,
-                        semiTransparentColor,
-                        transparentColor,
-                        transparentColor
-                );
+                if (!isLastInCategory)
+                    renderer.quad(
+                            x,
+                            y + height,
+                            width,
+                            glowLength,
+                            semiTransparentColor,
+                            semiTransparentColor,
+                            transparentColor,
+                            transparentColor
+                    );
             }
         }
 
