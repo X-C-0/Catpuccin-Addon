@@ -37,8 +37,8 @@ public class WCatpuccinWindow extends WWindow implements CatpuccinWidget {
         animation = new Animation(theme().uiAnimationType(), theme().uiAnimationSpeed());
         animation.finishedAt(expanded ? Direction.FORWARDS : Direction.BACKWARDS);
 
-        if (header instanceof WChlamydieHeader chlamydieHeader)
-            chlamydieHeader.setIndicator(expanded);
+        if (header instanceof WCatpuccinHeader catpuccinHeader)
+            catpuccinHeader.setIndicator(expanded);
     }
 
     public void initSnapping(CatpuccinModulesScreen modulesScreen, int gridSize) {
@@ -112,8 +112,8 @@ public class WCatpuccinWindow extends WWindow implements CatpuccinWidget {
     public void setExpanded(boolean expanded) {
         super.setExpanded(expanded);
 
-        if (header != null && header instanceof WChlamydieHeader chlamydieHeader)
-            chlamydieHeader.setIndicator(expanded);
+        if (header != null && header instanceof WCatpuccinHeader catpuccinHeader)
+            catpuccinHeader.setIndicator(expanded);
 
         if (animation != null)
             animation.reverse();
@@ -121,14 +121,14 @@ public class WCatpuccinWindow extends WWindow implements CatpuccinWidget {
 
     @Override
     protected WHeader header(WWidget icon) {
-        return new WChlamydieHeader(icon);
+        return new WCatpuccinHeader(icon);
     }
 
-    private class WChlamydieHeader extends WHeader {
+    private class WCatpuccinHeader extends WHeader {
         private WHorizontalList list;
         private WOpenIndicator indicator;
 
-        public WChlamydieHeader(WWidget icon) {
+        public WCatpuccinHeader(WWidget icon) {
             super(icon);
         }
 
