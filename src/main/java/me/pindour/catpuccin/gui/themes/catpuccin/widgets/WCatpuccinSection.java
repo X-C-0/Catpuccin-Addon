@@ -82,13 +82,13 @@ public class WCatpuccinSection extends WSection implements CatpuccinWidget {
 
     @Override
     protected WHeader createHeader() {
-        header = new WChlamydieHeader(title);
+        header = new WCatpuccinHeader(title);
         return header;
     }
 
-    protected class WChlamydieHeader extends WHeader {
+    protected class WCatpuccinHeader extends WHeader {
 
-        public WChlamydieHeader(String title) {
+        public WCatpuccinHeader(String title) {
             super(title);
         }
 
