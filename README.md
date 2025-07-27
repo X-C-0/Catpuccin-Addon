@@ -5,9 +5,16 @@
   <img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/misc/transparent.png" height="30" width="0px"/>
 </h3>
 
-<div>
-  <img src="assets/preview.png" alt="Main preview" />
-</div>
+<p align="center">
+	<a href="https://github.com/X-C-0/Catpuccin-Addon/stargazers"><img src="https://img.shields.io/github/stars/X-C-0/Catpuccin-Addon?colorA=363a4f&colorB=b7bdf8&style=for-the-badge"></a>
+	<a href="https://github.com/X-C-0/Catpuccin-Addon/issues"><img src="https://img.shields.io/github/issues/X-C-0/Catpuccin-Addon?colorA=363a4f&colorB=f5a97f&style=for-the-badge"></a>
+	<a href="https://github.com/X-C-0/Catpuccin-Addon/contributors"><img src="https://img.shields.io/github/contributors/X-C-0/Catpuccin-Addon?colorA=363a4f&colorB=a6da95&style=for-the-badge"></a>
+  <a href="https://github.com/X-C-0/Catpuccin-Addon/releases"><img src="https://img.shields.io/github/downloads/X-C-0/Catpuccin-Addon/total?style=for-the-badge&labelColor=363a4f&color=f5c2e7"></a>
+</p>
+
+<p align="center">
+  <img src="assets/preview.png" alt="Main preview"/>
+</p>
 
 ## 🖼️ Previews
 
@@ -78,5 +85,9 @@
 - im buggin out
 
 ## 💬 Support
-- You can find me on Meteor's discord (@Pindour) or join our freaky ahh [discord server](https://discord.com/invite/wn8AADqMka).
+- You can find me on Meteor's discord (@Pindour) or join our freaky ahh [discord server](https://discord.gg/njM9JFPnT5).
 - Or use GitHub issues, but I have no clue how those work so glhf
+
+<p align="center">
+	<img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/footers/gray0_ctp_on_line.svg?sanitize=true" />
+</p>
