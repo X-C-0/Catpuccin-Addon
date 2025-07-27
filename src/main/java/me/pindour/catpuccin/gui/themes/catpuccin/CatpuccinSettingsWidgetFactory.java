@@ -92,7 +92,7 @@ public class CatpuccinSettingsWidgetFactory extends SettingsWidgetFactory {
     }
 
     private double settingSpacing() {
-        return theme.textHeight() / 2;
+        return theme.textHeight() / 3;
     }
 
     // Setting groups
