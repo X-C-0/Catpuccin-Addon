@@ -84,16 +84,10 @@ public class WCatpuccinCheckbox extends WCheckbox implements CatpuccinWidget {
         animation.start(checked ? Direction.FORWARDS : Direction.BACKWARDS);
     }
 
-    public void setChecked(boolean checked, boolean runAction) {
+    public void setChecked(boolean checked) {
         if (this.checked == checked) return;
 
         this.checked = checked;
         startAnimation();
-
-        if (runAction && action != null) action.run();
-    }
-
-    public void setChecked(boolean checked) {
-        setChecked(checked, true);
     }
 }

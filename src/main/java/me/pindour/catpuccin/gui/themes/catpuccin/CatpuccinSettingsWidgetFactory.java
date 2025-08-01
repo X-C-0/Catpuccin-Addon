@@ -1,5 +1,6 @@
 package me.pindour.catpuccin.gui.themes.catpuccin;
 
+import me.pindour.catpuccin.gui.screens.settings.CatpuccinEntityTypeListSettingScreen;
 import me.pindour.catpuccin.gui.text.RichText;
 import me.pindour.catpuccin.gui.text.TextSize;
 import me.pindour.catpuccin.gui.themes.catpuccin.icons.CatpuccinIcons;
@@ -345,7 +346,11 @@ public class CatpuccinSettingsWidgetFactory extends SettingsWidgetFactory {
     }
 
     private void entityTypeListW(WTable table, EntityTypeListSetting setting) {
-        selectW(table, setting, () -> mc.setScreen(new EntityTypeListSettingScreen(theme, setting)));
+        selectW(table, setting, () ->
+                mc.setScreen(theme.catpuccinEntityTypeListScreen.get()
+                        ? new CatpuccinEntityTypeListSettingScreen(theme, setting)
+                        : new EntityTypeListSettingScreen(theme, setting))
+        );
     }
 
     private void enchantmentListW(WTable table, EnchantmentListSetting setting) {
