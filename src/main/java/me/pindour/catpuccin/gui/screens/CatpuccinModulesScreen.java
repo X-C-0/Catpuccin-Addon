@@ -156,7 +156,7 @@ public class CatpuccinModulesScreen extends TabScreen {
         double size = theme.scale(16);
 
         if (theme.categoryIcons()) {
-            w.beforeHeaderInit = wContainer -> wContainer.add(theme.icon(size, CatpuccinIcons.SEARCH)).centerY().pad(4).padLeft(10);
+            w.beforeHeaderInit = wContainer -> wContainer.add(theme.icon(size, CatpuccinIcons.SEARCH)).centerY().pad(4).padHorizontal(10);
         }
 
         c.add(w);
@@ -195,7 +195,7 @@ public class CatpuccinModulesScreen extends TabScreen {
         double size = theme.scale(16);
 
         if (theme.categoryIcons()) {
-            w.beforeHeaderInit = wContainer -> wContainer.add(theme.icon(size, CatpuccinIcons.BOOKMARK_YES)).centerY().pad(4).padLeft(10);
+            w.beforeHeaderInit = wContainer -> wContainer.add(theme.icon(size, CatpuccinIcons.BOOKMARK_YES)).centerY().pad(4).padHorizontal(10);
         }
 
         Cell<WWindow> cell = c.add(w);
