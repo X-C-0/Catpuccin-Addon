@@ -13,6 +13,7 @@ import me.pindour.catpuccin.gui.themes.catpuccin.flavor.CatppuccinFlavors;
 import me.pindour.catpuccin.gui.themes.catpuccin.icons.CatpuccinIcons;
 import me.pindour.catpuccin.gui.themes.catpuccin.widgets.*;
 import me.pindour.catpuccin.gui.themes.catpuccin.widgets.input.WCatpuccinDropdown;
+import me.pindour.catpuccin.gui.themes.catpuccin.widgets.input.WCatpuccinMultiSelect;
 import me.pindour.catpuccin.gui.themes.catpuccin.widgets.input.WCatpuccinSlider;
 import me.pindour.catpuccin.gui.themes.catpuccin.widgets.input.WCatpuccinTextBox;
 import me.pindour.catpuccin.gui.themes.catpuccin.widgets.pressable.*;
@@ -20,6 +21,7 @@ import me.pindour.catpuccin.gui.themes.catpuccin.widgets.settings.WCatpuccinDoub
 import me.pindour.catpuccin.gui.themes.catpuccin.widgets.settings.WCatpuccinIntEdit;
 import me.pindour.catpuccin.gui.themes.catpuccin.widgets.settings.WCatpuccinKeybind;
 import me.pindour.catpuccin.gui.widgets.WIcon;
+import me.pindour.catpuccin.gui.widgets.input.WMultiSelect;
 import me.pindour.catpuccin.gui.widgets.pressable.WColorPicker;
 import me.pindour.catpuccin.gui.widgets.pressable.WOpenIndicator;
 import meteordevelopment.meteorclient.gui.GuiTheme;
@@ -47,6 +49,7 @@ import meteordevelopment.meteorclient.utils.render.color.SettingColor;
 import net.minecraft.client.gui.screen.Screen;
 
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -62,6 +65,7 @@ public class CatpuccinGuiTheme extends GuiTheme {
     private final SettingGroup sgAnimations = settings.createGroup("Animations");
     private final SettingGroup sgColors = settings.createGroup("Colors");
     private final SettingGroup sgSnapping = settings.createGroup("Snapping");
+    private final SettingGroup sgScreens = settings.createGroup("Screens");
     private final SettingGroup sgStarscript = settings.createGroup("Starscript");
 
     // General
@@ -181,7 +185,15 @@ public class CatpuccinGuiTheme extends GuiTheme {
             .description("How big should the snapping grid be.")
             .defaultValue(10)
             .sliderRange(5, 50)
-            .visible(snapModuleCategories::get)
+            .build()
+    );
+
+    // Screens
+
+    public final Setting<Boolean> catpuccinEntityTypeListScreen = sgScreens.add(new BoolSetting.Builder()
+            .name("entity-type-list-screen")
+            .description("Replace Meteor's screen with a Catpuccin screen. This screen is used to select entities for a setting.")
+            .defaultValue(true)
             .build()
     );
 
@@ -389,6 +401,14 @@ public class CatpuccinGuiTheme extends GuiTheme {
 
     public WColorPicker colorPicker(Color color, GuiTexture overlayTexture) {
         return w(new WCatpuccinColorPicker(color, overlayTexture));
+    }
+
+    public <T> WCatpuccinMultiSelect<T> multiSelect(String title,  List<WMultiSelect.ItemInfo<T>> items) {
+        return w(new WCatpuccinMultiSelect<>(title, items, null));
+    }
+
+    public <T> WCatpuccinMultiSelect<T> multiSelect(String title, List<WMultiSelect.ItemInfo<T>> items, WTextBox searchBox) {
+        return w(new WCatpuccinMultiSelect<>(title, items, searchBox));
     }
 
     // Settings widgets
