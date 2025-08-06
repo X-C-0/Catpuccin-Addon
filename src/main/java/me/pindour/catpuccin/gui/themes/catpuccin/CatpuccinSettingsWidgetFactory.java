@@ -277,7 +277,8 @@ public class CatpuccinSettingsWidgetFactory extends SettingsWidgetFactory {
     private void keybindW(WTable table, KeybindSetting setting) {
         WHorizontalList list = table.add(theme.horizontalList()).expandX().widget();
 
-        WCatpuccinKeybind keybind = list.add(theme.catpuccinKeybind(setting.get(), setting.getDefaultValue())).expandX().widget();
+        WCatpuccinKeybind keybind = list.add(theme.catpuccinKeybind(setting.title, setting.get(), setting.getDefaultValue())).expandX().widget();
+        keybind.tooltip = setting.description;
         keybind.action = setting::onChanged;
         setting.widget = keybind;
     }
