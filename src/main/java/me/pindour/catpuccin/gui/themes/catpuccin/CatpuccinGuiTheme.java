@@ -388,7 +388,11 @@ public class CatpuccinGuiTheme extends GuiTheme {
     }
 
     public WCatpuccinKeybind catpuccinKeybind(Keybind keybind, Keybind defaultValue) {
-        return w(new WCatpuccinKeybind(keybind, defaultValue));
+        return catpuccinKeybind(null, keybind, defaultValue);
+    }
+
+    public WCatpuccinKeybind catpuccinKeybind(String title, Keybind keybind, Keybind defaultValue) {
+        return w(new WCatpuccinKeybind(title, keybind, defaultValue));
     }
 
     public WOpenIndicator openIndicator(boolean open) {
@@ -404,7 +408,7 @@ public class CatpuccinGuiTheme extends GuiTheme {
     }
 
     public <T> WCatpuccinMultiSelect<T> multiSelect(String title,  List<WMultiSelect.ItemInfo<T>> items) {
-        return w(new WCatpuccinMultiSelect<>(title, items, null));
+        return multiSelect(title, items, null);
     }
 
     public <T> WCatpuccinMultiSelect<T> multiSelect(String title, List<WMultiSelect.ItemInfo<T>> items, WTextBox searchBox) {
