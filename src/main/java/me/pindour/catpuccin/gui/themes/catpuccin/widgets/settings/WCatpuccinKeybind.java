@@ -13,14 +13,16 @@ public class WCatpuccinKeybind extends WKeybind implements CatpuccinWidget {
 
     private WCatpuccinButton button;
 
+    private final String title;
     private final Keybind keybind;
     private final Keybind defaultValue;
 
     private final String listeningText = "Press any key";
     private boolean listening;
 
-    public WCatpuccinKeybind(Keybind keybind, Keybind defaultValue) {
+    public WCatpuccinKeybind(String title, Keybind keybind, Keybind defaultValue) {
         super(keybind, defaultValue);
+        this.title = title != null && !title.isEmpty() ? title : "Bind";
         this.keybind = keybind;
         this.defaultValue = defaultValue;
     }
@@ -84,6 +86,6 @@ public class WCatpuccinKeybind extends WKeybind implements CatpuccinWidget {
     }
 
     private void refreshLabel() {
-        button.set(RichText.bold("Bind: ").append(keybind.toString()));
+        button.set(RichText.bold(title + ": ").append(keybind.toString()));
     }
 }
