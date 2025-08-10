@@ -10,6 +10,7 @@
   "mixins": [
     "meteorclient.FontsMixin",
     "meteorclient.GuiRendererMixin",
+    "meteorclient.WContainerMixin",
     "meteorclient.WHeaderMixin"
   ]
 }
