@@ -5,6 +5,7 @@ import me.pindour.catpuccin.gui.text.RichText;
 import me.pindour.catpuccin.gui.text.TextSize;
 import me.pindour.catpuccin.gui.themes.catpuccin.icons.CatpuccinIcons;
 import me.pindour.catpuccin.gui.themes.catpuccin.widgets.WCatpuccinLabel;
+import me.pindour.catpuccin.gui.themes.catpuccin.widgets.pressable.WCatpuccinCheckbox;
 import me.pindour.catpuccin.gui.themes.catpuccin.widgets.settings.WCatpuccinDoubleEdit;
 import me.pindour.catpuccin.gui.themes.catpuccin.widgets.settings.WCatpuccinIntEdit;
 import me.pindour.catpuccin.gui.themes.catpuccin.widgets.settings.WCatpuccinKeybind;
@@ -27,7 +28,6 @@ import meteordevelopment.meteorclient.gui.widgets.input.WBlockPosEdit;
 import meteordevelopment.meteorclient.gui.widgets.input.WDropdown;
 import meteordevelopment.meteorclient.gui.widgets.input.WTextBox;
 import meteordevelopment.meteorclient.gui.widgets.pressable.WButton;
-import meteordevelopment.meteorclient.gui.widgets.pressable.WCheckbox;
 import meteordevelopment.meteorclient.gui.widgets.pressable.WMinus;
 import meteordevelopment.meteorclient.gui.widgets.pressable.WPlus;
 import meteordevelopment.meteorclient.renderer.Fonts;
@@ -178,12 +178,12 @@ public class CatpuccinSettingsWidgetFactory extends SettingsWidgetFactory {
     private void boolW(WTable table, BoolSetting setting) {
         WHorizontalList list = table.add(theme.horizontalList()).expandX().widget();
 
-        WCheckbox checkbox = list.add(theme.checkbox(setting.get())).widget();
+        WCatpuccinCheckbox checkbox = (WCatpuccinCheckbox) list.add(theme.checkbox(setting.get())).widget();
         checkbox.action = () -> setting.set(checkbox.checked);
 
         title(list, setting).padLeft(theme.pad());
 
-        reset(table, setting, () -> checkbox.checked = setting.get());
+        reset(table, setting, () -> checkbox.setChecked(setting.get()));
     }
 
     private void intW(WTable table, IntSetting setting) {
