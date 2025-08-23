@@ -5,14 +5,13 @@ import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinGuiTheme;
 import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinWidget;
 import me.pindour.catpuccin.gui.widgets.input.WMultiSelect;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
-import meteordevelopment.meteorclient.gui.widgets.input.WTextBox;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 
 import java.util.List;
 
 public class WCatpuccinMultiSelect<T> extends WMultiSelect<T> implements CatpuccinWidget {
-    public WCatpuccinMultiSelect(String title, List<ItemInfo<T>> items, WTextBox searchBox) {
-        super(title, items, searchBox);
+    public WCatpuccinMultiSelect(String title, List<T> items) {
+        super(title, items);
     }
 
     @Override
@@ -21,8 +20,8 @@ public class WCatpuccinMultiSelect<T> extends WMultiSelect<T> implements Catpucc
     }
 
     @Override
-    protected WItem createItem(ItemInfo<T> itemInfo) {
-        return new WCatpuccinItem(itemInfo);
+    protected WItem createItem(T item) {
+        return new WCatpuccinItem(item);
     }
 
     protected class WCatpuccinHeader extends WHeader {
@@ -64,8 +63,8 @@ public class WCatpuccinMultiSelect<T> extends WMultiSelect<T> implements Catpucc
 
     protected class WCatpuccinItem extends WItem {
 
-        public WCatpuccinItem(ItemInfo<T> itemInfo) {
-            super(itemInfo);
+        public WCatpuccinItem(T item) {
+            super(item);
         }
 
         @Override
