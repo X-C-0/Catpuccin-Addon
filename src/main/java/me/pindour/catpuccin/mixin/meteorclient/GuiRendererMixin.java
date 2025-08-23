@@ -6,10 +6,8 @@ import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinGuiTheme;
 import me.pindour.catpuccin.gui.themes.catpuccin.icons.CatpuccinIcons;
 import meteordevelopment.meteorclient.gui.GuiTheme;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
-import meteordevelopment.meteorclient.gui.renderer.Scissor;
 import meteordevelopment.meteorclient.gui.renderer.operations.TextOperation;
 import meteordevelopment.meteorclient.renderer.Renderer2D;
-import meteordevelopment.meteorclient.renderer.Texture;
 import meteordevelopment.meteorclient.utils.render.ByteTexture;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 import net.minecraft.client.gui.DrawContext;
@@ -46,7 +44,7 @@ public abstract class GuiRendererMixin {
     public GuiTheme theme;
 
     @Shadow
-    private DrawContext drawContext; // CHANGED: Shadow the drawContext instead of matrices
+    private DrawContext drawContext;
 
     @Inject(method = "init", at = @At("HEAD"))
     private static void onPreInit(CallbackInfo ci) {
@@ -65,7 +63,7 @@ public abstract class GuiRendererMixin {
     }
 
     @Inject(
-            method = "endRender()V", // CHANGED: Updated method signature (no Scissor parameter in actual class)
+            method = "endRender()V",
             at = @At(
                     value = "INVOKE",
                     target = "Lmeteordevelopment/meteorclient/renderer/Renderer2D;end()V",
@@ -78,9 +76,9 @@ public abstract class GuiRendererMixin {
         if (!(theme instanceof CatpuccinGuiTheme)) return;
 
         catpuccinRenderer.end();
-        catpuccinRenderer.render();
+        catpuccinRenderer.render(drawContext.getMatrices());
 
-        // CHANGED: Use drawContext.getMatrices() instead of matrices
+        // From GuiRenderer
         r.render(drawContext.getMatrices());
         rTex.render(drawContext.getMatrices());
 
@@ -88,9 +86,6 @@ public abstract class GuiRendererMixin {
         texts.clear();
 
         catpuccinRenderer.renderText();
-
-        // Note: The scissor post tasks are handled differently in the actual implementation
-        // You may need to adjust this part based on your specific needs
 
         ci.cancel();
     }

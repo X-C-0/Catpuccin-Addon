@@ -64,22 +64,22 @@ public class CatpuccinModulesScreen extends TabScreen {
     }
 
     @Override
-    public void renderBackground(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
-        super.renderBackground(context, mouseX, mouseY, deltaTicks);
+    public void render(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+        if (showGrid) {
+            int color = theme.overlay0Color().copy().a(60).getPacked();
+            int windowWidth = Utils.getWindowWidth();
+            int windowHeight = Utils.getWindowHeight();
 
-        if (!showGrid) return;
+            for (int x = 0; x <= windowWidth; x += gridSize) {
+                context.drawVerticalLine(x, 0, windowHeight, color);
+            }
 
-        int color = theme.overlay0Color().copy().a(60).getPacked();
-        int windowWidth = Utils.getWindowWidth();
-        int windowHeight = Utils.getWindowHeight();
-
-        for (int x = 0; x <= windowWidth; x += gridSize) {
-            context.drawVerticalLine(x, 0, windowHeight, color);
+            for (int y = 0; y <= windowHeight; y += gridSize) {
+                context.drawHorizontalLine(0, windowWidth, y, color);
+            }
         }
 
-        for (int y = 0; y <= windowHeight; y += gridSize) {
-            context.drawHorizontalLine(0, windowWidth, y, color);
-        }
+        super.render(context, mouseX, mouseY, deltaTicks);
     }
 
     // Category
@@ -248,10 +248,8 @@ public class CatpuccinModulesScreen extends TabScreen {
         public void init() {
             List<Module> moduleList = new ArrayList<>();
             for (Category category : Modules.loopCategories()) {
-                for (Module module : Modules.get().getGroup(category)) {
-                    // Removed the hiddenModules check since it doesn't exist
-                    moduleList.add(module);
-                }
+                // Removed the hiddenModules check since it doesn't exist
+                moduleList.addAll(Modules.get().getGroup(category));
 
                 // Ensure empty categories are not shown
                 if (!moduleList.isEmpty()) {
