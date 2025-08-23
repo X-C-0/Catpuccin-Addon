@@ -407,12 +407,8 @@ public class CatpuccinGuiTheme extends GuiTheme {
         return w(new WCatpuccinColorPicker(color, overlayTexture));
     }
 
-    public <T> WCatpuccinMultiSelect<T> multiSelect(String title,  List<WMultiSelect.ItemInfo<T>> items) {
-        return multiSelect(title, items, null);
-    }
-
-    public <T> WCatpuccinMultiSelect<T> multiSelect(String title, List<WMultiSelect.ItemInfo<T>> items, WTextBox searchBox) {
-        return w(new WCatpuccinMultiSelect<>(title, items, searchBox));
+    public <T> WMultiSelect<T> multiSelect(String title, List<T> items) {
+        return w(new WCatpuccinMultiSelect<>(title, items));
     }
 
     // Settings widgets
