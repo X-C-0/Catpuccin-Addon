@@ -11,36 +11,38 @@ import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.widgets.WWidget;
 import meteordevelopment.meteorclient.gui.widgets.containers.WHorizontalList;
 import meteordevelopment.meteorclient.gui.widgets.containers.WVerticalList;
-import meteordevelopment.meteorclient.gui.widgets.input.WTextBox;
 import meteordevelopment.meteorclient.gui.widgets.pressable.WTriangle;
 
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 
 public abstract class WMultiSelect<T> extends WVerticalList {
     protected final String title;
     protected boolean expanded;
-    protected final List<ItemInfo<T>> items;
 
-    protected List<ItemInfo<T>> filteredItems;
+    protected final List<T> items;
+    protected List<T> filteredItems;
+
     protected FilterMode filterMode = FilterMode.ALL;
     private int selectedCount = 0;
 
     protected Animation animation;
-    public BiConsumer<T, Boolean> onSelection;
+
+    private Function<T, String> labelMapper = Object::toString;
+    private Predicate<T> selectionPredicate = item -> false;
+    private BiConsumer<T, Boolean> selectionChangeHandler;
 
     private WHeader header;
-    private WItem selectAllItem;
+    private WCatpuccinCheckbox selectAllCheckbox;
     private WVerticalList itemContainer;
 
-    public WMultiSelect(String title, List<ItemInfo<T>> items, WTextBox searchBox) {
+    public WMultiSelect(String title, List<T> items) {
         this.title = title;
         this.items = new ArrayList<>(items);
-
-        if (searchBox != null) searchBox.action = () -> updateFilter(searchBox.get());
-
         filteredItems = new ArrayList<>(items);
     }
 
@@ -56,17 +58,17 @@ public abstract class WMultiSelect<T> extends WVerticalList {
 
         // Select all
         if (items.size() > 1) {
-            selectAllItem = createItem(new ItemInfo<>(null, "Select all", false));
-            selectAllItem.action = () -> {
-                boolean shouldSelectAll = selectAllItem.checkbox.checked;
+            WHorizontalList list = add(theme.horizontalList()).expandX().widget();
 
-                for (ItemInfo<T> item : filteredItems)
-                    item.selected = shouldSelectAll;
+            selectAllCheckbox = (WCatpuccinCheckbox) list.add(theme.checkbox(false)).padLeft(8).widget();
+            list.add(theme.label("Select all")).padLeft(pad()).expandX();
 
+            selectAllCheckbox.action = () -> {
+                boolean shouldSelectAll = selectAllCheckbox.checked;
+                filteredItems.forEach(item -> handleSelectionChange(item, shouldSelectAll));
                 refreshItems();
             };
 
-            add(selectAllItem).expandX();
             add(theme.horizontalSeparator()).padBottom(4).expandX();
         }
 
@@ -114,12 +116,53 @@ public abstract class WMultiSelect<T> extends WVerticalList {
 
     @Override
     protected boolean propagateEvents(WWidget widget) {
-        return expanded || widget instanceof WMultiSelect<?>.WHeader;
+        return super.propagateEvents(widget) && (expanded || widget instanceof WMultiSelect<?>.WHeader);
     }
 
     protected abstract WHeader createHeader();
 
-    protected abstract WItem createItem(ItemInfo<T> itemInfo);
+    protected WItem createItem(T item) {
+        return new WItem(item);
+    }
+
+    /**
+     * Sets how to display each item as text.
+     * @param labelMapper function that converts item to display string
+     */
+    public WMultiSelect<T> label(Function<T, String> labelMapper) {
+        this.labelMapper = labelMapper;
+        return this;
+    }
+
+    /**
+     * Sets how to determine if an item is currently selected.
+     * @param selectionPredicate function that returns true if item should be checked
+     */
+    public WMultiSelect<T> isSelected(Predicate<T> selectionPredicate) {
+        this.selectionPredicate = selectionPredicate;
+        return this;
+    }
+
+    /**
+     * Sets callback for when user selects/deselects items.
+     * @param handler function called with (item, isSelected) when selection changes
+     */
+    public WMultiSelect<T> onSelectionChange(BiConsumer<T, Boolean> handler) {
+        this.selectionChangeHandler = handler;
+        return this;
+    }
+
+    protected String getItemLabel(T item) {
+        return labelMapper.apply(item);
+    }
+
+    protected boolean isItemSelected(T item) {
+        return selectionPredicate.test(item);
+    }
+
+    protected void handleSelectionChange(T item, boolean selected) {
+        if (selectionChangeHandler != null) selectionChangeHandler.accept(item, selected);
+    }
 
     public void setExpanded(boolean expanded) {
         if (this.expanded == expanded) return;
@@ -138,7 +181,6 @@ public abstract class WMultiSelect<T> extends WVerticalList {
 
         if (normalizedQuery.isEmpty() && filterMode == FilterMode.ALL)
             filteredItems = new ArrayList<>(items);
-
         else filterItems(normalizedQuery);
 
         refreshItems();
@@ -148,20 +190,20 @@ public abstract class WMultiSelect<T> extends WVerticalList {
     }
 
     private void filterItems(String query) {
-        for (ItemInfo<T> itemInfo : items) {
-            if (matchesFilter(itemInfo, query))
-                filteredItems.add(itemInfo);
+        for (T item : items) {
+            if (matchesFilter(item, query))
+                filteredItems.add(item);
         }
     }
 
-    private boolean matchesFilter(ItemInfo<T> itemInfo, String query) {
+    private boolean matchesFilter(T item, String query) {
         boolean matchesQuery = query.isEmpty()
-                || itemInfo.label.toLowerCase().contains(query);
+                || getItemLabel(item).toLowerCase().contains(query);
 
         boolean matchesFilterMode = switch (filterMode) {
             case ALL -> true;
-            case SELECTED -> itemInfo.selected;
-            case UNSELECTED -> !itemInfo.selected;
+            case SELECTED -> isItemSelected(item);
+            case UNSELECTED -> !isItemSelected(item);
         };
 
         return matchesQuery && matchesFilterMode;
@@ -171,10 +213,10 @@ public abstract class WMultiSelect<T> extends WVerticalList {
         itemContainer.clear();
         selectedCount = 0;
 
-        for (ItemInfo<T> itemInfo : filteredItems) {
-            if (itemInfo.selected) selectedCount++;
+        for (T item : filteredItems) {
+            if (isItemSelected(item)) selectedCount++;
 
-            WItem itemWidget = createItem(itemInfo);
+            WItem itemWidget = createItem(item);
             itemContainer.add(itemWidget).expandX().widget();
         }
 
@@ -183,7 +225,7 @@ public abstract class WMultiSelect<T> extends WVerticalList {
     }
 
     private void updateSelectAllState() {
-        if (selectAllItem != null) selectAllItem.setSelected(selectedCount > 0);
+        if (selectAllCheckbox != null) selectAllCheckbox.setChecked(selectedCount > 0);
     }
 
     private void updateHeaderLabel() {
@@ -236,23 +278,21 @@ public abstract class WMultiSelect<T> extends WVerticalList {
         }
     }
 
-    protected abstract class WItem extends WHorizontalList {
-        protected final ItemInfo<T> itemInfo;
+    protected class WItem extends WHorizontalList {
+        protected final T item;
         protected WCatpuccinCheckbox checkbox;
-        public Runnable action;
 
-        public WItem(ItemInfo<T> itemInfo) {
-            this.itemInfo = itemInfo;
+        public WItem(T item) {
+            this.item = item;
         }
 
         @Override
         public void init() {
-            checkbox = (WCatpuccinCheckbox) add(theme.checkbox(itemInfo.selected)).padLeft(8).widget();
-            checkbox.action = this::toggleSelection;
+            boolean selected = isItemSelected(item);
+            checkbox = (WCatpuccinCheckbox) add(theme.checkbox(selected)).padLeft(8).widget();
+            checkbox.action = this::onSelection;
 
-            if (itemInfo.itemWidget != null) add(itemInfo.itemWidget);
-
-            add(theme.label(itemInfo.label)).padLeft(pad()).expandX();
+            add(theme.label(getItemLabel(item))).padLeft(pad()).expandX();
         }
 
         @Override
@@ -263,49 +303,25 @@ public abstract class WMultiSelect<T> extends WVerticalList {
 
         @Override
         public boolean onMouseClicked(double mouseX, double mouseY, int button, boolean used) {
-            if (mouseOver && button == GLFW_MOUSE_BUTTON_LEFT && !used) {
-                toggleSelection();
+            if (mouseOver && button == GLFW_MOUSE_BUTTON_LEFT && !used && !checkbox.mouseOver) {
+                checkbox.setChecked(!checkbox.checked);
+                onSelection();
                 return true;
             }
 
             return false;
         }
 
-        public void setSelected(boolean selected) {
-            itemInfo.selected = selected;
-            checkbox.setChecked(selected);
-        }
+        private void onSelection() {
+            boolean selected = checkbox.checked;
 
-        private void toggleSelection() {
-            setSelected(!itemInfo.selected);
+            selectedCount += selected ? 1 : -1;
+            selectedCount = Math.clamp(selectedCount, 0, items.size());
 
-            // Only update counter for real items (not for "Select all")
-            if (selectAllItem != null && itemInfo.item != null) {
-                selectedCount += itemInfo.selected ? 1 : -1;
-                updateSelectAllState();
-            }
-
+            updateSelectAllState();
             updateHeaderLabel();
 
-            if (action != null) action.run();
-            if (onSelection != null) onSelection.accept(itemInfo.item, itemInfo.selected);
-        }
-    }
-
-    public static class ItemInfo<T> {
-        public T item;
-        public String label;
-        public boolean selected;
-        public WWidget itemWidget;
-
-        public ItemInfo(T item, String label, boolean selected) {
-            this.item = item;
-            this.label = label;
-            this.selected = selected;
-        }
-
-        public void setItemWidget(WWidget itemWidget) {
-            this.itemWidget = itemWidget;
+            handleSelectionChange(item, selected);
         }
     }
 
