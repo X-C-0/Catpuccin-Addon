@@ -13,7 +13,6 @@ import meteordevelopment.meteorclient.renderer.Renderer2D;
 import meteordevelopment.meteorclient.utils.misc.Pool;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.Pair;
 import net.minecraft.util.math.MathHelper;
 
 import java.util.ArrayList;
@@ -22,8 +21,8 @@ import java.util.List;
 import java.util.Map;
 
 public class CatpuccinRenderer {
-    private static CatpuccinRenderer INSTANCE;
-    private static CatpuccinGuiTheme theme;
+    private static final CatpuccinRenderer INSTANCE = new CatpuccinRenderer();
+    private CatpuccinGuiTheme theme;
 
     private static TextureRegion CIRCLE_TEXTURE;
 
@@ -31,20 +30,14 @@ public class CatpuccinRenderer {
     private final Renderer2D rTex = new Renderer2D(true);
 
     private final Pool<RichTextOperation> textPool = new Pool<>(RichTextOperation::new);
-    private final List<RichTextOperation> texts = new ArrayList<>();
-
-    private final Map<Pair<FontStyle, Double>, List<RichTextOperation>> textsByStyleAndScale = new HashMap<>();
-
-    public CatpuccinRenderer() {
-        INSTANCE = this;
-    }
+    private final Map<StyleKey, List<RichTextOperation>> groupedOperations = new HashMap<>();
 
     public static CatpuccinRenderer get() {
-        return (INSTANCE != null ? INSTANCE : new CatpuccinRenderer());
+        return INSTANCE;
     }
 
     public void setTheme(CatpuccinGuiTheme theme) {
-        if (CatpuccinRenderer.theme != theme) CatpuccinRenderer.theme = theme;
+        if (this.theme == null) this.theme = theme;
     }
 
     public void begin() {
@@ -68,32 +61,24 @@ public class CatpuccinRenderer {
     public void renderText() {
         if (theme == null) return;
 
-        textsByStyleAndScale.clear();
+        // Render each style group in batches to minimize font/scale changes
+        for (Map.Entry<StyleKey, List<RichTextOperation>> entry : groupedOperations.entrySet()) {
+            List<RichTextOperation> textOps = entry.getValue();
 
-        for (RichTextOperation text : texts) {
-            FontStyle style = text.getStyle();
-            double scale = text.getScale();
-            Pair<FontStyle, Double> key = new Pair<>(style, scale);
-            textsByStyleAndScale.computeIfAbsent(key, k -> new ArrayList<>()).add(text);
-        }
+            if (textOps.isEmpty()) continue;
 
-        for (Map.Entry<Pair<FontStyle, Double>, List<RichTextOperation>> entry : textsByStyleAndScale.entrySet()) {
-            FontStyle style = entry.getKey().getLeft();
-            double scale = entry.getKey().getRight();
+            StyleKey key = entry.getKey();
 
-            theme.richTextRenderer().setFontStyle(style);
-            theme.richTextRenderer().begin(theme.scale(scale));
+            theme.richTextRenderer().setFontStyle(key.style());
+            theme.richTextRenderer().begin(theme.scale(key.scale()));
 
-            for (RichTextOperation text : entry.getValue()) {
+            for (RichTextOperation text : textOps) {
                 text.run(textPool);
             }
 
             theme.richTextRenderer().end();
-
-            entry.getValue().clear();
+            textOps.clear();
         }
-
-        texts.clear();
     }
 
     public void setAlpha(double a) {
@@ -107,11 +92,17 @@ public class CatpuccinRenderer {
         for (RichTextSegment segment : text.getSegments()) {
             if (segment.getText() == null || segment.getText().isEmpty()) continue;
 
-            double segmentWidth = theme.textWidth(segment);
+            RichTextOperation operation = getOperation(textPool, segmentX, y, color)
+                    .set(segment, theme.richTextRenderer());
 
-            texts.add(getOperation(textPool, segmentX, y, color).set(segment, theme.richTextRenderer()));
+            // Group operations by style and scale to batch render them later
+            StyleKey key = new StyleKey(operation.getStyle(), operation.getScale());
 
-            segmentX += segmentWidth;
+            groupedOperations
+                    .computeIfAbsent(key, k -> new ArrayList<>())
+                    .add(operation);
+
+            segmentX += theme.textWidth(segment);
         }
     }
 
@@ -198,4 +189,6 @@ public class CatpuccinRenderer {
         op.set(x, y, color);
         return op;
     }
+
+    public record StyleKey(FontStyle style, double scale) { }
 }
