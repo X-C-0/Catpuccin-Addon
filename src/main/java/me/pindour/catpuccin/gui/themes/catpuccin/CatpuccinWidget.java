@@ -18,7 +18,7 @@ public interface CatpuccinWidget extends BaseWidget {
         return CatpuccinRenderer.get();
     }
 
-    default void renderBackground(WWidget widget, boolean pressed, boolean mouseOver) {
+    default void renderBackground(WWidget widget, Color outlineColor, Color backgroundColor) {
         CatpuccinGuiTheme theme = theme();
         boolean drawOutline = theme.widgetOutline.get();
         double s = drawOutline ? theme.scale(2) : 0;
@@ -28,7 +28,7 @@ public interface CatpuccinWidget extends BaseWidget {
             catpuccinRenderer().roundedRect(
                     widget,
                     smallCornerRadius,
-                    theme().outlineColor.get(pressed, mouseOver),
+                    outlineColor,
                     CornerStyle.ALL
             );
 
@@ -39,8 +39,16 @@ public interface CatpuccinWidget extends BaseWidget {
                 widget.width - s * 2,
                 widget.height - s * 2,
                 smallCornerRadius - s,
-                theme.backgroundColor.get(pressed, mouseOver).copy().a(theme.backgroundOpacity()),
+                backgroundColor.copy().a(theme.backgroundOpacity()),
                 CornerStyle.ALL
+        );
+    }
+
+    default void renderBackground(WWidget widget, boolean pressed, boolean mouseOver) {
+        renderBackground(
+                widget,
+                theme().outlineColor.get(pressed, mouseOver),
+                theme().backgroundColor.get(pressed, mouseOver).copy().a(theme().backgroundOpacity())
         );
     }
 }

@@ -284,7 +284,7 @@ public class CatpuccinGuiTheme extends GuiTheme {
     }
 
     public WCatpuccinButton button(RichText text) {
-        return w(new WCatpuccinButton(text, null));
+        return button(text, null);
     }
 
     @Override
@@ -298,8 +298,18 @@ public class CatpuccinGuiTheme extends GuiTheme {
     }
 
     @Override
+    protected WConfirmedButton confirmedButton(String text, String confirmText, GuiTexture texture) {
+        return w(new WCatpuccinConfirmedButton(text, confirmText, texture));
+    }
+
+    @Override
     public WMinus minus() {
         return w(new WCatpuccinMinus());
+    }
+
+    @Override
+    public WConfirmedMinus confirmedMinus() {
+        return w(new WCatpuccinConfirmedMinus());
     }
 
     @Override
