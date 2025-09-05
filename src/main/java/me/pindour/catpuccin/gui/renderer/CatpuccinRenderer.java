@@ -9,6 +9,7 @@ import meteordevelopment.meteorclient.gui.renderer.GuiRenderOperation;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.renderer.packer.TextureRegion;
 import meteordevelopment.meteorclient.gui.widgets.WWidget;
+import meteordevelopment.meteorclient.renderer.GL;
 import meteordevelopment.meteorclient.renderer.Renderer2D;
 import meteordevelopment.meteorclient.utils.misc.Pool;
 import meteordevelopment.meteorclient.utils.render.ByteTexture;
@@ -59,7 +60,7 @@ public class CatpuccinRenderer {
     public void render(MatrixStack matrices) {
         r.render(matrices);
         // Bind the texture before rendering - ByteTexture extends AbstractTexture which has bind()
-        TEXTURE.bindTexture();
+        GL.bindTexture(TEXTURE.getGlId());
         rTex.render(matrices);
     }
 
