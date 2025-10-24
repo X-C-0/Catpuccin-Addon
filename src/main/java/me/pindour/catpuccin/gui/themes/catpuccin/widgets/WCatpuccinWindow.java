@@ -13,6 +13,7 @@ import meteordevelopment.meteorclient.gui.widgets.WWidget;
 import meteordevelopment.meteorclient.gui.widgets.containers.WHorizontalList;
 import meteordevelopment.meteorclient.gui.widgets.containers.WWindow;
 import meteordevelopment.meteorclient.utils.render.color.Color;
+import net.minecraft.client.gui.Click;
 
 public class WCatpuccinWindow extends WWindow implements CatpuccinWidget {
     private final int shadowOffset = 2;
@@ -183,21 +184,21 @@ public class WCatpuccinWindow extends WWindow implements CatpuccinWidget {
         }
 
         @Override
-        public boolean onMouseClicked(double mouseX, double mouseY, int button, boolean used) {
-            boolean clicked = super.onMouseClicked(mouseX, mouseY, button, used);
+        public boolean onMouseClicked(Click click, boolean used) {
+            boolean clicked = super.onMouseClicked(click, used);
 
             if (clicked && shouldSnap) {
-                mouseOffsetX = mouseX - x;
-                mouseOffsetY = mouseY - y;
+                mouseOffsetX = click.x() - x;
+                mouseOffsetY = click.y() - y;
             }
 
             return clicked;
         }
 
         @Override
-        public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        public boolean mouseReleased(Click click) {
             if (shouldSnap) modulesScreen.showGrid(false);
-            return super.mouseReleased(mouseX, mouseY, button);
+            return super.mouseReleased(click);
         }
 
         @Override

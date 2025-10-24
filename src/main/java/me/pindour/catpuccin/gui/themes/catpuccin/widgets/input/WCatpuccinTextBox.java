@@ -12,7 +12,10 @@ import meteordevelopment.meteorclient.gui.widgets.containers.WContainer;
 import meteordevelopment.meteorclient.gui.widgets.containers.WVerticalList;
 import meteordevelopment.meteorclient.gui.widgets.input.WTextBox;
 import meteordevelopment.meteorclient.utils.render.color.Color;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.Click;
+import net.minecraft.client.input.CharInput;
+import net.minecraft.client.input.KeyInput;
+import net.minecraft.client.util.MacWindowUtil;
 import net.minecraft.util.math.MathHelper;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -48,26 +51,26 @@ public class WCatpuccinTextBox extends WTextBox implements CatpuccinWidget {
     }
 
     @Override
-    public boolean onMouseClicked(double mouseX, double mouseY, int button, boolean used) {
-        boolean clicked =  super.onMouseClicked(mouseX, mouseY, button, used);
+    public boolean onMouseClicked(Click click, boolean used) {
+        boolean clicked =  super.onMouseClicked(click, used);
 
         // Update widget width when text is cleared
-        if (clicked && dynamicWidth && button == GLFW_MOUSE_BUTTON_RIGHT && !text.isEmpty()) onCalculateSize();
+        if (clicked && dynamicWidth && click.button() == GLFW_MOUSE_BUTTON_RIGHT && !text.isEmpty()) onCalculateSize();
 
         return clicked;
     }
 
     @Override
-    public boolean onKeyRepeated(int key, int mods) {
-        boolean repeated = super.onKeyRepeated(key, mods);
+    public boolean onKeyRepeated(KeyInput input) {
+        boolean repeated = super.onKeyRepeated(input);
 
         if (repeated && dynamicWidth) {
-            boolean control = MinecraftClient.IS_SYSTEM_MAC ? mods == GLFW_MOD_SUPER : mods == GLFW_MOD_CONTROL;
+            boolean control = MacWindowUtil.IS_MAC ? input.modifiers() == GLFW_MOD_SUPER : input.modifiers() == GLFW_MOD_CONTROL;
 
             // Update widget width when text is updated
-            if ((control && key == GLFW_KEY_V)
-                    || key == GLFW_KEY_BACKSPACE
-                    || key == GLFW_KEY_DELETE)
+            if ((control && input.key() == GLFW_KEY_V)
+                    || input.key() == GLFW_KEY_BACKSPACE
+                    || input.key() == GLFW_KEY_DELETE)
                 onCalculateSize();
         }
 
@@ -75,8 +78,8 @@ public class WCatpuccinTextBox extends WTextBox implements CatpuccinWidget {
     }
 
     @Override
-    public boolean onCharTyped(char c) {
-        boolean typed = super.onCharTyped(c);
+    public boolean onCharTyped(CharInput input) {
+        boolean typed = super.onCharTyped(input);
         if (dynamicWidth) onCalculateSize();
         return typed;
     }
