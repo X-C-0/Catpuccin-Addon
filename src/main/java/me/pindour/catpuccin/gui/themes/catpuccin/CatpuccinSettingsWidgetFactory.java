@@ -258,7 +258,7 @@ public class CatpuccinSettingsWidgetFactory extends SettingsWidgetFactory {
         WHorizontalList list = table.add(theme.horizontalList()).expandX().widget();
 
         WButton edit = list.add(theme.button(CatpuccinIcons.EDIT.texture())).widget();
-        edit.action = () -> mc.setScreen(setting.get().createScreen(theme));
+        edit.action = () -> mc.setScreen(setting.createScreen(theme));
 
         title(list, setting).padLeft(theme.pad());
     }

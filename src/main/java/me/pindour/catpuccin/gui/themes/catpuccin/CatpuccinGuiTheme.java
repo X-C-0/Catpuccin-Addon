@@ -47,6 +47,7 @@ import meteordevelopment.meteorclient.utils.misc.Keybind;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 import meteordevelopment.meteorclient.utils.render.color.SettingColor;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.util.MacWindowUtil;
 
 import java.util.EnumMap;
 import java.util.List;
@@ -54,7 +55,6 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import static meteordevelopment.meteorclient.MeteorClient.mc;
-import static net.minecraft.client.MinecraftClient.IS_SYSTEM_MAC;
 
 public class CatpuccinGuiTheme extends GuiTheme {
     private final Map<CatppuccinColor, Color> colorCache;
@@ -677,7 +677,7 @@ public class CatpuccinGuiTheme extends GuiTheme {
     public double scale(double value) {
         double scaled = value * scale.get();
 
-        if (IS_SYSTEM_MAC) {
+        if (MacWindowUtil.IS_MAC) {
             scaled /= (double) mc.getWindow().getWidth() / mc.getWindow().getFramebufferWidth();
         }
 

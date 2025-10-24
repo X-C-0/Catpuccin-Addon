@@ -7,13 +7,13 @@ import meteordevelopment.meteorclient.gui.GuiThemes;
 import meteordevelopment.meteorclient.renderer.Fonts;
 import meteordevelopment.meteorclient.renderer.text.FontFace;
 import meteordevelopment.meteorclient.utils.render.FontUtils;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
