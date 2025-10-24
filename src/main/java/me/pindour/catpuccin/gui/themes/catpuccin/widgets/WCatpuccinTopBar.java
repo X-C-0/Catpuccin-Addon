@@ -69,19 +69,24 @@ public class WCatpuccinTopBar extends WTopBar implements CatpuccinWidget {
         @Override
         protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
             double pad = theme.scale(12);
+            double s = theme.scale(4);
             boolean isSelected = mc.currentScreen instanceof TabScreen && ((TabScreen) mc.currentScreen).tab == tab;
 
             if (isSelected)
-                catpuccinRenderer().roundedRect();
+                catpuccinRenderer().roundedRect(
+                        x + s, y + s,
+                        width - s * 2, height - s * 2,
+                        smallCornerRadius, theme().accentColor(), CornerStyle.ALL
+                );
 
-            RichText text = RichText.of(tab.name).boldIf(isSelected);
+            RichText text = RichText.of(tab.name);
             double offset = width / 2 - theme().textWidth(text) / 2;
 
             catpuccinRenderer().text(
                     text,
                     x + offset,
                     y + pad,
-                    isSelected ? theme().accentColor() : theme().textColor()
+                    isSelected ? theme().baseColor() : theme().textColor()
             );
         }
     }
