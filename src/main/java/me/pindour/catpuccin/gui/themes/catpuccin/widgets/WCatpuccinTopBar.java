@@ -19,11 +19,13 @@ public class WCatpuccinTopBar extends WTopBar implements CatpuccinWidget {
 
     @Override
     public void init() {
-        Tab firstTab = Tabs.get().getFirst();
-        Tab lastTab = Tabs.get().getLast();
-
         for (Tab tab : Tabs.get())
-            add(new WTopBarButton(tab, firstTab.equals(tab), lastTab.equals(tab)));
+            add(new WTopBarButton(tab));
+    }
+
+    @Override
+    protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
+        catpuccinRenderer().roundedRect(this, cornerRadius, theme().baseColor(), CornerStyle.ALL);
     }
 
     @Override
@@ -38,18 +40,14 @@ public class WCatpuccinTopBar extends WTopBar implements CatpuccinWidget {
 
     protected class WTopBarButton extends WPressable {
         private final Tab tab;
-        private final boolean isFirst;
-        private final boolean isLast;
 
-        public WTopBarButton(Tab tab, boolean isFirst, boolean isLast) {
+        public WTopBarButton(Tab tab) {
             this.tab = tab;
-            this.isFirst = isFirst;
-            this.isLast = isLast;
         }
 
         @Override
         protected void onCalculateSize() {
-            double pad = theme.scale(8);
+            double pad = theme.scale(12);
 
             width = pad + theme().textWidth(RichText.bold(tab.name)) + pad;
             height = pad + theme.textHeight() + pad;
@@ -70,18 +68,11 @@ public class WCatpuccinTopBar extends WTopBar implements CatpuccinWidget {
 
         @Override
         protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
-            double pad = theme.scale(8);
+            double pad = theme.scale(12);
             boolean isSelected = mc.currentScreen instanceof TabScreen && ((TabScreen) mc.currentScreen).tab == tab;
 
-            Color color = getButtonColor(pressed || isSelected, mouseOver);
-
-            if (isFirst)
-                catpuccinRenderer().roundedRect(this, cornerRadius, color, CornerStyle.BOTTOM_LEFT);
-
-            else if (isLast)
-                catpuccinRenderer().roundedRect(this, cornerRadius, color, CornerStyle.BOTTOM_RIGHT);
-
-            else renderer.quad(x, y, width, height, color);
+            if (isSelected)
+                catpuccinRenderer().roundedRect();
 
             RichText text = RichText.of(tab.name).boldIf(isSelected);
             double offset = width / 2 - theme().textWidth(text) / 2;
