@@ -200,15 +200,15 @@ public class CatpuccinGuiTheme extends GuiTheme {
     // Three state colors
 
     public final ThreeStateColor backgroundColor = new ThreeStateColor(
-            this::mantleColor,
             this::surface0Color,
-            this::surface0Color
+            this::surface1Color,
+            this::surface2Color
     );
 
     public final ThreeStateColor outlineColor = new ThreeStateColor(
-            this::surface0Color,
-            this::surface2Color,
-            this::surface2Color
+            this::overlay0Color,
+            this::overlay2Color,
+            this::accentColor
     );
 
     public final ThreeStateColor scrollbarColor = new ThreeStateColor(

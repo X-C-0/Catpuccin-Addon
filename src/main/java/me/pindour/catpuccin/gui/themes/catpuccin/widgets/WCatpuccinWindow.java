@@ -71,7 +71,7 @@ public class WCatpuccinWindow extends WWindow implements CatpuccinWidget {
                     width,
                     height - header.height,
                     cornerRadius - shadowOffset,
-                    theme().baseColor().copy().a(theme().windowOpacity()),
+                    theme().mantleColor().copy().a(theme().windowOpacity()),
                     CornerStyle.BOTTOM
             );
     }
@@ -183,16 +183,16 @@ public class WCatpuccinWindow extends WWindow implements CatpuccinWidget {
                 Color transparentColor = theme().crustColor().copy().a(0);
                 Color semiTransparentColor = theme().crustColor().copy().a(120);
 
-                renderer.quad(
-                        x,
-                        y + height,
-                        width,
-                        12,
-                        semiTransparentColor,
-                        semiTransparentColor,
-                        transparentColor,
-                        transparentColor
-                );
+//                renderer.quad(
+//                        x,
+//                        y + height,
+//                        width,
+//                        12,
+//                        semiTransparentColor,
+//                        semiTransparentColor,
+//                        transparentColor,
+//                        transparentColor
+//                );
             }
         }
 

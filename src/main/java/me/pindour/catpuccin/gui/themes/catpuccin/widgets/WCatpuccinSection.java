@@ -52,6 +52,18 @@ public class WCatpuccinSection extends WSection implements CatpuccinWidget {
     }
 
     @Override
+    protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
+        if (expanded || animation.isRunning())
+            catpuccinRenderer().roundedRect(
+                    x, y + header.height,
+                    width, height - header.height,
+                    cornerRadius,
+                    theme().baseColor().copy().a(theme().backgroundOpacity()),
+                    CornerStyle.BOTTOM
+            );
+    }
+
+    @Override
     public boolean render(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
         boolean isAnimationRunning = animation.isRunning();
         double progress = animation.getProgress();
@@ -122,31 +134,18 @@ public class WCatpuccinSection extends WSection implements CatpuccinWidget {
             CatpuccinGuiTheme theme = theme();
             double pad = pad();
             double s = theme.textHeight() * 0.75;
+            Color bgColor = (mouseOver
+                    ? theme().surface1Color()
+                    : theme().surface0Color())
+                    .copy().a(theme.backgroundOpacity());
 
             // Background
             catpuccinRenderer().roundedRect(
                     this,
-                    smallCornerRadius,
-                    theme.backgroundColor.get(mouseOver).copy().a(theme.backgroundOpacity()),
+                    cornerRadius,
+                    bgColor,
                     expanded || animation.isRunning() ? CornerStyle.TOP : CornerStyle.ALL
             );
-
-            // Shadow under the header
-            if (expanded || animation.getProgress() > 0) {
-                Color semiTransparentColor = theme.mantleColor().copy().a(160);
-                Color transparentColor = theme.mantleColor().copy().a(0);
-
-                renderer.quad(
-                        x,
-                        y + height,
-                        width,
-                        8 * animation.getProgress(),
-                        semiTransparentColor,
-                        semiTransparentColor,
-                        transparentColor,
-                        transparentColor
-                );
-            }
 
             if (headerWidget != null) return;
 

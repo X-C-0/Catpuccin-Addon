@@ -178,15 +178,27 @@ public class WCatpuccinTextBox extends WTextBox implements CatpuccinWidget {
         if (renderBackground) {
             int bottomSize = 2;
             Color highlightColor = focused ? theme.accentColor() :
-                    mouseOver ? theme.surface2Color() : theme.surface0Color();
+                    mouseOver ? theme.surface2Color() : theme.surface1Color();
 
             // Background
-            catpuccinRenderer().roundedRect(x, y, width, height, smallCornerRadius, theme.mantleColor().copy().a(theme.backgroundOpacity()), CornerStyle.ALL);
+            catpuccinRenderer().roundedRect(
+                    x, y,
+                    width, height,
+                    smallCornerRadius,
+                    theme.surface0Color().copy().a(theme.backgroundOpacity()),
+                    CornerStyle.ALL
+            );
 
             renderer.scissorStart(x, y + height - bottomSize, width, bottomSize);
 
             // Bottom highlight
-            catpuccinRenderer().roundedRect(x, y, width, height, smallCornerRadius, highlightColor, CornerStyle.BOTTOM);
+            catpuccinRenderer().roundedRect(
+                    x, y,
+                    width, height,
+                    smallCornerRadius,
+                    highlightColor,
+                    CornerStyle.BOTTOM
+            );
 
             renderer.scissorEnd();
         }

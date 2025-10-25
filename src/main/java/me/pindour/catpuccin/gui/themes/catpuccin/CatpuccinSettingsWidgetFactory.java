@@ -123,10 +123,10 @@ public class CatpuccinSettingsWidgetFactory extends SettingsWidgetFactory {
     }
 
     private void group(WVerticalList list, SettingGroup group, String filter, List<RemoveInfo> removeInfoList) {
-        WSection section = list.add(theme.section(group.name, group.sectionExpanded)).expandX().widget();
+        WSection section = list.add(theme.section(group.name, group.sectionExpanded)).expandX().padHorizontal(theme.pad()).widget();
         section.action = () -> group.sectionExpanded = section.isExpanded();
 
-        WTable table = section.add(theme.table()).expandX().padTop(theme.pad()).widget();
+        WTable table = section.add(theme.table()).expandX().padVertical(theme.pad()).widget();
         table.verticalSpacing = settingSpacing();
 
         RemoveInfo removeInfo = null;
