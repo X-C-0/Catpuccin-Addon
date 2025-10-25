@@ -50,7 +50,21 @@ public class WCatpuccinWindow extends WWindow implements CatpuccinWidget {
 
     @Override
     protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
-        if (expanded || animation.isRunning()) {
+        Color shadowColor = theme().baseColor().copy().a(80);
+
+        // Shadow rectangle
+        catpuccinRenderer().roundedRect(
+                x - shadowOffset,
+                y - shadowOffset,
+                width + shadowOffset * 2,
+                (expanded || animation.isRunning() ? height : header.height) + shadowOffset * 2,
+                cornerRadius,
+                shadowColor,
+                CornerStyle.ALL
+        );
+
+        // Inner rectangle
+        if (expanded || animation.isRunning())
             catpuccinRenderer().roundedRect(
                     x,
                     y + header.height,
@@ -60,7 +74,6 @@ public class WCatpuccinWindow extends WWindow implements CatpuccinWidget {
                     theme().baseColor().copy().a(theme().windowOpacity()),
                     CornerStyle.BOTTOM
             );
-        }
     }
 
     @Override
@@ -165,13 +178,20 @@ public class WCatpuccinWindow extends WWindow implements CatpuccinWidget {
                     !expanded && animation.isFinished() ? CornerStyle.ALL : CornerStyle.TOP
             );
 
+            // Shadow under the header
             if (expanded || animation.isRunning()) {
+                Color transparentColor = theme().crustColor().copy().a(0);
+                Color semiTransparentColor = theme().crustColor().copy().a(120);
+
                 renderer.quad(
                         x,
                         y + height,
                         width,
-                        theme.scale(2),
-                        theme().surface0Color()
+                        12,
+                        semiTransparentColor,
+                        semiTransparentColor,
+                        transparentColor,
+                        transparentColor
                 );
             }
         }
