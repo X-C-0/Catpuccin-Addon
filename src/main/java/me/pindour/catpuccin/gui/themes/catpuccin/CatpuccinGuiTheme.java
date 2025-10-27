@@ -207,14 +207,14 @@ public class CatpuccinGuiTheme extends GuiTheme {
 
     public final ThreeStateColor outlineColor = new ThreeStateColor(
             this::overlay0Color,
-            this::overlay2Color,
-            this::accentColor
+            this::overlay1Color,
+            this::overlay2Color
     );
 
     public final ThreeStateColor scrollbarColor = new ThreeStateColor(
             this::surface0Color,
             this::surface1Color,
-            this::overlay2Color
+            this::surface2Color
     );
 
     // Starscript
@@ -509,16 +509,12 @@ public class CatpuccinGuiTheme extends GuiTheme {
 
     // Colors - Text
 
-    public Color titleTextColor() {
+    public Color textColor() {
         return colorCache.get(CatppuccinColor.Text);
     }
 
-    public Color textColor() {
-        return colorCache.get(CatppuccinColor.Subtext1);
-    }
-
     public Color textSecondaryColor() {
-        return colorCache.get(CatppuccinColor.Subtext0);
+        return colorCache.get(CatppuccinColor.Subtext1);
     }
 
     public Color textHighlightColor() {
@@ -694,6 +690,7 @@ public class CatpuccinGuiTheme extends GuiTheme {
         return hideHUD.get();
     }
 
+    // TODO: Ts kinda sucks ngl, i should probably redo this whole thing
     public class ThreeStateColor {
         private final Supplier<Color> normal, hovered, pressed;
 
@@ -707,17 +704,40 @@ public class CatpuccinGuiTheme extends GuiTheme {
             return normal.get();
         }
 
+        public Color get(float alpha) {
+            return withAlpha(normal.get(), alpha);
+        }
+
         public Color get(boolean pressed, boolean hovered, boolean bypassDisableHoverColor) {
             if (pressed) return this.pressed.get();
             return (hovered && (bypassDisableHoverColor || !disableHoverColor)) ? this.hovered.get() : this.normal.get();
+        }
+
+        public Color get(boolean pressed, boolean hovered, boolean bypassDisableHoverColor, float alpha) {
+            Color color = get(pressed, hovered, bypassDisableHoverColor);
+            return withAlpha(color, alpha);
         }
 
         public Color get(boolean pressed, boolean hovered) {
             return get(pressed, hovered, false);
         }
 
+        public Color get(boolean pressed, boolean hovered, float alpha) {
+            return get(pressed, hovered, false, alpha);
+        }
+
         public Color get(boolean hovered) {
             return get(false, hovered, false);
+        }
+
+        public Color get(boolean hovered, float alpha) {
+            return get(false, hovered, false, alpha);
+        }
+
+        private Color withAlpha(Color color, float alpha) {
+            Color result = color.copy().a((int) (255 * alpha));
+            result.validate();
+            return result;
         }
     }
 }

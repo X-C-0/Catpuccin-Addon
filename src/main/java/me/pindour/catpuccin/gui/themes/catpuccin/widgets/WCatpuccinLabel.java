@@ -27,7 +27,7 @@ public class WCatpuccinLabel extends WLabel implements CatpuccinWidget {
                 richText,
                 x,
                 y,
-                color != null ? color : (title ? theme().titleTextColor() : theme().textColor())
+                color != null ? color : theme().textColor()
         );
     }
 

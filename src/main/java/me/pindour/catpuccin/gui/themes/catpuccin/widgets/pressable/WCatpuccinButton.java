@@ -3,6 +3,7 @@ package me.pindour.catpuccin.gui.themes.catpuccin.widgets.pressable;
 import me.pindour.catpuccin.gui.text.RichText;
 import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinGuiTheme;
 import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinWidget;
+import me.pindour.catpuccin.utils.ColorUtils;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.renderer.packer.GuiTexture;
 import meteordevelopment.meteorclient.gui.widgets.pressable.WButton;
@@ -42,10 +43,18 @@ public class WCatpuccinButton extends WButton implements CatpuccinWidget {
         CatpuccinGuiTheme theme = theme();
         double pad = pad();
 
-        renderBackground(this, pressed, mouseOver);
+        renderBackground(
+                this,
+                ColorUtils.withAlpha(theme.accentColor(), mouseOver ? 0.8 : 0),
+                theme().backgroundColor.get(pressed, mouseOver)
+        );
 
         if (richText != null) {
-            catpuccinRenderer().text(richText, x + width / 2 - textWidth / 2, y + pad, theme.textColor());
+            catpuccinRenderer().text(
+                    richText,
+                    x + width / 2 - textWidth / 2,
+                    y + pad, theme.textColor()
+            );
         }
         else {
             double ts = theme.textHeight();
