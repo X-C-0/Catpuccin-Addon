@@ -58,15 +58,15 @@ public class RichText {
     // Conditional styling
 
     public RichText boldIf(boolean condition) {
-        return condition ? bold() : this;
+        return condition ? bold() : setStyle(FontStyle.REGULAR);
     }
 
     public RichText italicIf(boolean condition) {
-        return condition ? italic() : this;
+        return condition ? italic() : setStyle(FontStyle.REGULAR);
     }
 
     public RichText shadowIf(boolean condition) {
-        return condition ? shadow() : this;
+        return condition ? shadow() : setStyle(FontStyle.REGULAR);
     }
 
     // Scale
