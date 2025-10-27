@@ -28,6 +28,6 @@ public class WCatpuccinFavorite extends WFavorite implements CatpuccinWidget {
 
     @Override
     protected Color getColor() {
-        return theme().overlay2Color();
+        return theme().textColor();
     }
 }

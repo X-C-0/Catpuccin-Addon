@@ -16,7 +16,13 @@ public class WCatpuccinColorPicker extends WColorPicker implements CatpuccinWidg
 
     @Override
     protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
-        catpuccinRenderer().roundedRect(x, y, width, height, smallCornerRadius, mouseOver ? ColorUtils.darker(color) : color, CornerStyle.ALL);
+        catpuccinRenderer().roundedRect(
+                x, y,
+                width, height,
+                smallCornerRadius,
+                mouseOver ? ColorUtils.darker(color) : color,
+                CornerStyle.ALL
+        );
 
         if (mouseOver) {
             double s = theme.textHeight();
