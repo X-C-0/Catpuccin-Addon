@@ -4,6 +4,7 @@ import me.pindour.catpuccin.gui.renderer.CornerStyle;
 import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinGuiTheme;
 import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinWidget;
 import me.pindour.catpuccin.gui.widgets.input.WMultiSelect;
+import me.pindour.catpuccin.utils.ColorUtils;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 
@@ -37,8 +38,8 @@ public class WCatpuccinMultiSelect<T> extends WMultiSelect<T> implements Catpucc
             // Background
             catpuccinRenderer().roundedRect(
                     this,
-                    smallCornerRadius,
-                    theme.backgroundColor.get(mouseOver).copy().a(theme.backgroundOpacity()),
+                    smallCornerRadius(),
+                    ColorUtils.withAlpha(theme.backgroundColor.get(mouseOver), theme.backgroundOpacity()),
                     expanded || animation.isRunning() ? CornerStyle.TOP : CornerStyle.ALL
             );
 
@@ -73,7 +74,7 @@ public class WCatpuccinMultiSelect<T> extends WMultiSelect<T> implements Catpucc
 
             catpuccinRenderer().roundedRect(
                     this,
-                    smallCornerRadius,
+                    smallCornerRadius(),
                     theme().surface0Color(),
                     CornerStyle.ALL
             );

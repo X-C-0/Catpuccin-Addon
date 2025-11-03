@@ -62,6 +62,7 @@ public class CatpuccinGuiTheme extends GuiTheme {
     private RichTextRenderer textRenderer;
 
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
+    private final SettingGroup sgCorners = settings.createGroup("Corners");
     private final SettingGroup sgAnimations = settings.createGroup("Animations");
     private final SettingGroup sgColors = settings.createGroup("Colors");
     private final SettingGroup sgSnapping = settings.createGroup("Snapping");
@@ -110,14 +111,34 @@ public class CatpuccinGuiTheme extends GuiTheme {
     public final Setting<Boolean> widgetOutline = sgGeneral.add(new BoolSetting.Builder()
             .name("widget-outline")
             .description("Renders a small outline around some UI elements for better visibility.")
-            .defaultValue(false)
+            .defaultValue(true)
             .build()
     );
 
-    public final Setting<Boolean> roundedCorners = sgGeneral.add(new BoolSetting.Builder()
+    // Corners
+
+    public final Setting<Boolean> roundedCorners = sgCorners.add(new BoolSetting.Builder()
             .name("rounded-corners")
-            .description("Makes the corners of most UI elements rounded.")
+            .description("Makes the corners of UI elements rounded or... not so round.")
             .defaultValue(true)
+            .build()
+    );
+
+    public final Setting<Integer> cornerRadius = sgCorners.add(new IntSetting.Builder()
+            .name("corner-radius")
+            .description("Controls how rounded the corners should be for large UI elements.")
+            .defaultValue(10)
+            .sliderRange(1, 25)
+            .visible(roundedCorners::get)
+            .build()
+    );
+
+    public final Setting<Integer> smallCornerRadius = sgCorners.add(new IntSetting.Builder()
+            .name("small-corner-radius")
+            .description("Controls how rounded the corners should be for small UI elements.")
+            .defaultValue(6)
+            .sliderRange(1, 25)
+            .visible(roundedCorners::get)
             .build()
     );
 
@@ -155,19 +176,21 @@ public class CatpuccinGuiTheme extends GuiTheme {
             .build()
     );
 
-    public final Setting<Integer> windowOpacity = sgColors.add(new IntSetting.Builder()
+    public final Setting<Double> windowOpacity = sgColors.add(new DoubleSetting.Builder()
             .name("window-opacity")
             .description("How much opaque the windows should be.")
-            .defaultValue(255)
-            .sliderRange(0, 255)
+            .defaultValue(1)
+            .sliderRange(0, 1)
+            .decimalPlaces(2)
             .build()
     );
 
-    public final Setting<Integer> backgroundOpacity = sgColors.add(new IntSetting.Builder()
+    public final Setting<Double> backgroundOpacity = sgColors.add(new DoubleSetting.Builder()
             .name("background-opacity")
             .description("How much opaque the backgrounds should be.")
-            .defaultValue(255)
-            .sliderRange(0, 255)
+            .defaultValue(1)
+            .sliderRange(0, 1)
+            .decimalPlaces(2)
             .build()
     );
 
@@ -523,11 +546,11 @@ public class CatpuccinGuiTheme extends GuiTheme {
 
     // Opacity
 
-    public int windowOpacity() {
+    public double windowOpacity() {
         return windowOpacity.get();
     }
 
-    public int backgroundOpacity() {
+    public double backgroundOpacity() {
         return backgroundOpacity.get();
     }
 

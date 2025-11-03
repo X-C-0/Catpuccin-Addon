@@ -19,7 +19,7 @@ public class WCatpuccinColorPicker extends WColorPicker implements CatpuccinWidg
         catpuccinRenderer().roundedRect(
                 x, y,
                 width, height,
-                smallCornerRadius,
+                smallCornerRadius(),
                 mouseOver ? ColorUtils.darker(color) : color,
                 CornerStyle.ALL
         );

@@ -7,6 +7,7 @@ import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinGuiTheme;
 import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinWidget;
 import me.pindour.catpuccin.gui.themes.catpuccin.icons.CatpuccinIcons;
 import me.pindour.catpuccin.mixininterface.IWContainer;
+import me.pindour.catpuccin.utils.ColorUtils;
 import me.pindour.catpuccin.utils.WidgetUtils;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.widgets.WWidget;
@@ -57,8 +58,8 @@ public class WCatpuccinSection extends WSection implements CatpuccinWidget {
             catpuccinRenderer().roundedRect(
                     x, y + header.height,
                     width, height - header.height,
-                    cornerRadius,
-                    theme().baseColor().copy().a(theme().backgroundOpacity()),
+                    cornerRadius(),
+                    ColorUtils.withAlpha(theme().baseColor(), theme().backgroundOpacity()),
                     CornerStyle.BOTTOM
             );
     }
@@ -134,15 +135,15 @@ public class WCatpuccinSection extends WSection implements CatpuccinWidget {
             CatpuccinGuiTheme theme = theme();
             double pad = pad();
             double s = theme.textHeight() * 0.75;
-            Color bgColor = (mouseOver
-                    ? theme().surface1Color()
-                    : theme().surface0Color())
-                    .copy().a(theme.backgroundOpacity());
+            Color bgColor = ColorUtils.withAlpha(
+                    mouseOver ? theme().surface1Color() : theme().surface0Color(),
+                    theme.backgroundOpacity()
+            );
 
             // Background
             catpuccinRenderer().roundedRect(
                     this,
-                    cornerRadius,
+                    cornerRadius(),
                     bgColor,
                     expanded || animation.isRunning() ? CornerStyle.TOP : CornerStyle.ALL
             );

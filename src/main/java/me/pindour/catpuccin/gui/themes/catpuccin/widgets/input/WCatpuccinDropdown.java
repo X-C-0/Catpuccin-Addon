@@ -201,7 +201,7 @@ public class WCatpuccinDropdown<T> extends WDropdown<T> implements CatpuccinWidg
                 catpuccinRenderer().roundedRect(
                         x, y,
                         width, height,
-                        smallCornerRadius,
+                        smallCornerRadius(),
                         ColorUtils.withAlpha(theme.accentColor(), 0.4),
                         CornerStyle.ALL
                 );

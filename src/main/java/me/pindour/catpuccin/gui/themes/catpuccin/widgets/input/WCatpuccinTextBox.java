@@ -5,6 +5,7 @@ import me.pindour.catpuccin.gui.text.RichText;
 import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinGuiTheme;
 import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinWidget;
 import me.pindour.catpuccin.gui.themes.catpuccin.widgets.WCatpuccinLabel;
+import me.pindour.catpuccin.utils.ColorUtils;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.utils.CharFilter;
 import meteordevelopment.meteorclient.gui.widgets.WWidget;
@@ -184,8 +185,8 @@ public class WCatpuccinTextBox extends WTextBox implements CatpuccinWidget {
             catpuccinRenderer().roundedRect(
                     x, y,
                     width, height,
-                    smallCornerRadius,
-                    theme.surface0Color().copy().a(theme.backgroundOpacity()),
+                    smallCornerRadius(),
+                    ColorUtils.withAlpha(theme.surface0Color(), theme.backgroundOpacity()),
                     CornerStyle.ALL
             );
 
@@ -195,7 +196,7 @@ public class WCatpuccinTextBox extends WTextBox implements CatpuccinWidget {
             catpuccinRenderer().roundedRect(
                     x, y,
                     width, height,
-                    smallCornerRadius,
+                    smallCornerRadius(),
                     highlightColor,
                     CornerStyle.BOTTOM
             );

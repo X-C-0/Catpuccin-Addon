@@ -71,7 +71,7 @@ public class WCatpuccinSlider extends WSlider implements CatpuccinWidget {
                 bgY,
                 width - valueWidth - handleSize,
                 backgroundHeight,
-                smallCornerRadius,
+                smallCornerRadius(),
                 theme.accentColor().copy().a(120),
                 CornerStyle.RIGHT
         );
@@ -82,7 +82,7 @@ public class WCatpuccinSlider extends WSlider implements CatpuccinWidget {
                 y + height / 2 - handleTextureSize / 2 - handlePadding,
                 handlePadding * 2 + valueWidth + handleTextureSize,
                 handleTextureSize + handlePadding * 2,
-                smallCornerRadius,
+                smallCornerRadius(),
                 theme.accentColor(),
                 CornerStyle.ALL
         );

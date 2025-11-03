@@ -12,6 +12,6 @@ public class WCatpuccinTooltip extends WTooltip implements CatpuccinWidget {
 
     @Override
     protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
-        renderer.quad(this, theme().backgroundColor.get());
+        renderBackground(this, false, false);
     }
 }

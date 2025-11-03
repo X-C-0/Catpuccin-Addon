@@ -25,7 +25,7 @@ public class WCatpuccinTopBar extends WTopBar implements CatpuccinWidget {
 
     @Override
     protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
-        catpuccinRenderer().roundedRect(this, cornerRadius, theme().baseColor(), CornerStyle.ALL);
+        catpuccinRenderer().roundedRect(this, cornerRadius(), theme().baseColor(), CornerStyle.ALL);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class WCatpuccinTopBar extends WTopBar implements CatpuccinWidget {
                 catpuccinRenderer().roundedRect(
                         x + s, y + s,
                         width - s * 2, height - s * 2,
-                        smallCornerRadius, theme().accentColor(), CornerStyle.ALL
+                        smallCornerRadius(), theme().accentColor(), CornerStyle.ALL
                 );
 
             RichText text = RichText.of(tab.name);
