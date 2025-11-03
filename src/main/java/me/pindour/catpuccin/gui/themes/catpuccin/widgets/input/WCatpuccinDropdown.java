@@ -173,7 +173,7 @@ public class WCatpuccinDropdown<T> extends WDropdown<T> implements CatpuccinWidg
 
         @Override
         protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
-            renderBackground(this, theme().accentColor(), theme().baseColor(), true);
+            renderBackground(this, theme().accentColor(), theme().surface0Color(), true);
         }
     }
 

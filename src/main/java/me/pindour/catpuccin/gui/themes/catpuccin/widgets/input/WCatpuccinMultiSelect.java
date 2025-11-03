@@ -16,6 +16,18 @@ public class WCatpuccinMultiSelect<T> extends WMultiSelect<T> implements Catpucc
     }
 
     @Override
+    protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
+        if (expanded || animation.isRunning())
+            catpuccinRenderer().roundedRect(
+                    x, y + header.height,
+                    width, height - header.height,
+                    cornerRadius(),
+                    ColorUtils.withAlpha(theme().baseColor(), theme().backgroundOpacity()),
+                    CornerStyle.BOTTOM
+            );
+    }
+
+    @Override
     protected WHeader createHeader() {
         return new WCatpuccinHeader(title);
     }
@@ -34,31 +46,18 @@ public class WCatpuccinMultiSelect<T> extends WMultiSelect<T> implements Catpucc
         @Override
         protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
             CatpuccinGuiTheme theme = theme();
+            Color bgColor = ColorUtils.withAlpha(
+                    mouseOver ? theme.surface1Color() : theme.surface0Color(),
+                    theme.backgroundOpacity()
+            );
 
             // Background
             catpuccinRenderer().roundedRect(
                     this,
-                    smallCornerRadius(),
-                    ColorUtils.withAlpha(theme.backgroundColor.get(mouseOver), theme.backgroundOpacity()),
+                    cornerRadius(),
+                    bgColor,
                     expanded || animation.isRunning() ? CornerStyle.TOP : CornerStyle.ALL
             );
-
-            // Shadow under the header
-            if (expanded || animation.getProgress() > 0) {
-                Color semiTransparentColor = theme.mantleColor().copy().a(160);
-                Color transparentColor = theme.mantleColor().copy().a(0);
-
-                renderer.quad(
-                        x,
-                        y + height,
-                        width,
-                        8 * animation.getProgress(),
-                        semiTransparentColor,
-                        semiTransparentColor,
-                        transparentColor,
-                        transparentColor
-                );
-            }
         }
     }
 

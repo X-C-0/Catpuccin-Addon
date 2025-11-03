@@ -135,8 +135,9 @@ public class WCatpuccinSection extends WSection implements CatpuccinWidget {
             CatpuccinGuiTheme theme = theme();
             double pad = pad();
             double s = theme.textHeight() * 0.75;
+
             Color bgColor = ColorUtils.withAlpha(
-                    mouseOver ? theme().surface1Color() : theme().surface0Color(),
+                    mouseOver ? theme.surface1Color() : theme.surface0Color(),
                     theme.backgroundOpacity()
             );
 
