@@ -2,6 +2,7 @@ package me.pindour.catpuccin.gui.themes.catpuccin.widgets;
 
 import me.pindour.catpuccin.gui.renderer.CornerStyle;
 import me.pindour.catpuccin.gui.text.RichText;
+import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinGuiTheme;
 import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinWidget;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.tabs.Tab;
@@ -68,25 +69,26 @@ public class WCatpuccinTopBar extends WTopBar implements CatpuccinWidget {
 
         @Override
         protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
-            double pad = theme.scale(12);
-            double s = theme.scale(4);
+            CatpuccinGuiTheme theme = theme();
+            double pad = theme.scale(4);
             boolean isSelected = mc.currentScreen instanceof TabScreen && ((TabScreen) mc.currentScreen).tab == tab;
 
             if (isSelected)
                 catpuccinRenderer().roundedRect(
-                        x + s, y + s,
-                        width - s * 2, height - s * 2,
-                        smallCornerRadius(), theme().accentColor(), CornerStyle.ALL
+                        x + pad, y + pad,
+                        width - pad * 2, height - pad * 2,
+                        smallCornerRadius(), theme.accentColor(), CornerStyle.ALL
                 );
 
             RichText text = RichText.of(tab.name);
-            double offset = width / 2 - theme().textWidth(text) / 2;
+            double offsetX = width / 2 - theme.textWidth(text) / 2;
+            double offsetY = height / 2 - theme.textHeight() / 2;
 
             catpuccinRenderer().text(
                     text,
-                    x + offset,
-                    y + pad,
-                    isSelected ? theme().baseColor() : theme().textColor()
+                    x + offsetX,
+                    y + offsetY,
+                    isSelected ? theme.baseColor() : theme.textSecondaryColor()
             );
         }
     }
