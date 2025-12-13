@@ -177,26 +177,18 @@ public class WCatpuccinTextBox extends WTextBox implements CatpuccinWidget {
         }
 
         if (renderBackground) {
-            int bottomSize = 2;
-            Color highlightColor = focused ? theme.accentColor() :
-                    mouseOver ? theme.surface2Color() : theme.surface1Color();
-
-            // Background
-            catpuccinRenderer().roundedRect(
-                    x, y,
-                    width, height,
-                    smallCornerRadius(),
-                    ColorUtils.withAlpha(theme.surface0Color(), theme.backgroundOpacity()),
-                    CornerStyle.ALL
-            );
+            float bottomSize = 2.5f;
+            Color highlightColor = focused
+                    ? theme.accentColor()
+                    : mouseOver ? theme.surface2Color() : theme.surface1Color();
 
             renderer.scissorStart(x, y + height - bottomSize, width, bottomSize);
 
             // Bottom highlight
-            catpuccinRenderer().roundedRect(
+            renderer().roundedRect(
                     x, y,
                     width, height,
-                    smallCornerRadius(),
+                    smallRadius(),
                     highlightColor,
                     CornerStyle.BOTTOM
             );
@@ -211,7 +203,11 @@ public class WCatpuccinTextBox extends WTextBox implements CatpuccinWidget {
 
         // Text content
         if (!text.isEmpty()) {
-            this.renderer.render(renderer, x + pad - overflowWidth, y + pad, text, customColor != null ? customColor : theme.textColor());
+            Color textColor = customColor != null
+                    ? customColor
+                    : (focused ? theme.textColor() : ColorUtils.darker(theme.textSecondaryColor()));
+
+            this.renderer.render(renderer, x + pad - overflowWidth, y + pad, text, textColor);
         }
         else if (placeholder != null) {
             this.renderer.render(renderer, x + pad - overflowWidth, y + pad, placeholder, theme.textSecondaryColor());
