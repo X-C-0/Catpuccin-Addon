@@ -54,14 +54,7 @@ public class WCatpuccinSection extends WSection implements CatpuccinWidget {
 
     @Override
     protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
-        if (expanded || animation.isRunning())
-            catpuccinRenderer().roundedRect(
-                    x, y + header.height,
-                    width, height - header.height,
-                    cornerRadius(),
-                    ColorUtils.withAlpha(theme().baseColor(), theme().backgroundOpacity()),
-                    CornerStyle.BOTTOM
-            );
+        if (expanded || animation.isRunning()) renderBackground(this, false, false);
     }
 
     @Override
@@ -111,6 +104,47 @@ public class WCatpuccinSection extends WSection implements CatpuccinWidget {
         return header;
     }
 
+    @Override
+    public CornerStyle cornerStyle() {
+        return CornerStyle.BOTTOM;
+    }
+
+    @Override
+    public void drawOutline(WWidget widget, Color color, int radius, CornerStyle style) {
+        Color outlineColor = ColorUtils.withAlpha(
+                theme().surface0Color(),
+                theme().backgroundOpacity()
+        );
+
+        renderer().roundedRect(
+                x,
+                y + header.height,
+                width,
+                height - header.height,
+                radius(),
+                outlineColor,
+                style
+        );
+    }
+
+    @Override
+    public void drawBackground(WWidget widget, int inset, Color color) {
+        Color backgroundColor = ColorUtils.withAlpha(
+                theme().baseColor(),
+                theme().backgroundOpacity()
+        );
+
+        renderer().roundedRect(
+                x + inset,
+                y + header.height,
+                width - inset * 2,
+                height - header.height - inset,
+                radius() - inset,
+                backgroundColor,
+                cornerStyle()
+        );
+    }
+
     protected class WCatpuccinHeader extends WHeader {
 
         public WCatpuccinHeader(String title) {
@@ -142,9 +176,9 @@ public class WCatpuccinSection extends WSection implements CatpuccinWidget {
             );
 
             // Background
-            catpuccinRenderer().roundedRect(
+            renderer().roundedRect(
                     this,
-                    cornerRadius(),
+                    radius(),
                     bgColor,
                     expanded || animation.isRunning() ? CornerStyle.TOP : CornerStyle.ALL
             );
