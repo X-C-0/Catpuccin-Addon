@@ -35,7 +35,7 @@ import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.render.color.SettingColor;
 import net.minecraft.client.resource.language.I18n;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -132,7 +132,7 @@ public class CatpuccinSettingsWidgetFactory extends SettingsWidgetFactory {
         RemoveInfo removeInfo = null;
 
         for (Setting<?> setting : group) {
-            if (!StringUtils.containsIgnoreCase(setting.title, filter)) continue;
+            if (!Strings.CI.contains(setting.title, filter)) continue;
 
             boolean visible = setting.isVisible();
             setting.lastWasVisible = visible;

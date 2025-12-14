@@ -77,7 +77,7 @@ public abstract class GuiRendererMixin {
 
         // From GuiRenderer
         r.render();
-        rTex.render("u_Texture", TEXTURE.getGlTextureView());
+        rTex.render("u_Texture", TEXTURE.getGlTextureView(), TEXTURE.getSampler());
 
         // From GuiRenderer
         texts.clear();
