@@ -6,9 +6,7 @@ base {
     archivesName = properties["archives_base_name"] as String
     group = properties["maven_group"] as String
 
-    val modVersion = libs.versions.mod.version.get()
-    val mcVersion = libs.versions.minecraft.get()
-    version = "mc$mcVersion-v$modVersion"
+    version = libs.versions.mod.version.get() + "+mc" + libs.versions.minecraft.get()
 }
 
 repositories {
