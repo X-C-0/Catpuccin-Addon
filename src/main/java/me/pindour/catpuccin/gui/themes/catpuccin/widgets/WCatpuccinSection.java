@@ -6,12 +6,9 @@ import me.pindour.catpuccin.gui.renderer.CornerStyle;
 import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinGuiTheme;
 import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinWidget;
 import me.pindour.catpuccin.gui.themes.catpuccin.icons.CatpuccinIcons;
-import me.pindour.catpuccin.mixininterface.IWContainer;
-import me.pindour.catpuccin.utils.WidgetUtils;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.widgets.WWidget;
 import meteordevelopment.meteorclient.gui.widgets.containers.WSection;
-import meteordevelopment.meteorclient.gui.widgets.containers.WView;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 
 public class WCatpuccinSection extends WSection implements CatpuccinWidget {
@@ -75,15 +72,6 @@ public class WCatpuccinSection extends WSection implements CatpuccinWidget {
         if (expanded || animation.getProgress() > 0 || widget instanceof WHeader) {
             widget.render(renderer, mouseX, mouseY, delta);
         }
-    }
-
-    @Override
-    protected boolean propagateEvents(WWidget widget) {
-        WView parentView = ((IWContainer)this).catpuccin$getParentView();
-
-        if (parentView == null) parentView = WidgetUtils.findParentView(this);
-
-        return (expanded || widget instanceof WHeader) && WidgetUtils.isWidgetInside(widget, parentView);
     }
 
     @Override
