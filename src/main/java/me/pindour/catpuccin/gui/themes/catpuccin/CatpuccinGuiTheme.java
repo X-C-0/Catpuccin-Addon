@@ -374,8 +374,8 @@ public class CatpuccinGuiTheme extends GuiTheme {
     }
 
     @Override
-    public WWidget module(Module module) {
-        return w(new WCatpuccinModule(module));
+    public WWidget module(Module module, String title) {
+        return w(new WCatpuccinModule(module, title));
     }
 
     @Override

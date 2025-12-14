@@ -20,6 +20,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_RIGHT;
 
 public class WCatpuccinModule extends WPressable implements CatpuccinWidget {
     private final Module module;
+    private final String title;
 
     private double titleWidth;
     private boolean wasHovered = false;
@@ -34,8 +35,9 @@ public class WCatpuccinModule extends WPressable implements CatpuccinWidget {
     private Color semiTransparentColor;
     private Color transparentColor;
 
-    public WCatpuccinModule(Module module) {
+    public WCatpuccinModule(Module module, String title) {
         this.module = module;
+        this.title = title;
         this.tooltip = module.description;
     }
 
@@ -67,7 +69,7 @@ public class WCatpuccinModule extends WPressable implements CatpuccinWidget {
     protected void onCalculateSize() {
         double pad = pad();
 
-        if (titleWidth == 0) titleWidth = theme.textWidth(module.title);
+        if (titleWidth == 0) titleWidth = theme.textWidth(title);
 
         width = pad + titleWidth + pad;
         height = pad + theme.textHeight() + pad;
@@ -161,6 +163,6 @@ public class WCatpuccinModule extends WPressable implements CatpuccinWidget {
 
         // Text
         Color textColor = ColorUtils.interpolateColor(theme.textColor(), theme.baseColor(), highlightProgress);
-        catpuccinRenderer().text(RichText.of(module.title), x, y + pad, textColor);
+        catpuccinRenderer().text(RichText.of(title), x, y + pad, textColor);
     }
 }
