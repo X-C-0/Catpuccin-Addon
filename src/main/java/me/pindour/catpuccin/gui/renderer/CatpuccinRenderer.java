@@ -10,7 +10,6 @@ import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.renderer.packer.TextureRegion;
 import meteordevelopment.meteorclient.gui.widgets.WWidget;
 import meteordevelopment.meteorclient.renderer.Renderer2D;
-import meteordevelopment.meteorclient.renderer.Texture;
 import meteordevelopment.meteorclient.utils.misc.Pool;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 import net.minecraft.util.math.MathHelper;
@@ -20,10 +19,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+//? if <=1.21.4 {
+/*import net.minecraft.client.util.math.MatrixStack;
+*///?} else {
+import meteordevelopment.meteorclient.renderer.Texture;
+//?}
+
 public class CatpuccinRenderer {
     private static final CatpuccinRenderer INSTANCE = new CatpuccinRenderer();
     private CatpuccinGuiTheme theme;
 
+    //? if >1.21.4
     private static Texture TEXTURE;
     private static TextureRegion CIRCLE_TEXTURE;
 
@@ -33,9 +39,11 @@ public class CatpuccinRenderer {
     private final Pool<RichTextOperation> textPool = new Pool<>(RichTextOperation::new);
     private final Map<StyleKey, List<RichTextOperation>> groupedOperations = new HashMap<>();
 
+    //? if >1.21.4 {
     public static void init(Texture texture) {
         TEXTURE = texture;
     }
+    //?}
 
     public static CatpuccinRenderer get() {
         return INSTANCE;
@@ -55,10 +63,21 @@ public class CatpuccinRenderer {
         rTex.end();
     }
 
+    //? if <=1.21.4 {
+    /*public void render(MatrixStack matrices) {
+        r.render(matrices);
+    }
+
+    public void renderTexture(MatrixStack matrices) {
+        rTex.render(matrices);
+    }
+
+    *///?} else {
     public void render() {
         r.render();
         rTex.render("u_Texture", TEXTURE.getGlTextureView(), TEXTURE.getSampler());
     }
+    //?}
 
     public void renderText() {
         if (theme == null) return;

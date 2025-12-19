@@ -1,12 +1,18 @@
 plugins {
-    alias(libs.plugins.fabric.loom)
+    id("fabric-loom")
 }
 
-base {
-    archivesName = properties["archives_base_name"] as String
-    group = properties["maven_group"] as String
+val minecraftVersion = stonecutter.current.version
+val yarnMappings = project.property("yarn_mappings") as String
+val loaderVersion = project.property("fabric_loader") as String
+val modVersion = project.property("mod_version") as String
+val mavenGroup = project.property("mod_group") as String
+val meteorVersion = project.property("meteor_version") as String
 
-    version = libs.versions.mod.version.get() + "+mc" + libs.versions.minecraft.get()
+base {
+    archivesName = project.property("mod_id") as String
+    version = "${modVersion}+mc${minecraftVersion}"
+    group = mavenGroup
 }
 
 repositories {
@@ -22,19 +28,19 @@ repositories {
 
 dependencies {
     // Fabric
-    minecraft(libs.minecraft)
-    mappings(variantOf(libs.yarn) { classifier("v2") })
-    modImplementation(libs.fabric.loader)
+    minecraft("com.mojang:minecraft:$minecraftVersion")
+    mappings("net.fabricmc:yarn:$yarnMappings:v2")
+    modImplementation("net.fabricmc:fabric-loader:$loaderVersion")
 
     // Meteor
-    modImplementation(libs.meteor.client)
+    modImplementation("meteordevelopment:meteor-client:$meteorVersion")
 }
 
 tasks {
     processResources {
         val propertyMap = mapOf(
-            "version" to project.version,
-            "mc_version" to libs.versions.minecraft.get()
+            "version" to project.property("mod_version"),
+            "mc_version" to project.property("mod_mc_dep")
         )
 
         inputs.properties(propertyMap)
@@ -44,6 +50,14 @@ tasks {
         filesMatching("fabric.mod.json") {
             expand(propertyMap)
         }
+    }
+
+    // Builds the version into a shared folder in `build/libs/${mod version}/`
+    register<Copy>("buildAndCollect") {
+        group = "build"
+        from(remapJar.map { it.archiveFile }, remapSourcesJar.map { it.archiveFile })
+        into(rootProject.layout.buildDirectory.file("libs/$modVersion"))
+        dependsOn("build")
     }
 
     jar {
