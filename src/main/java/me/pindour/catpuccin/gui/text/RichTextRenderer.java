@@ -67,11 +67,13 @@ public class RichTextRenderer implements TextRenderer {
 
         if (!scaleOnly) mesh.begin();
 
-        Font[] fonts = getCurrentFontArray();
+        Font[] fonts = getFonts(currentStyle);
         int scaleIndex = calculateScaleIndex(scale);
 
-        currentFont = fonts[scaleIndex];
+        if (scaleIndex >= fonts.length) scaleIndex = fonts.length - 1;
+
         currentFontIndex = scaleIndex;
+        currentFont = fonts[currentFontIndex];
 
         building = true;
 
@@ -90,8 +92,12 @@ public class RichTextRenderer implements TextRenderer {
         return 0;
     }
 
+    // Width Calculations
+
     public double getWidth(RichTextSegment segment, int length) {
-        Font font = getFontForStyle(segment.getStyle());
+        Font[] fonts = getFonts(segment.getStyle());
+        Font font = building ? getCurrentFont(fonts) : fonts[0];
+
         return (font.getWidth(segment.getText(), length) + (segment.hasShadow() ? 1 : 0)) * segment.getScale() / 1.5;
     }
 
@@ -109,14 +115,13 @@ public class RichTextRenderer implements TextRenderer {
 
             int segLength = Math.min(segText.length(), remainingLength);
 
-            Font font = getFontForStyle(segment.getStyle());
-            double scale = segment.getScale();
+            Font[] fonts = getFonts(segment.getStyle());
+            Font font = building ? getCurrentFont(fonts) : fonts[0];
 
             double segmentWidth = font.getWidth(segText, segLength);
-
             if (segment.hasShadow()) segmentWidth += 1;
 
-            totalWidth += segmentWidth * (scale / 1.5);
+            totalWidth += segmentWidth * (segment.getScale() / 1.5);
             remainingLength -= segLength;
         }
 
@@ -133,14 +138,19 @@ public class RichTextRenderer implements TextRenderer {
         return getWidth(RichText.of(text).shadowIf(shadow), length);
     }
 
+    // Height Calculations
+
     public double getHeight(RichTextSegment segment) {
-        Font font = getFontForStyle(segment.getStyle());
+        Font[] fonts = getFonts(segment.getStyle());
+        Font font = building ? getCurrentFont(fonts) : fonts[0];
+
         return (font.getHeight() + 1 + (segment.hasShadow() ? 1 : 0)) * segment.getScale() / 1.5;
     }
 
     public double getHeight(RichText text) {
-        double largestSegment = getHeight(text.getSegments().getFirst());
+        if (text.getSegments().isEmpty()) return 0;
 
+        double largestSegment = 0;
         for (RichTextSegment segment : text.getSegments())
             largestSegment = Math.max(largestSegment, getHeight(segment));
 
@@ -149,9 +159,11 @@ public class RichTextRenderer implements TextRenderer {
 
     @Override
     public double getHeight(boolean shadow) {
-        Font font = building ? currentFont : getCurrentFontArray()[0];
+        Font font = building ? currentFont : getFonts(FontStyle.REGULAR)[0];
         return (font.getHeight() + 1 + (shadow ? 1 : 0)) * scale / 1.5;
     }
+
+    // Rendering
 
     public void renderTextWithStyle(String text, double x, double y, Color color, boolean shadow, FontStyle fontStyle) {
         if (currentStyle != fontStyle) setFontStyle(fontStyle);
@@ -211,18 +223,25 @@ public class RichTextRenderer implements TextRenderer {
         if (this.currentStyle == style) return;
         this.currentStyle = style;
 
-        Font[] fonts = getCurrentFontArray();
-
-        if (currentFontIndex >= 0 && currentFontIndex < fonts.length)
-            currentFont = fonts[currentFontIndex];
+        Font[] fonts = getFonts(style);
+        if (building) currentFont = getCurrentFont(fonts);
     }
 
-    private Font[] getCurrentFontArray() {
-        return switch (currentStyle) {
+    // Helpers
+
+    private Font[] getFonts(FontStyle style) {
+        return switch (style) {
             case BOLD -> boldFonts;
             case ITALIC -> italicFonts;
             default -> regularFonts;
         };
+    }
+
+    private Font getCurrentFont(Font[] fonts) {
+        if (currentFontIndex >= 0 && currentFontIndex < fonts.length)
+            return fonts[currentFontIndex];
+
+        return fonts[0];
     }
 
     private FontFamily findFontFamily(FontFace fontFace) {
@@ -231,15 +250,5 @@ public class RichTextRenderer implements TextRenderer {
                 return fontFamily;
 
         return Fonts.FONT_FAMILIES.getFirst();
-    }
-
-    private Font getFontForStyle(FontStyle style) {
-        Font[] fonts = switch (style) {
-            case BOLD -> boldFonts;
-            case ITALIC -> italicFonts;
-            default -> regularFonts;
-        };
-
-        return currentFontIndex < fonts.length ? fonts[currentFontIndex] : fonts[0];
     }
 }
