@@ -8,7 +8,7 @@ base {
 
     val modVersion = properties["mod_version"] as String
     val mcVersion = properties["minecraft_version"] as String
-    version = "mc$mcVersion-v$modVersion"
+    version = "$modVersion+mc$mcVersion"
 }
 
 repositories {
