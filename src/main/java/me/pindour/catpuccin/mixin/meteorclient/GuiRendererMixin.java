@@ -42,10 +42,10 @@ public abstract class GuiRendererMixin {
     @Shadow
     private static ByteTexture TEXTURE;
 
-    *///?} elif =1.21.11 {
+    *///?} else {
     @Shadow
     private static Texture TEXTURE;
-     //?}
+    //?}
 
     @Shadow
     @Final
@@ -66,7 +66,7 @@ public abstract class GuiRendererMixin {
         CatpuccinIcons.init();
     }
 
-    //? if >1.21.4 {
+    //? if >=1.21.5 {
     @Inject(method = "init", at = @At("TAIL"))
     private static void onPostInit(CallbackInfo ci) {
         CatpuccinRenderer.init(TEXTURE);
@@ -80,11 +80,10 @@ public abstract class GuiRendererMixin {
     }
 
     @Inject(
-        //? if <=1.21.4 {
-        /*method = "endRender()V",
-        *///?} elif =1.21.11 {
+        //? if <=1.21.4
+        //method = "endRender()V",
+        //? if >=1.21.5
         method = "endRender(Lmeteordevelopment/meteorclient/gui/renderer/Scissor;)V",
-        //?}
 
         at = @At(
             value = "INVOKE",
@@ -95,7 +94,7 @@ public abstract class GuiRendererMixin {
         cancellable = true
     )
     private void onEndRender(
-            //? if >1.21.4
+            //? if >=1.21.5
             Scissor scissor,
             CallbackInfo ci
     ) {
@@ -127,7 +126,7 @@ public abstract class GuiRendererMixin {
         catpuccinRenderer.renderText();
 
         // From GuiRenderer
-        //? if >1.21.4
+        //? if >=1.21.5
         if (scissor != null) scissor.pop(); 
         ci.cancel();
     }

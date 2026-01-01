@@ -36,6 +36,26 @@ dependencies {
     modImplementation("meteordevelopment:meteor-client:$meteorVersion")
 }
 
+stonecutter {
+    replacements {
+        string(current.parsed <= "1.21.8") {
+            // Click -> mouseX, mouseY, button
+            replace("onMouseClicked(Click click", "onMouseClicked(double mouseX, double mouseY, int button")
+            replace("onMouseReleased(Click click", "onMouseReleased(double mouseX, double mouseY, int button")
+            replace("mouseReleased(Click click", "mouseReleased(double mouseX, double mouseY, int button")
+            // CharInput -> char
+            replace("onCharTyped(CharInput input)", "onCharTyped(char input)")
+            // KeyInput -> key, mods
+            replace("onKeyRepeated(KeyInput input)", "onKeyRepeated(int key, int mods)")
+        }
+        string(current.parsed <= "1.21.4") {
+            // String utils
+            replace("org.apache.commons.lang3.Strings", "org.apache.commons.lang3.StringUtils")
+            replace("Strings.CI.contains", "StringUtils.containsIgnoreCase")
+        }
+    }
+}
+
 tasks {
     processResources {
         val propertyMap = mapOf(

@@ -29,7 +29,7 @@ public class CatpuccinRenderer {
     private static final CatpuccinRenderer INSTANCE = new CatpuccinRenderer();
     private CatpuccinGuiTheme theme;
 
-    //? if >1.21.4
+    //? if >=1.21.5
     private static Texture TEXTURE;
     private static TextureRegion CIRCLE_TEXTURE;
 
@@ -39,7 +39,7 @@ public class CatpuccinRenderer {
     private final Pool<RichTextOperation> textPool = new Pool<>(RichTextOperation::new);
     private final Map<StyleKey, List<RichTextOperation>> groupedOperations = new HashMap<>();
 
-    //? if >1.21.4 {
+    //? if >=1.21.5 {
     public static void init(Texture texture) {
         TEXTURE = texture;
     }

@@ -12,7 +12,6 @@ import meteordevelopment.meteorclient.gui.widgets.WWidget;
 import meteordevelopment.meteorclient.gui.widgets.containers.WHorizontalList;
 import meteordevelopment.meteorclient.gui.widgets.containers.WVerticalList;
 import meteordevelopment.meteorclient.gui.widgets.pressable.WTriangle;
-import net.minecraft.client.gui.Click;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -20,6 +19,9 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
+
+//? if >=1.21.9
+import net.minecraft.client.gui.Click;
 
 public abstract class WMultiSelect<T> extends WVerticalList {
     protected final String title;
@@ -261,7 +263,13 @@ public abstract class WMultiSelect<T> extends WVerticalList {
 
         @Override
         public boolean onMouseClicked(Click click, boolean used) {
-            if (mouseOver && click.button() == GLFW_MOUSE_BUTTON_LEFT && !used) {
+            if (mouseOver
+                //? if >=1.21.9
+                && click.button() == GLFW_MOUSE_BUTTON_LEFT
+                //? if <1.21.9
+                //&& button == GLFW_MOUSE_BUTTON_LEFT
+                && !used
+            ) {
                 onClick();
                 return true;
             }
@@ -304,7 +312,14 @@ public abstract class WMultiSelect<T> extends WVerticalList {
 
         @Override
         public boolean onMouseClicked(Click click, boolean used) {
-            if (mouseOver && click.button() == GLFW_MOUSE_BUTTON_LEFT && !used && !checkbox.mouseOver) {
+            if (mouseOver
+                //? if >= 1.21.9
+                && click.button() == GLFW_MOUSE_BUTTON_LEFT
+                //? if < 1.21.9
+                //&& button == GLFW_MOUSE_BUTTON_LEFT
+                && !used
+                && !checkbox.mouseOver
+            ) {
                 checkbox.setChecked(!checkbox.checked);
                 onSelection();
                 return true;

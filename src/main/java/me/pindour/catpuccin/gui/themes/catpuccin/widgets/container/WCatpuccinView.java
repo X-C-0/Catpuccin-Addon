@@ -1,4 +1,4 @@
-package me.pindour.catpuccin.gui.themes.catpuccin.widgets;
+package me.pindour.catpuccin.gui.themes.catpuccin.widgets.container;
 
 import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinWidget;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;

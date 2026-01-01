@@ -12,11 +12,16 @@ import meteordevelopment.meteorclient.gui.widgets.containers.WContainer;
 import meteordevelopment.meteorclient.gui.widgets.containers.WVerticalList;
 import meteordevelopment.meteorclient.gui.widgets.input.WTextBox;
 import meteordevelopment.meteorclient.utils.render.color.Color;
+import net.minecraft.util.math.MathHelper;
+
+//? if >=1.21.9 {
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.input.CharInput;
 import net.minecraft.client.input.KeyInput;
 import net.minecraft.client.util.MacWindowUtil;
-import net.minecraft.util.math.MathHelper;
+//? } else {
+/*import static net.minecraft.client.MinecraftClient.IS_SYSTEM_MAC;
+*///? }
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -52,27 +57,61 @@ public class WCatpuccinTextBox extends WTextBox implements CatpuccinWidget {
 
     @Override
     public boolean onMouseClicked(Click click, boolean used) {
-        boolean clicked =  super.onMouseClicked(click, used);
+        boolean clicked =  super.onMouseClicked(
+                //? if >=1.21.9
+                click,
+                //? if <1.21.9
+                //mouseX, mouseY, button,
+                used
+        );
 
         // Update widget width when text is cleared
-        if (clicked && dynamicWidth && click.button() == GLFW_MOUSE_BUTTON_RIGHT && !text.isEmpty()) onCalculateSize();
+        if (clicked
+            && dynamicWidth
+            && !text.isEmpty()
+            //? if >=1.21.9
+            && click.button() == GLFW_MOUSE_BUTTON_LEFT
+            //? if <1.21.9
+            //&& button == GLFW_MOUSE_BUTTON_LEFT
+        ) {
+            onCalculateSize();
+        }
 
         return clicked;
     }
 
     @Override
     public boolean onKeyRepeated(KeyInput input) {
-        boolean repeated = super.onKeyRepeated(input);
+        boolean repeated = super.onKeyRepeated(
+                //? if >=1.21.9
+                input
+                //? if <1.21.9
+                //key, mods
+        );
+
+        //? if >=1.21.9 {
 
         if (repeated && dynamicWidth) {
             boolean control = MacWindowUtil.IS_MAC ? input.modifiers() == GLFW_MOD_SUPER : input.modifiers() == GLFW_MOD_CONTROL;
 
-            // Update widget width when text is updated
             if ((control && input.key() == GLFW_KEY_V)
                     || input.key() == GLFW_KEY_BACKSPACE
                     || input.key() == GLFW_KEY_DELETE)
                 onCalculateSize();
         }
+
+        //? } else {
+
+        /*if (repeated && dynamicWidth) {
+            boolean control = IS_SYSTEM_MAC ? mods == GLFW_MOD_SUPER : mods == GLFW_MOD_CONTROL;
+
+            if ((control && key == GLFW_KEY_V)
+                    || key == GLFW_KEY_BACKSPACE
+                    || key == GLFW_KEY_DELETE)
+                onCalculateSize();
+        }
+
+        *///? }
 
         return repeated;
     }

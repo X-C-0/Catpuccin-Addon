@@ -2,7 +2,7 @@ package me.pindour.catpuccin.gui.screens;
 
 import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinGuiTheme;
 import me.pindour.catpuccin.gui.themes.catpuccin.icons.CatpuccinIcons;
-import me.pindour.catpuccin.gui.themes.catpuccin.widgets.WCatpuccinWindow;
+import me.pindour.catpuccin.gui.themes.catpuccin.widgets.container.WCatpuccinWindow;
 import meteordevelopment.meteorclient.gui.GuiTheme;
 import meteordevelopment.meteorclient.gui.tabs.TabScreen;
 import meteordevelopment.meteorclient.gui.tabs.Tabs;
@@ -27,7 +27,7 @@ import java.util.Set;
 import static meteordevelopment.meteorclient.utils.Utils.getWindowHeight;
 import static meteordevelopment.meteorclient.utils.Utils.getWindowWidth;
 
-//? if >1.21.4
+//? if >=1.21.5
 import net.minecraft.util.Pair;
 
 public class CatpuccinModulesScreen extends TabScreen {

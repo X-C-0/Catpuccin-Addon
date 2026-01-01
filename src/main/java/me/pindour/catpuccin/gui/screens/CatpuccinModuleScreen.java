@@ -26,7 +26,7 @@ import meteordevelopment.meteorclient.utils.render.prompts.OkPrompt;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.nbt.NbtCompound;
 
-//? if >1.21.4
+//? if >=1.21.5
 import java.util.Optional;
 
 import static meteordevelopment.meteorclient.utils.Utils.getWindowWidth;

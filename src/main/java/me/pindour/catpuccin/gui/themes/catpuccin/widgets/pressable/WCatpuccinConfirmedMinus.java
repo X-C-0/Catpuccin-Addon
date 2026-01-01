@@ -1,5 +1,5 @@
 package me.pindour.catpuccin.gui.themes.catpuccin.widgets.pressable;
-
+//? if >=1.21.11 {
 import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinGuiTheme;
 import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinWidget;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
@@ -22,3 +22,4 @@ public class WCatpuccinConfirmedMinus extends WConfirmedMinus implements Catpucc
         renderer.quad(x + pad, y + height / 2 - s / 2, width - pad * 2, s, fg);
     }
 }
+//? }

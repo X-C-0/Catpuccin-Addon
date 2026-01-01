@@ -258,7 +258,9 @@ public class CatpuccinSettingsWidgetFactory extends SettingsWidgetFactory {
         WHorizontalList list = table.add(theme.horizontalList()).expandX().widget();
 
         WButton edit = list.add(theme.button(CatpuccinIcons.EDIT.texture())).widget();
-        edit.action = () -> mc.setScreen(setting.createScreen(theme));
+        edit.action = () -> mc.setScreen(
+                setting/*? if <=1.21.4 >>+ '()' *//*.get()*/.createScreen(theme)
+        );
 
         title(list, setting).padLeft(theme.pad());
     }
@@ -394,7 +396,9 @@ public class CatpuccinSettingsWidgetFactory extends SettingsWidgetFactory {
         WHorizontalList list = table.add(theme.horizontalList()).expandX().widget();
 
         WButton button = list.add(theme.button(GuiRenderer.EDIT)).widget();
-        button.action = () -> mc.setScreen(new BlockDataSettingScreen<>(theme, setting));
+        button.action = () -> mc.setScreen(
+                new BlockDataSettingScreen/*? if >= 1.21.11 >>+ '<>'*/<>(theme, setting)
+        );
 
         title(list, setting).padLeft(theme.pad());
 

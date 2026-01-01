@@ -8,6 +8,8 @@ import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinWidget;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.widgets.input.WSlider;
 import meteordevelopment.meteorclient.utils.render.color.Color;
+
+//? if >=1.21.9
 import net.minecraft.client.gui.Click;
 
 public class WCatpuccinSlider extends WSlider implements CatpuccinWidget {
@@ -36,14 +38,27 @@ public class WCatpuccinSlider extends WSlider implements CatpuccinWidget {
 
     @Override
     public boolean onMouseClicked(Click click, boolean used) {
-        boolean clicked = super.onMouseClicked(click, used);
+        boolean clicked = super.onMouseClicked(
+                //? if >=1.21.9
+                click,
+                //? if <=1.21.8
+                //mouseX, mouseY, button,
+                used
+        );
+
         if (clicked) animation.start(Direction.FORWARDS);
         return clicked;
     }
 
     @Override
     public boolean onMouseReleased(Click click) {
-        boolean released = super.onMouseReleased(click);
+        boolean released = super.onMouseReleased(
+                //? if >=1.21.9
+                click
+                //? if <=1.21.8
+                //mouseX, mouseY, button
+        );
+
         if (released) animation.start(Direction.BACKWARDS);
         return released;
     }

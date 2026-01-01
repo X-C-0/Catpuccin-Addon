@@ -12,6 +12,9 @@ import me.pindour.catpuccin.gui.themes.catpuccin.colors.CatppuccinColor;
 import me.pindour.catpuccin.gui.themes.catpuccin.flavor.CatppuccinFlavors;
 import me.pindour.catpuccin.gui.themes.catpuccin.icons.CatpuccinIcons;
 import me.pindour.catpuccin.gui.themes.catpuccin.widgets.*;
+import me.pindour.catpuccin.gui.themes.catpuccin.widgets.container.WCatpuccinSection;
+import me.pindour.catpuccin.gui.themes.catpuccin.widgets.container.WCatpuccinView;
+import me.pindour.catpuccin.gui.themes.catpuccin.widgets.container.WCatpuccinWindow;
 import me.pindour.catpuccin.gui.themes.catpuccin.widgets.input.WCatpuccinDropdown;
 import me.pindour.catpuccin.gui.themes.catpuccin.widgets.input.WCatpuccinMultiSelect;
 import me.pindour.catpuccin.gui.themes.catpuccin.widgets.input.WCatpuccinSlider;
@@ -47,7 +50,6 @@ import meteordevelopment.meteorclient.utils.misc.Keybind;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 import meteordevelopment.meteorclient.utils.render.color.SettingColor;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.util.MacWindowUtil;
 
 import java.util.EnumMap;
 import java.util.List;
@@ -55,6 +57,11 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import static meteordevelopment.meteorclient.MeteorClient.mc;
+
+//? if <1.21.9
+//import static net.minecraft.client.MinecraftClient.IS_SYSTEM_MAC;
+//? if >=1.21.10
+import net.minecraft.client.util.MacWindowUtil;
 
 public class CatpuccinGuiTheme extends GuiTheme {
     private final Map<CatppuccinColor, Color> colorCache;
@@ -297,20 +304,24 @@ public class CatpuccinGuiTheme extends GuiTheme {
         return w(new WCatpuccinButton(texture));
     }
 
+    //? if >=1.21.11 {
     @Override
     protected WConfirmedButton confirmedButton(String text, String confirmText, GuiTexture texture) {
         return w(new WCatpuccinConfirmedButton(text, confirmText, texture));
     }
+    //? }
 
     @Override
     public WMinus minus() {
         return w(new WCatpuccinMinus());
     }
 
+    //? if >=1.21.11 {
     @Override
     public WConfirmedMinus confirmedMinus() {
         return w(new WCatpuccinConfirmedMinus());
     }
+    //? }
 
     @Override
     public WPlus plus() {
@@ -373,6 +384,12 @@ public class CatpuccinGuiTheme extends GuiTheme {
         return w(new WCatpuccinAccount(screen, account));
     }
 
+    @Override
+    public WWidget module(Module module) {
+        return w(module(module, module.title));
+    }
+
+    //? if >= 1.21.11
     @Override
     public WWidget module(Module module, String title) {
         return w(new WCatpuccinModule(module, title));
@@ -680,7 +697,11 @@ public class CatpuccinGuiTheme extends GuiTheme {
     public double scale(double value) {
         double scaled = value * scale.get();
 
-        if (MacWindowUtil.IS_MAC) {
+        if (//? if >=1.21.9
+            MacWindowUtil.IS_MAC
+            //? if <1.21.9
+            //IS_SYSTEM_MAC
+        ) {
             scaled /= (double) mc.getWindow().getWidth() / mc.getWindow().getFramebufferWidth();
         }
 

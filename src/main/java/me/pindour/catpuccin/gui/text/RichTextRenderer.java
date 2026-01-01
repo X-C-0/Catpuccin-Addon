@@ -1,20 +1,27 @@
 package me.pindour.catpuccin.gui.text;
 
-import meteordevelopment.meteorclient.renderer.Fonts;
-import meteordevelopment.meteorclient.renderer.MeshBuilder;
-import meteordevelopment.meteorclient.renderer.MeshRenderer;
-import meteordevelopment.meteorclient.renderer.MeteorRenderPipelines;
+import meteordevelopment.meteorclient.renderer.*;
 import meteordevelopment.meteorclient.renderer.text.*;
 import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.render.color.Color;
-import net.minecraft.client.MinecraftClient;
 import org.lwjgl.BufferUtils;
 
 import java.nio.ByteBuffer;
 
+//? if <=1.21.4 {
+/*import net.minecraft.client.util.math.MatrixStack;
+*///?} else {
+import net.minecraft.client.MinecraftClient;
+//?}
+
 public class RichTextRenderer implements TextRenderer {
     public static final Color SHADOW_COLOR = new Color(60, 60, 60, 180);
+
+    //? if <=1.21.4 {
+    /*private final Mesh mesh = new ShaderMesh(Shaders.TEXT, DrawMode.Triangles, Mesh.Attrib.Vec2, Mesh.Attrib.Vec2, Mesh.Attrib.Color);
+    *///?} else {
     private final MeshBuilder mesh = new MeshBuilder(MeteorRenderPipelines.UI_TEXT);
+    //?}
 
     public final FontFace fontFace;
 
@@ -178,18 +185,24 @@ public class RichTextRenderer implements TextRenderer {
     }
 
     @Override
-    public void end() {
+    public void end(/*? <=1.21.4 >> ')'*//*MatrixStack matrices*/) {
         if (!building) throw new RuntimeException("end() called without calling begin()");
 
         if (!scaleOnly) {
             mesh.end();
 
+            //? if <=1.21.4 {
+            /*GL.bindTexture(currentFont.texture.getGlId());
+            mesh.render(matrices);
+
+            *///?} else {
             MeshRenderer.begin()
                     .attachments(MinecraftClient.getInstance().getFramebuffer())
                     .pipeline(MeteorRenderPipelines.UI_TEXT)
                     .mesh(mesh)
                     .sampler("u_Texture", currentFont.texture.getGlTextureView(), currentFont.texture.getSampler())
                     .end();
+             //?}
         }
 
         building = false;

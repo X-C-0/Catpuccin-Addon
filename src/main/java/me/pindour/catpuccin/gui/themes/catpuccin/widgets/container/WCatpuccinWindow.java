@@ -1,4 +1,4 @@
-package me.pindour.catpuccin.gui.themes.catpuccin.widgets;
+package me.pindour.catpuccin.gui.themes.catpuccin.widgets.container;
 
 import me.pindour.catpuccin.gui.animation.Animation;
 import me.pindour.catpuccin.gui.animation.Direction;
@@ -13,6 +13,7 @@ import meteordevelopment.meteorclient.gui.widgets.WWidget;
 import meteordevelopment.meteorclient.gui.widgets.containers.WHorizontalList;
 import meteordevelopment.meteorclient.gui.widgets.containers.WWindow;
 import meteordevelopment.meteorclient.utils.render.color.Color;
+//? if >=1.21.9
 import net.minecraft.client.gui.Click;
 
 public class WCatpuccinWindow extends WWindow implements CatpuccinWidget {
@@ -205,11 +206,22 @@ public class WCatpuccinWindow extends WWindow implements CatpuccinWidget {
 
         @Override
         public boolean onMouseClicked(Click click, boolean used) {
-            boolean clicked = super.onMouseClicked(click, used);
+            boolean clicked = super.onMouseClicked(
+                    //? if >=1.21.9
+                    click,
+                    //? if <=1.21.8
+                    //mouseX, mouseY, button,
+                    used
+            );
 
             if (clicked && shouldSnap) {
+                //? if >=1.21.9 {
                 mouseOffsetX = click.x() - x;
                 mouseOffsetY = click.y() - y;
+                //? } else {
+                /*mouseOffsetX = mouseX - x;
+                mouseOffsetY = mouseY - y;
+                *///? }
             }
 
             return clicked;
@@ -218,7 +230,12 @@ public class WCatpuccinWindow extends WWindow implements CatpuccinWidget {
         @Override
         public boolean mouseReleased(Click click) {
             if (shouldSnap) modulesScreen.showGrid(false);
-            return super.mouseReleased(click);
+            return super.mouseReleased(
+                    //? if >=1.21.9
+                    click
+                    //? if <=1.21.8
+                    //mouseX, mouseY, button
+            );
         }
 
         @Override
