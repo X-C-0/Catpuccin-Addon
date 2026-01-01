@@ -8,50 +8,72 @@ import meteordevelopment.meteorclient.gui.widgets.WWidget;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 
 public interface CatpuccinWidget extends BaseWidget {
+
+    // Getters
+
     default CatpuccinGuiTheme theme() {
         return (CatpuccinGuiTheme) getTheme();
     }
 
-    default CatpuccinRenderer catpuccinRenderer() {
+    default CatpuccinRenderer renderer() {
         return CatpuccinRenderer.get();
     }
 
-    default int cornerRadius() {
+    // Styling
+
+    default int radius() {
         return theme().cornerRadius.get();
     }
 
-    default int smallCornerRadius() {
+    default int smallRadius() {
         return theme().smallCornerRadius.get();
     }
 
-    default void drawOutline(WWidget widget, Color outlineColor) {
-        catpuccinRenderer().roundedRect(
+    default CornerStyle cornerStyle() {
+        return CornerStyle.ALL;
+    }
+
+    default int outlineWidth() {
+        return 2;
+    }
+
+    // Outline
+
+    default void drawOutline(WWidget widget, Color color) {
+        drawOutline(widget, color, smallRadius(), cornerStyle());
+    }
+
+    default void drawOutline(WWidget widget, Color outlineColor, int radius, CornerStyle style) {
+        renderer().roundedRect(
                 widget,
-                smallCornerRadius(),
+                radius,
                 outlineColor,
-                CornerStyle.ALL
+                style
         );
     }
 
-    default void drawBackground(WWidget widget, int outlineOffset, Color backgroundColor) {
-        catpuccinRenderer().roundedRect(
-                widget.x + outlineOffset,
-                widget.y + outlineOffset,
-                widget.width - outlineOffset * 2,
-                widget.height - outlineOffset * 2,
-                smallCornerRadius() - outlineOffset,
-                backgroundColor,
-                CornerStyle.ALL
+    // Background
+
+    default void drawBackground(WWidget widget, int inset, Color color) {
+        renderer().roundedRect(
+                widget.x + inset,
+                widget.y + inset,
+                widget.width - inset * 2,
+                widget.height - inset * 2,
+                smallRadius() - inset,
+                color,
+                cornerStyle()
         );
     }
+
+    // Rendering
 
     default void renderBackground(WWidget widget, Color outlineColor, Color backgroundColor, boolean forceOutline) {
-        CatpuccinGuiTheme theme = theme();
-        boolean drawOutline = forceOutline || (theme.widgetOutline.get() && outlineColor.a > 0);
-        int outlineOffset = drawOutline ? 2 : 0;
+        boolean drawOutline = forceOutline || (theme().widgetOutline.get() && outlineColor.a > 0);
+        int inset = drawOutline ? outlineWidth() : 0;
 
         if (drawOutline) drawOutline(widget, outlineColor);
-        drawBackground(widget, outlineOffset, backgroundColor);
+        drawBackground(widget, inset, backgroundColor);
     }
 
     default void renderBackground(WWidget widget, Color outlineColor, Color backgroundColor) {

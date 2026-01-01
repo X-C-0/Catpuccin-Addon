@@ -1,20 +1,14 @@
 package me.pindour.catpuccin.gui.themes.catpuccin.widgets.settings;
 
-import me.pindour.catpuccin.gui.text.RichText;
-import me.pindour.catpuccin.gui.text.TextSize;
 import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinWidget;
 import me.pindour.catpuccin.gui.themes.catpuccin.widgets.input.WCatpuccinTextBox;
-import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.widgets.containers.WHorizontalList;
-import meteordevelopment.meteorclient.gui.widgets.containers.WVerticalList;
 import meteordevelopment.meteorclient.gui.widgets.input.WSlider;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-public class WCatpuccinDoubleEdit extends WVerticalList implements CatpuccinWidget {
-    private final String title;
-    private final String description;
+public class WCatpuccinDoubleEdit extends WHorizontalList implements CatpuccinWidget {
     private double value;
 
     private final double min, max;
@@ -29,9 +23,7 @@ public class WCatpuccinDoubleEdit extends WVerticalList implements CatpuccinWidg
     private WCatpuccinTextBox textBox;
     private WSlider slider;
 
-    public WCatpuccinDoubleEdit(String title, String description, double value, double min, double max, double sliderMin, double sliderMax, int decimalPlaces, boolean noSlider) {
-        this.title = title;
-        this.description = description;
+    public WCatpuccinDoubleEdit(double value, double min, double max, double sliderMin, double sliderMax, int decimalPlaces, boolean noSlider) {
         this.value = value;
         this.min = min;
         this.max = max;
@@ -44,54 +36,42 @@ public class WCatpuccinDoubleEdit extends WVerticalList implements CatpuccinWidg
 
     @Override
     public void init() {
-        WHorizontalList list = add(theme.horizontalList()).expandX().padHorizontal(8).padTop(6).widget();
-
-        // Title
-        list.add(theme.label(title, true)).centerY().expandCellX().widget().tooltip = description;
-
-        // Value
-        textBox = (WCatpuccinTextBox) list.add(theme.textBox(valueString(), this::filter)).right().widget();
-        textBox.setRenderBackground(false);
-        textBox.setDynamicWidth(true);
-        textBox.color(theme().accentColor());
-
         // Slider or buttons
         if (noSlider) {
-            list.add(theme.button("+")).minWidth(30).widget().action = () -> setButton(get() + 1);
-            list.add(theme.button("-")).minWidth(30).widget().action = () -> setButton(get() - 1);
+            add(theme.button("+")).minWidth(30).widget().action = () -> setButton(get() + 1);
+            add(theme.button("-")).minWidth(30).widget().action = () -> setButton(get() - 1);
         }
         else {
-            WHorizontalList sliderList = add(theme.horizontalList()).expandX().padHorizontal(8).padBottom(6).widget();
-
-            // Min label
-            RichText minText = RichText
-                .of(String.valueOf(sliderMin))
-                .scale(TextSize.SMALL.get());
-
-            sliderList.add(theme().label(minText).color(theme().textSecondaryColor())).padLeft(pad());
-
-            // Slider
-            slider = sliderList.add(theme.slider(value, sliderMin, sliderMax)).padHorizontal(6).minWidth(250).expandX().widget();
-
-            // Max label
-            RichText maxText = RichText
-                .of(String.valueOf(sliderMax))
-                .scale(TextSize.SMALL.get());
-
-            sliderList.add(theme().label(maxText).color(theme().textSecondaryColor())).padRight(pad());
+            slider = add(theme.slider(value, sliderMin, sliderMax)).padHorizontal(6).minWidth(250).expandX().widget();
         }
+
+// Value
+        double reservedWith = Math.max(
+                theme.textWidth(String.valueOf(sliderMin)),
+                theme.textWidth(String.valueOf(sliderMax))
+        );
+
+        textBox = (WCatpuccinTextBox) add(theme
+                .textBox(valueString(), this::filter))
+                .minWidth(reservedWith + pad())
+                .right()
+                .widget();
+
+        textBox.setRenderBackground(false);
+//        textBox.setDynamicWidth(true);
+        textBox.color(theme().accentColor());
 
         textBox.actionOnUnfocused = () -> {
             double lastValue = value;
 
-            if (textBox.get().isEmpty()) value = 0;
-            else if (textBox.get().equals("-")) value = -0;
-            else if (textBox.get().equals(".")) value = 0;
-            else if (textBox.get().equals("-.")) value = 0;
-            else {
-                try {
-                    value = Double.parseDouble(textBox.get());
-                } catch (NumberFormatException ignored) {}
+            switch (textBox.get()) {
+                case "", ".", "-." -> value = 0;
+                case "-" -> value = -0;
+                default -> {
+                    try {
+                        value = Double.parseDouble(textBox.get());
+                    } catch (NumberFormatException ignored) { }
+                }
             }
 
             double preValidationValue = value;
@@ -122,11 +102,6 @@ public class WCatpuccinDoubleEdit extends WVerticalList implements CatpuccinWidg
                 if (actionOnRelease != null) actionOnRelease.run();
             };
         }
-    }
-
-    @Override
-    protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
-        renderBackground(this, false, false);
     }
 
     private boolean filter(String text, char c) {
@@ -186,7 +161,7 @@ public class WCatpuccinDoubleEdit extends WVerticalList implements CatpuccinWidg
             .stripTrailingZeros();
 
         // Ensures the number has at least one decimal digit (e.g. 3 → 3.0) so it doesn't look stupid
-        if (bd.scale() < 1) bd = bd.setScale(1);
+        if (bd.scale() < 1) bd = bd.setScale(1, RoundingMode.UNNECESSARY);
 
         return bd.toPlainString();
     }

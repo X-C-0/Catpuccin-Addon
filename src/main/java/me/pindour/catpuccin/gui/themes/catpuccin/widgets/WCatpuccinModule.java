@@ -161,6 +161,6 @@ public class WCatpuccinModule extends WPressable implements CatpuccinWidget {
 
         // Text
         Color textColor = ColorUtils.interpolateColor(theme.textColor(), theme.baseColor(), highlightProgress);
-        catpuccinRenderer().text(RichText.of(module.title), x, y + pad, textColor);
+        renderer().text(RichText.of(module.title), x, y + pad, textColor);
     }
 }

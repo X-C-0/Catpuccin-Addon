@@ -6,7 +6,7 @@ import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.widgets.WLabel;
 
 public class WCatpuccinLabel extends WLabel implements CatpuccinWidget {
-    private RichText richText;
+    protected RichText richText;
 
     public WCatpuccinLabel(RichText text) {
         super(text.getPlainText(), false);
@@ -23,7 +23,7 @@ public class WCatpuccinLabel extends WLabel implements CatpuccinWidget {
     protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
         if (text.isEmpty()) return;
 
-        catpuccinRenderer().text(
+        renderer().text(
                 richText,
                 x,
                 y,

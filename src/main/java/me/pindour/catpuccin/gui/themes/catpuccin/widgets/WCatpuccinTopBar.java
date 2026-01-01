@@ -26,7 +26,7 @@ public class WCatpuccinTopBar extends WTopBar implements CatpuccinWidget {
 
     @Override
     protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
-        catpuccinRenderer().roundedRect(this, cornerRadius(), theme().baseColor(), CornerStyle.ALL);
+        renderer().roundedRect(this, radius(), theme().baseColor(), CornerStyle.ALL);
     }
 
     @Override
@@ -74,17 +74,17 @@ public class WCatpuccinTopBar extends WTopBar implements CatpuccinWidget {
             boolean isSelected = mc.currentScreen instanceof TabScreen && ((TabScreen) mc.currentScreen).tab == tab;
 
             if (isSelected)
-                catpuccinRenderer().roundedRect(
+                renderer().roundedRect(
                         x + pad, y + pad,
                         width - pad * 2, height - pad * 2,
-                        smallCornerRadius(), theme.accentColor(), CornerStyle.ALL
+                        smallRadius(), theme.accentColor(), CornerStyle.ALL
                 );
 
             RichText text = RichText.of(tab.name);
             double offsetX = width / 2 - theme.textWidth(text) / 2;
             double offsetY = height / 2 - theme.textHeight() / 2;
 
-            catpuccinRenderer().text(
+            renderer().text(
                     text,
                     x + offsetX,
                     y + offsetY,

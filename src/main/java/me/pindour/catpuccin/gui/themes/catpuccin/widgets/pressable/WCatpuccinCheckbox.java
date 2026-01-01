@@ -58,12 +58,12 @@ public class WCatpuccinCheckbox extends WCheckbox implements CatpuccinWidget {
         double centerOffset = (width - size) / 2;
 
         // Outline
-        catpuccinRenderer().roundedRect(
+        renderer().roundedRect(
                 x + centerOffset,
                 y + centerOffset,
                 size,
                 size,
-                smallCornerRadius(),
+                smallRadius(),
                 theme.accentColor().copy().a(mouseOver ? 140 : 80),
                 CornerStyle.ALL
         );
@@ -72,12 +72,12 @@ public class WCatpuccinCheckbox extends WCheckbox implements CatpuccinWidget {
         double innerSize = size - outlineSize * 2;
         double innerOffset = centerOffset + outlineSize;
 
-        catpuccinRenderer().roundedRect(
+        renderer().roundedRect(
                 x + innerOffset,
                 y + innerOffset,
                 innerSize,
                 innerSize,
-                smallCornerRadius() - outlineSize / 2,
+                smallRadius() - outlineSize / 2,
                 theme.accentColor(),
                 CornerStyle.ALL
         );

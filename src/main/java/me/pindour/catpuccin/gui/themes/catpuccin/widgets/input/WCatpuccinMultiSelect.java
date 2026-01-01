@@ -18,10 +18,10 @@ public class WCatpuccinMultiSelect<T> extends WMultiSelect<T> implements Catpucc
     @Override
     protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
         if (expanded || animation.isRunning())
-            catpuccinRenderer().roundedRect(
+            renderer().roundedRect(
                     x, y + header.height,
                     width, height - header.height,
-                    cornerRadius(),
+                    radius(),
                     ColorUtils.withAlpha(theme().baseColor(), theme().backgroundOpacity()),
                     CornerStyle.BOTTOM
             );
@@ -52,9 +52,9 @@ public class WCatpuccinMultiSelect<T> extends WMultiSelect<T> implements Catpucc
             );
 
             // Background
-            catpuccinRenderer().roundedRect(
+            renderer().roundedRect(
                     this,
-                    cornerRadius(),
+                    radius(),
                     bgColor,
                     expanded || animation.isRunning() ? CornerStyle.TOP : CornerStyle.ALL
             );
@@ -71,9 +71,9 @@ public class WCatpuccinMultiSelect<T> extends WMultiSelect<T> implements Catpucc
         protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
             if (!mouseOver || checkbox.mouseOver) return;
 
-            catpuccinRenderer().roundedRect(
+            renderer().roundedRect(
                     this,
-                    smallCornerRadius(),
+                    smallRadius(),
                     theme().surface0Color(),
                     CornerStyle.ALL
             );
