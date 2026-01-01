@@ -40,6 +40,9 @@ public abstract class FontsMixin {
     private static void onLoad(FontFace fontFace, CallbackInfo ci) {
         if (!(GuiThemes.get() instanceof CatpuccinGuiTheme theme)) return;
 
+        if (theme.textRenderer() instanceof RichTextRenderer currentRenderer)
+             if (currentRenderer.fontFace.equals(fontFace)) return;
+
         try {
             theme.setTextRenderer(new RichTextRenderer(fontFace));
         } catch (Exception e) {

@@ -623,11 +623,14 @@ public class CatpuccinGuiTheme extends GuiTheme {
     }
 
     public RichTextRenderer richTextRenderer() {
-        if (textRenderer == null) textRenderer = new RichTextRenderer(Config.get().font.get());
+        if (textRenderer == null)
+            setTextRenderer(new RichTextRenderer(Config.get().font.get()));
+
         return textRenderer;
     }
 
     public void setTextRenderer(RichTextRenderer renderer) {
+        if (textRenderer != null) textRenderer.destroy();
         this.textRenderer = renderer;
     }
 

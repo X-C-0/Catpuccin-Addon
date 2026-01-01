@@ -16,6 +16,8 @@ public class RichTextRenderer implements TextRenderer {
     public static final Color SHADOW_COLOR = new Color(60, 60, 60, 180);
     private final MeshBuilder mesh = new MeshBuilder(MeteorRenderPipelines.UI_TEXT);
 
+    public final FontFace fontFace;
+
     private final Font[] regularFonts;
     private final Font[] boldFonts;
     private final Font[] italicFonts;
@@ -29,34 +31,11 @@ public class RichTextRenderer implements TextRenderer {
     private double fontScale = 1;
     private double scale = 1;
 
-    public RichTextRenderer(FontFace regularFace, FontFace boldFace, FontFace italicFace) {
-        if (boldFace == null || italicFace == null) {
-            FontFamily fontFamily = findFontFamily(regularFace);
-
-            regularFace = fontFamily.get(FontInfo.Type.Regular);
-            boldFace = fontFamily.get(FontInfo.Type.Bold);
-            italicFace = fontFamily.get(FontInfo.Type.Italic);
-        }
-
-        this.regularFonts = loadFonts(regularFace);
-        this.boldFonts = boldFace != null ? loadFonts(boldFace) : regularFonts;
-        this.italicFonts = italicFace != null ? loadFonts(italicFace) : regularFonts;
-    }
-
     public RichTextRenderer(FontFace fontFace) {
-        this(fontFace, null, null);
-    }
-
-    private Font[] loadFonts(FontFace fontFace) {
-        byte[] bytes = Utils.readBytes(fontFace.toStream());
-        ByteBuffer buffer = BufferUtils.createByteBuffer(bytes.length).put(bytes).flip();
-
-        Font[] fonts = new Font[5];
-
-        for (int i = 0; i < fonts.length; i++)
-            fonts[i] = new Font(buffer, (int) Math.round(27 * ((i * 0.5) + 1)));
-
-        return fonts;
+        this.fontFace = fontFace;
+        this.regularFonts = loadFonts(fontFace);
+        this.boldFonts = resolveVariant(fontFace, FontInfo.Type.Bold);
+        this.italicFonts = resolveVariant(fontFace, FontInfo.Type.Italic);
     }
 
     @Override
@@ -70,32 +49,36 @@ public class RichTextRenderer implements TextRenderer {
 
         if (!scaleOnly) mesh.begin();
 
-        Font[] fonts = getCurrentFontArray();
-        int scaleIndex = calculateScaleIndex(scale);
+        int scaleIndex;
+        if (scale >= 3) scaleIndex = 4;
+        else if (scale >= 2.5) scaleIndex = 3;
+        else if (scale >= 2) scaleIndex = 2;
+        else if (scale >= 1.5) scaleIndex = 1;
+        else scaleIndex = 0;
 
-        currentFont = fonts[scaleIndex];
         currentFontIndex = scaleIndex;
+        Font[] fonts = getFonts(currentStyle);
+
+        if (currentFontIndex >= fonts.length) currentFontIndex = fonts.length - 1;
+        currentFont = fonts[currentFontIndex];
 
         building = true;
+        this.scaleOnly = scaleOnly;
 
         fontScale = currentFont.getHeight() / 27.0;
-        this.scaleOnly = scaleOnly;
         this.scale = 1 + (scale - fontScale) / fontScale;
     }
 
-    private int calculateScaleIndex(double scale) {
-        double scaleTruncated = Math.floor(scale * 10) / 10;
-
-        if (scaleTruncated >= 3) return 4;
-        if (scaleTruncated >= 2.5) return 3;
-        if (scaleTruncated >= 2) return 2;
-        if (scaleTruncated >= 1.5) return 1;
-        return 0;
-    }
+    // Width Calculations
 
     public double getWidth(RichTextSegment segment, int length) {
-        Font font = getFontForStyle(segment.getStyle());
-        return (font.getWidth(segment.getText(), length) + (segment.hasShadow() ? 1 : 0)) * segment.getScale() / 1.5;
+        Font[] fonts = getFonts(segment.getStyle());
+        Font font = building ? (currentFontIndex < fonts.length ? fonts[currentFontIndex] : fonts[0]) : fonts[0];
+
+        double width = font.getWidth(segment.getText(), length);
+        if (segment.hasShadow()) width += 1;
+
+        return width * (segment.getScale() / 1.5);
     }
 
     public double getWidth(RichText text, int length) {
@@ -105,22 +88,15 @@ public class RichTextRenderer implements TextRenderer {
         int remainingLength = length;
 
         for (RichTextSegment segment : text.getSegments()) {
-            if (remainingLength == 0) break;
-
             String segText = segment.getText();
             if (segText.isEmpty()) continue;
 
             int segLength = Math.min(segText.length(), remainingLength);
 
-            Font font = getFontForStyle(segment.getStyle());
-            double scale = segment.getScale();
+            totalWidth += getWidth(segment, segLength);
 
-            double segmentWidth = font.getWidth(segText, segLength);
-
-            if (segment.hasShadow()) segmentWidth += 1;
-
-            totalWidth += segmentWidth * (scale / 1.5);
             remainingLength -= segLength;
+            if (remainingLength == 0) break;
         }
 
         return totalWidth;
@@ -136,28 +112,37 @@ public class RichTextRenderer implements TextRenderer {
         return getWidth(RichText.of(text).shadowIf(shadow), length);
     }
 
+    // Height Calculations
+
     public double getHeight(RichTextSegment segment) {
-        Font font = getFontForStyle(segment.getStyle());
+        Font[] fonts = getFonts(segment.getStyle());
+        Font font = building ? (currentFontIndex < fonts.length ? fonts[currentFontIndex] : fonts[0]) : fonts[0];
+
         return (font.getHeight() + 1 + (segment.hasShadow() ? 1 : 0)) * segment.getScale() / 1.5;
     }
 
     public double getHeight(RichText text) {
-        double largestSegment = getHeight(text.getSegments().getFirst());
+        double largestSegment = 0;
+        if (text.getSegments().isEmpty()) return 0;
 
-        for (RichTextSegment segment : text.getSegments())
-            largestSegment = Math.max(largestSegment, getHeight(segment));
+        for (RichTextSegment segment : text.getSegments()) {
+            double h = getHeight(segment);
+            if (h > largestSegment) largestSegment = h;
+        }
 
         return largestSegment;
     }
 
     @Override
     public double getHeight(boolean shadow) {
-        Font font = building ? currentFont : getCurrentFontArray()[0];
+        Font font = building ? currentFont : regularFonts[0];
         return (font.getHeight() + 1 + (shadow ? 1 : 0)) * scale / 1.5;
     }
 
+    // Rendering
+
     public void renderTextWithStyle(String text, double x, double y, Color color, boolean shadow, FontStyle fontStyle) {
-        if (currentStyle != fontStyle) setFontStyle(fontStyle);
+        if (currentStyle != fontStyle) setStyleInternal(fontStyle);
         render(text, x, y, color, shadow);
     }
 
@@ -166,28 +151,25 @@ public class RichTextRenderer implements TextRenderer {
         boolean wasBuilding = building;
         if (!wasBuilding) begin();
 
-        double width = renderText(text, x, y, color, shadow);
-
-        if (!wasBuilding) end();
-        return width;
-    }
-
-    private double renderText(String text, double x, double y, Color color, boolean shadow) {
         double renderScale = scale / 1.5;
+        double width;
 
         if (shadow) {
             int originalShadowAlpha = SHADOW_COLOR.a;
             SHADOW_COLOR.a = (int) (color.a / 255.0 * originalShadowAlpha);
 
             double shadowOffset = fontScale * renderScale;
-            double width = currentFont.render(mesh, text, x + shadowOffset, y + shadowOffset, SHADOW_COLOR, renderScale);
+
+            width = currentFont.render(mesh, text, x + shadowOffset, y + shadowOffset, SHADOW_COLOR, renderScale);
             currentFont.render(mesh, text, x, y, color, renderScale);
 
             SHADOW_COLOR.a = originalShadowAlpha;
-            return width;
         } else {
-            return currentFont.render(mesh, text, x, y, color, renderScale);
+            width = currentFont.render(mesh, text, x, y, color, renderScale);
         }
+
+        if (!wasBuilding) end();
+        return width;
     }
 
     @Override
@@ -214,39 +196,65 @@ public class RichTextRenderer implements TextRenderer {
         scale = 1;
     }
 
+    // Helpers
+
+    private Font[] loadFonts(FontFace fontFace) {
+        byte[] bytes = Utils.readBytes(fontFace.toStream());
+        ByteBuffer buffer = BufferUtils.createByteBuffer(bytes.length).put(bytes).flip();
+
+        Font[] fonts = new Font[5];
+
+        for (int i = 0; i < fonts.length; i++)
+            fonts[i] = new Font(buffer, (int) Math.round(27 * ((i * 0.5) + 1)));
+
+        return fonts;
+    }
+
+    private Font[] resolveVariant(FontFace regularFace, FontInfo.Type type) {
+        FontFamily family = Fonts.getFamily(regularFace.info.family());
+        FontFace fontVariant = family.get(type);
+
+        if (fontVariant != null && fontVariant != regularFace)
+            return loadFonts(fontVariant);
+
+        return regularFonts; // Fallback
+    }
+
     public void setFontStyle(FontStyle style) {
         if (this.currentStyle == style) return;
+        setStyleInternal(style);
+    }
+
+    private void setStyleInternal(FontStyle style) {
         this.currentStyle = style;
+        Font[] fonts = getFonts(style);
 
-        Font[] fonts = getCurrentFontArray();
-
-        if (currentFontIndex >= 0 && currentFontIndex < fonts.length)
-            currentFont = fonts[currentFontIndex];
+        if (building) {
+            if (currentFontIndex < fonts.length) currentFont = fonts[currentFontIndex];
+            else currentFont = fonts[0];
+        }
     }
 
-    private Font[] getCurrentFontArray() {
-        return switch (currentStyle) {
+    private Font[] getFonts(FontStyle style) {
+        return switch (style) {
             case BOLD -> boldFonts;
             case ITALIC -> italicFonts;
             default -> regularFonts;
         };
     }
 
-    private FontFamily findFontFamily(FontFace fontFace) {
-        for (FontFamily fontFamily : Fonts.FONT_FAMILIES)
-            if (fontFamily.getName().equalsIgnoreCase(fontFace.info.family()))
-                return fontFamily;
+    public void destroy() {
+        for (Font font : regularFonts)
+            font.texture.close();
 
-        return Fonts.FONT_FAMILIES.getFirst();
-    }
+        if (boldFonts != regularFonts) {
+            for (Font font : boldFonts)
+                font.texture.close();
+        }
 
-    private Font getFontForStyle(FontStyle style) {
-        Font[] fonts = switch (style) {
-            case BOLD -> boldFonts;
-            case ITALIC -> italicFonts;
-            default -> regularFonts;
-        };
-
-        return currentFontIndex < fonts.length ? fonts[currentFontIndex] : fonts[0];
+        if (italicFonts != regularFonts) {
+            for (Font font : italicFonts)
+                font.texture.close();
+        }
     }
 }
