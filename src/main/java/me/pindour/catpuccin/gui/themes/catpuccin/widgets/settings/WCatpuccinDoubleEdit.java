@@ -57,7 +57,7 @@ public class WCatpuccinDoubleEdit extends WHorizontalList implements CatpuccinWi
                 .right()
                 .widget();
 
-        textBox.setRenderBackground(false);
+        textBox.shouldRenderBackground(false);
 //        textBox.setDynamicWidth(true);
         textBox.color(theme().accentColor());
 

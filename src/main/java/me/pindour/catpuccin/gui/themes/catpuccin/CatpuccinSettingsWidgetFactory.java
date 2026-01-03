@@ -231,10 +231,10 @@ public class CatpuccinSettingsWidgetFactory extends SettingsWidgetFactory {
     private void stringW(WTable table, StringSetting setting) {
         WHorizontalList list = table.add(theme.horizontalList()).expandX().widget();
 
-        title(list, setting).padRight(theme.pad());
+        title(list, setting).padLeft(theme.pad());
 
         CharFilter filter = setting.filter == null ? (text, c) -> true : setting.filter;
-        Cell<WTextBox> cell = list.add(theme.textBox(setting.get(), filter, setting.renderer));
+        Cell<WTextBox> cell = list.add(theme.textBox(setting.get(), "", setting.title, filter, setting.renderer));
         if (setting.wide) cell.minWidth(Utils.getWindowWidth() - Utils.getWindowWidth() / 4.0);
 
         WTextBox textBox = cell.expandX().widget();

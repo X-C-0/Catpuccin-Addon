@@ -51,7 +51,7 @@ public class WCatpuccinIntEdit extends WHorizontalList implements CatpuccinWidge
 
         // Value
         textBox = (WCatpuccinTextBox) header.add(theme.textBox(Integer.toString(value), this::filter)).expandX().widget();
-        textBox.setRenderBackground(false);
+        textBox.shouldRenderBackground(false);
         textBox.color(theme().accentColor());
 
         // Slider

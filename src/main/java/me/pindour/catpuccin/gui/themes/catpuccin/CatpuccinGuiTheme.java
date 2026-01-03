@@ -350,9 +350,13 @@ public class CatpuccinGuiTheme extends GuiTheme {
         return w(new WCatpuccinSlider(value, min, max));
     }
 
+    public WTextBox textBox(String text, String placeholder, String title, CharFilter filter, Class<? extends WTextBox.Renderer> renderer) {
+        return w(new WCatpuccinTextBox(text, placeholder, title, filter, renderer));
+    }
+
     @Override
     public WTextBox textBox(String text, String placeholder, CharFilter filter, Class<? extends WTextBox.Renderer> renderer) {
-        return w(new WCatpuccinTextBox(text, placeholder, filter, renderer));
+        return textBox(text, placeholder, "", filter, renderer);
     }
 
     public <T> WDropdown<T> dropdown(String title, T[] values, T value) {

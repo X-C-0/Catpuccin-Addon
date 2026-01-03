@@ -13,82 +13,22 @@ import meteordevelopment.meteorclient.gui.widgets.containers.WContainer;
 import meteordevelopment.meteorclient.gui.widgets.containers.WVerticalList;
 import meteordevelopment.meteorclient.gui.widgets.input.WTextBox;
 import meteordevelopment.meteorclient.utils.render.color.Color;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.input.CharInput;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.client.util.MacWindowUtil;
 import net.minecraft.util.math.MathHelper;
 
-import static org.lwjgl.glfw.GLFW.*;
-
 public class WCatpuccinTextBox extends WTextBox implements CatpuccinWidget {
+    private final String title;
+    private Color customColor;
+
     private boolean cursorVisible;
     private double cursorTimer;
 
     private double animProgress;
     private boolean renderBackground;
-    private boolean dynamicWidth;
 
-    private Color customColor;
-
-    public WCatpuccinTextBox(String text, String placeholder, CharFilter filter, Class<? extends Renderer> renderer) {
+    public WCatpuccinTextBox(String text, String placeholder, String title, CharFilter filter, Class<? extends Renderer> renderer) {
         super(text, placeholder, filter, renderer);
-        renderBackground = true;
-        dynamicWidth = false;
-    }
-
-    @Override
-    protected void onCalculateSize() {
-        super.onCalculateSize();
-        if (dynamicWidth) {
-            double pad = pad();
-            double textWidth = textWidths.isEmpty() ? 0 : textWidths.getDouble(textWidths.size() - 1);
-
-            if (width == textWidth) return;
-
-            width = pad + textWidth + pad;
-            parent.invalidate();
-        }
-    }
-
-    @Override
-    public boolean onMouseClicked(Click click, boolean used) {
-        boolean clicked =  super.onMouseClicked(click, used);
-
-        // Update widget width when text is cleared
-        if (clicked && dynamicWidth && click.button() == GLFW_MOUSE_BUTTON_RIGHT && !text.isEmpty()) onCalculateSize();
-
-        return clicked;
-    }
-
-    @Override
-    public boolean onKeyRepeated(KeyInput input) {
-        boolean repeated = super.onKeyRepeated(input);
-
-        if (repeated && dynamicWidth) {
-            boolean control = MacWindowUtil.IS_MAC ? input.modifiers() == GLFW_MOD_SUPER : input.modifiers() == GLFW_MOD_CONTROL;
-
-            // Update widget width when text is updated
-            if ((control && input.key() == GLFW_KEY_V)
-                    || input.key() == GLFW_KEY_BACKSPACE
-                    || input.key() == GLFW_KEY_DELETE)
-                onCalculateSize();
-        }
-
-        return repeated;
-    }
-
-    @Override
-    public boolean onCharTyped(CharInput input) {
-        boolean typed = super.onCharTyped(input);
-        if (dynamicWidth) onCalculateSize();
-        return typed;
-    }
-
-    @Override
-    public void set(String text) {
-        super.set(text);
-        if (dynamicWidth) onCalculateSize();
+        this.title = title;
+        this.renderBackground = true;
     }
 
     @Override
@@ -118,11 +58,6 @@ public class WCatpuccinTextBox extends WTextBox implements CatpuccinWidget {
     @Override
     protected <T extends WWidget & ICompletionItem> T createCompletionsValueWidth(String completion, boolean selected) {
         return (T) new CompletionItem(completion, false, selected);
-    }
-
-    @Override
-    protected double getOverflowWidthForRender() {
-        return dynamicWidth ? 0 : super.getOverflowWidthForRender();
     }
 
     private static class CompletionItem extends WCatpuccinLabel implements ICompletionItem {
@@ -167,6 +102,9 @@ public class WCatpuccinTextBox extends WTextBox implements CatpuccinWidget {
     @Override
     protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
         CatpuccinGuiTheme theme = theme();
+        int HORIZONTAL_LIST_SPACING = 3;
+        double pad = pad();
+        double titleWidth = (hasTitle() ? pad + theme.textWidth(title) + HORIZONTAL_LIST_SPACING : 0);
 
         if (cursorTimer >= 1) {
             cursorVisible = !cursorVisible;
@@ -177,26 +115,21 @@ public class WCatpuccinTextBox extends WTextBox implements CatpuccinWidget {
         }
 
         if (renderBackground) {
-            float bottomSize = 2.5f;
-            Color highlightColor = focused
-                    ? theme.accentColor()
-                    : mouseOver ? theme.surface2Color() : theme.surface1Color();
+            // Title
+            if (hasTitle()) {
+                renderer().roundedRect(
+                        x - titleWidth, y,
+                        titleWidth, height,
+                        smallRadius(),
+                        theme.surface0Color(),
+                        CornerStyle.LEFT
+                );
+            }
 
-            renderer.scissorStart(x, y + height - bottomSize, width, bottomSize);
-
-            // Bottom highlight
-            renderer().roundedRect(
-                    x, y,
-                    width, height,
-                    smallRadius(),
-                    highlightColor,
-                    CornerStyle.BOTTOM
-            );
-
-            renderer.scissorEnd();
+            // Outline
+            renderBackground(this, theme.surface0Color(), theme.baseColor(), true);
         }
 
-        double pad = pad();
         double overflowWidth = getOverflowWidthForRender();
 
         renderer.scissorStart(x + pad, y + pad, width - pad * 2, height - pad * 2);
@@ -234,16 +167,21 @@ public class WCatpuccinTextBox extends WTextBox implements CatpuccinWidget {
         renderer.scissorEnd();
     }
 
+    @Override
+    public CornerStyle cornerStyle() {
+        return hasTitle() ? CornerStyle.RIGHT : CornerStyle.ALL;
+    }
+
+    private boolean hasTitle() {
+        return title != null && !title.isEmpty();
+    }
+
     public int getCursor() {
         return cursor;
     }
 
-    public void setRenderBackground(boolean renderBackground) {
+    public void shouldRenderBackground(boolean renderBackground) {
         this.renderBackground = renderBackground;
-    }
-
-    public void setDynamicWidth(boolean dynamicWidth) {
-        this.dynamicWidth = dynamicWidth;
     }
 
     public void color(Color color) {
