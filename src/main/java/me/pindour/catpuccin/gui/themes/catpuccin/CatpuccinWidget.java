@@ -81,18 +81,26 @@ public interface CatpuccinWidget extends BaseWidget {
     }
 
     default void renderBackground(WWidget widget, boolean pressed, boolean mouseOver) {
+        renderBackground(widget, getOutlineColor(pressed, mouseOver), getBackgroundColor(pressed, mouseOver));
+    }
+
+    // Colors
+
+    default Color getBackgroundColor(boolean pressed, boolean mouseOver) {
         CatpuccinGuiTheme theme = theme();
 
-        Color outlineColor = ColorUtils.withAlpha(
-                theme.outlineColor.get(pressed, mouseOver),
-                theme.backgroundOpacity() * 0.4
-        );
-
-        Color backgroundColor = ColorUtils.withAlpha(
+        return ColorUtils.withAlpha(
                 theme.backgroundColor.get(pressed, mouseOver),
                 theme.backgroundOpacity()
         );
+    }
 
-        renderBackground(widget, outlineColor, backgroundColor);
+    default Color getOutlineColor(boolean pressed, boolean mouseOver) {
+        CatpuccinGuiTheme theme = theme();
+
+        return ColorUtils.withAlpha(
+                theme.outlineColor.get(pressed, mouseOver),
+                theme.backgroundOpacity() * 0.4
+        );
     }
 }
