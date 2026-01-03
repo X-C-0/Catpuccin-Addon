@@ -3,9 +3,14 @@ package me.pindour.catpuccin.gui.themes.catpuccin.widgets.settings;
 import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinWidget;
 import me.pindour.catpuccin.gui.themes.catpuccin.widgets.input.WCatpuccinTextBox;
 import meteordevelopment.meteorclient.gui.widgets.containers.WHorizontalList;
+import meteordevelopment.meteorclient.gui.widgets.containers.WVerticalList;
 import meteordevelopment.meteorclient.gui.widgets.input.WSlider;
 
 public class WCatpuccinIntEdit extends WHorizontalList implements CatpuccinWidget {
+    private final String title;
+    private final String description;
+    public WHorizontalList header;
+
     private int value;
 
     public final int min, max;
@@ -18,7 +23,9 @@ public class WCatpuccinIntEdit extends WHorizontalList implements CatpuccinWidge
     private WCatpuccinTextBox textBox;
     private WSlider slider;
 
-    public WCatpuccinIntEdit(int value, int min, int max, int sliderMin, int sliderMax, boolean noSlider) {
+    public WCatpuccinIntEdit(String title, String description, int value, int min, int max, int sliderMin, int sliderMax, boolean noSlider) {
+        this.title = title;
+        this.description = description;
         this.value = value;
         this.min = min;
         this.max = max;
@@ -30,30 +37,27 @@ public class WCatpuccinIntEdit extends WHorizontalList implements CatpuccinWidge
 
     @Override
     public void init() {
-        // Slider and buttons
+        WVerticalList verticalList = add(theme.verticalList()).expandX().widget();
+        header = verticalList.add(theme.horizontalList()).expandX().widget();
+
+        // Buttons
         if (noSlider) {
-            add(theme.button("+")).minWidth(30).widget().action = () -> setButton(get() + 1);
-            add(theme.button("-")).minWidth(30).widget().action = () -> setButton(get() - 1);
+            header.add(theme.button("+")).minWidth(30).widget().action = () -> setButton(get() + 1);
+            header.add(theme.button("-")).minWidth(30).widget().action = () -> setButton(get() - 1);
         }
-        else {
-            slider = add(theme.slider(value, sliderMin, sliderMax)).padHorizontal(6).expandX().widget();
-        }
+
+        // Title
+        header.add(theme().label(title + ":")).padLeft(pad()).widget().tooltip = description;
 
         // Value
-        double reservedWith = Math.max(
-                theme.textWidth(String.valueOf(sliderMin)),
-                theme.textWidth(String.valueOf(sliderMax))
-        );
-
-        textBox = (WCatpuccinTextBox) add(theme
-                .textBox(Integer.toString(value), this::filter))
-                .minWidth(reservedWith + pad())
-                .right()
-                .widget();
-
+        textBox = (WCatpuccinTextBox) header.add(theme.textBox(Integer.toString(value), this::filter)).expandX().widget();
         textBox.setRenderBackground(false);
-//        textBox.setDynamicWidth(true);
         textBox.color(theme().accentColor());
+
+        // Slider
+        if (!noSlider) {
+            slider = verticalList.add(theme.slider(value, sliderMin, sliderMax)).padHorizontal(pad() * 2).minWidth(200).expandX().widget();
+        }
 
         textBox.actionOnUnfocused = () -> {
             int lastValue = value;
@@ -135,5 +139,9 @@ public class WCatpuccinIntEdit extends WHorizontalList implements CatpuccinWidge
 
         textBox.set(Integer.toString(value));
         if (slider != null) slider.set(value);
+    }
+
+    public boolean showReset() {
+        return mouseOver || (slider != null && slider.focused);
     }
 }

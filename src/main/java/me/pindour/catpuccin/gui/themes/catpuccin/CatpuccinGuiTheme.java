@@ -446,8 +446,8 @@ public class CatpuccinGuiTheme extends GuiTheme {
 
     // Settings widgets
 
-    public WCatpuccinIntEdit catpuccinIntEdit(int value, int min, int max, int sliderMin, int sliderMax, boolean noSlider) {
-        return w(new WCatpuccinIntEdit(value, min, max, sliderMin, sliderMax, noSlider));
+    public WCatpuccinIntEdit catpuccinIntEdit(String title, String description, int value, int min, int max, int sliderMin, int sliderMax, boolean noSlider) {
+        return w(new WCatpuccinIntEdit(title, description, value, min, max, sliderMin, sliderMax, noSlider));
     }
 
     public WCatpuccinDoubleEdit catpuccinDoubleEdit(double value, double min, double max, double sliderMin, double sliderMax, int decimalPlaces, boolean noSlider) {

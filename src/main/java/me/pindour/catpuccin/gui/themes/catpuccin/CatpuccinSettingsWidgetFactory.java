@@ -89,14 +89,10 @@ public class CatpuccinSettingsWidgetFactory extends SettingsWidgetFactory {
         factories.put(Vector3dSetting.class, (table, setting) -> vector3dW(table, (Vector3dSetting) setting));
     }
 
-    // Spacings
-
-    private double sectionSpacing() {
-        return theme.textHeight();
-    }
+    // Spacing
 
     private double settingSpacing() {
-        return theme.textHeight() / 3;
+        return theme.pad();
     }
 
     // Setting groups
@@ -104,7 +100,6 @@ public class CatpuccinSettingsWidgetFactory extends SettingsWidgetFactory {
     @Override
     public WWidget create(GuiTheme theme, Settings settings, String filter) {
         WVerticalList list = theme.verticalList();
-        list.spacing = sectionSpacing();
 
         List<RemoveInfo> removeInfoList = new ArrayList<>();
 
@@ -126,10 +121,10 @@ public class CatpuccinSettingsWidgetFactory extends SettingsWidgetFactory {
     }
 
     private void group(WVerticalList list, SettingGroup group, String filter, List<RemoveInfo> removeInfoList) {
-        WSection section = list.add(theme.section(group.name, group.sectionExpanded)).expandX().padHorizontal(theme.pad()).widget();
+        WSection section = list.add(theme.section(group.name, group.sectionExpanded)).expandX().pad(theme.pad()).widget();
         section.action = () -> group.sectionExpanded = section.isExpanded();
 
-        WTable table = section.add(theme.table()).expandX().pad(theme.pad()).widget();
+        WTable table = section.add(theme.table()).expandX().pad(theme.pad() * 2).widget();
         table.verticalSpacing = settingSpacing();
 
         RemoveInfo removeInfo = null;
@@ -184,36 +179,34 @@ public class CatpuccinSettingsWidgetFactory extends SettingsWidgetFactory {
         WCatpuccinCheckbox checkbox = (WCatpuccinCheckbox) list.add(theme.checkbox(setting.get())).widget();
         checkbox.action = () -> setting.set(checkbox.checked);
 
-        title(list, setting).padLeft(theme.pad());
+        title(list, setting);
 
         reset(table, setting, () -> checkbox.setChecked(setting.get()), () -> list.mouseOver);
     }
 
     private void intW(WTable table, IntSetting setting) {
-        WHorizontalList list = table.add(theme.horizontalList()).expandX().widget();
-
-        title(list, setting).padLeft(theme.pad());
-
-        WCatpuccinIntEdit edit = list.add(theme.catpuccinIntEdit(
+        WCatpuccinIntEdit edit = table.add(theme.catpuccinIntEdit(
+                setting.title,
+                setting.description,
                 setting.get(),
                 setting.min,
                 setting.max,
                 setting.sliderMin,
                 setting.sliderMax,
                 setting.noSlider
-        )).expandX().minWidth(200).right().widget();
+        )).expandX().widget();
 
         edit.action = () -> {
             if (!setting.set(edit.get())) edit.set(setting.get());
         };
 
-        reset(table, setting, () -> edit.set(setting.get()), () -> list.mouseOver);
+        edit.header.add(reset(table, setting, () -> edit.set(setting.get()), edit::showReset).widget());
     }
 
     private void doubleW(WTable table, DoubleSetting setting) {
         WHorizontalList list = table.add(theme.horizontalList()).expandX().widget();
 
-        title(list, setting).padLeft(theme.pad());
+        title(list, setting);
 
         WCatpuccinDoubleEdit edit = list.add(theme.catpuccinDoubleEdit(
                 setting.get(),
