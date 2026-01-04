@@ -11,7 +11,12 @@ public class WCatpuccinTooltip extends WTooltip implements CatpuccinWidget {
     }
 
     @Override
+    public void init() {
+        add(theme.label(text)).padVertical(4).padHorizontal(6);
+    }
+
+    @Override
     protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
-        renderer.quad(this, theme().backgroundColor.get());
+        renderBackground(this, false, false);
     }
 }

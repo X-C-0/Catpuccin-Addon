@@ -1,10 +1,7 @@
 package me.pindour.catpuccin.gui.themes.catpuccin.widgets.settings;
 
-import me.pindour.catpuccin.gui.text.RichText;
-import me.pindour.catpuccin.gui.text.TextSize;
 import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinWidget;
 import me.pindour.catpuccin.gui.themes.catpuccin.widgets.input.WCatpuccinTextBox;
-import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.widgets.containers.WHorizontalList;
 import meteordevelopment.meteorclient.gui.widgets.containers.WVerticalList;
 import meteordevelopment.meteorclient.gui.widgets.input.WSlider;
@@ -15,6 +12,8 @@ import java.math.RoundingMode;
 public class WCatpuccinDoubleEdit extends WVerticalList implements CatpuccinWidget {
     private final String title;
     private final String description;
+    public WHorizontalList header;
+
     private double value;
 
     private final double min, max;
@@ -44,54 +43,39 @@ public class WCatpuccinDoubleEdit extends WVerticalList implements CatpuccinWidg
 
     @Override
     public void init() {
-        WHorizontalList list = add(theme.horizontalList()).expandX().padHorizontal(8).padTop(6).widget();
+        header = add(theme.horizontalList()).expandX().widget();
+
+        // Buttons
+        if (noSlider) {
+            header.add(theme.button("+")).minWidth(30).widget().action = () -> setButton(get() + 1);
+            header.add(theme.button("-")).minWidth(30).widget().action = () -> setButton(get() - 1);
+        }
 
         // Title
-        list.add(theme.label(title, true)).centerY().expandCellX().widget().tooltip = description;
+        header.add(theme().label(title + ":")).bottom().widget().tooltip = description;
 
         // Value
-        textBox = (WCatpuccinTextBox) list.add(theme.textBox(valueString(), this::filter)).right().widget();
-        textBox.setRenderBackground(false);
-        textBox.setDynamicWidth(true);
+        textBox = (WCatpuccinTextBox) header.add(theme().textBox(valueString(), this::filter, 0)).expandX().bottom().widget();
+        textBox.shouldRenderBackground(false);
         textBox.color(theme().accentColor());
 
-        // Slider or buttons
-        if (noSlider) {
-            list.add(theme.button("+")).minWidth(30).widget().action = () -> setButton(get() + 1);
-            list.add(theme.button("-")).minWidth(30).widget().action = () -> setButton(get() - 1);
-        }
-        else {
-            WHorizontalList sliderList = add(theme.horizontalList()).expandX().padHorizontal(8).padBottom(6).widget();
-
-            // Min label
-            RichText minText = RichText
-                .of(String.valueOf(sliderMin))
-                .scale(TextSize.SMALL.get());
-
-            sliderList.add(theme().label(minText).color(theme().textSecondaryColor())).padLeft(pad());
-
-            // Slider
-            slider = sliderList.add(theme.slider(value, sliderMin, sliderMax)).padHorizontal(6).minWidth(250).expandX().widget();
-
-            // Max label
-            RichText maxText = RichText
-                .of(String.valueOf(sliderMax))
-                .scale(TextSize.SMALL.get());
-
-            sliderList.add(theme().label(maxText).color(theme().textSecondaryColor())).padRight(pad());
+        // Slider
+        if (!noSlider) {
+            slider = add(theme.slider(value, sliderMin, sliderMax)).minWidth(200).expandX().widget();
         }
 
         textBox.actionOnUnfocused = () -> {
             double lastValue = value;
 
-            if (textBox.get().isEmpty()) value = 0;
-            else if (textBox.get().equals("-")) value = -0;
-            else if (textBox.get().equals(".")) value = 0;
-            else if (textBox.get().equals("-.")) value = 0;
-            else {
-                try {
-                    value = Double.parseDouble(textBox.get());
-                } catch (NumberFormatException ignored) {}
+            switch (textBox.get()) {
+                case "", ".", "-." -> value = 0;
+                case "-" -> value = -0;
+                default -> {
+                    try {
+                        value = Double.parseDouble(textBox.get());
+                    } catch (NumberFormatException ignored) {
+                    }
+                }
             }
 
             double preValidationValue = value;
@@ -122,11 +106,6 @@ public class WCatpuccinDoubleEdit extends WVerticalList implements CatpuccinWidg
                 if (actionOnRelease != null) actionOnRelease.run();
             };
         }
-    }
-
-    @Override
-    protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
-        renderBackground(this, false, false);
     }
 
     private boolean filter(String text, char c) {
@@ -186,8 +165,12 @@ public class WCatpuccinDoubleEdit extends WVerticalList implements CatpuccinWidg
             .stripTrailingZeros();
 
         // Ensures the number has at least one decimal digit (e.g. 3 → 3.0) so it doesn't look stupid
-        if (bd.scale() < 1) bd = bd.setScale(1);
+        if (bd.scale() < 1) bd = bd.setScale(1, RoundingMode.HALF_UP);
 
         return bd.toPlainString();
+    }
+
+    public boolean showReset() {
+        return mouseOver || (slider != null && slider.focused);
     }
 }

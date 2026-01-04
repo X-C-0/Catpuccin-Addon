@@ -5,6 +5,7 @@ import me.pindour.catpuccin.gui.text.RichText;
 import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinGuiTheme;
 import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinWidget;
 import me.pindour.catpuccin.gui.themes.catpuccin.widgets.WCatpuccinLabel;
+import me.pindour.catpuccin.utils.ColorUtils;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.utils.CharFilter;
 import meteordevelopment.meteorclient.gui.widgets.WWidget;
@@ -14,119 +15,31 @@ import meteordevelopment.meteorclient.gui.widgets.input.WTextBox;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 import net.minecraft.util.math.MathHelper;
 
-//? if >=1.21.9 {
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.input.CharInput;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.client.util.MacWindowUtil;
-//? } else {
-/*import static net.minecraft.client.MinecraftClient.IS_SYSTEM_MAC;
-*///? }
-
-import static org.lwjgl.glfw.GLFW.*;
-
 public class WCatpuccinTextBox extends WTextBox implements CatpuccinWidget {
+    private final String title;
+    private final double padding;
+    private Color customColor;
+
     private boolean cursorVisible;
     private double cursorTimer;
 
     private double animProgress;
     private boolean renderBackground;
-    private boolean dynamicWidth;
 
-    private Color customColor;
-
-    public WCatpuccinTextBox(String text, String placeholder, CharFilter filter, Class<? extends Renderer> renderer) {
+    public WCatpuccinTextBox(String text, String placeholder, String title, double padding, CharFilter filter, Class<? extends Renderer> renderer) {
         super(text, placeholder, filter, renderer);
-        renderBackground = true;
-        dynamicWidth = false;
+        this.title = title;
+        this.padding = padding;
+        this.renderBackground = true;
     }
 
     @Override
     protected void onCalculateSize() {
         super.onCalculateSize();
-        if (dynamicWidth) {
-            double pad = pad();
-            double textWidth = textWidths.isEmpty() ? 0 : textWidths.getDouble(textWidths.size() - 1);
+        double s = theme.textHeight();
 
-            if (width == textWidth) return;
-
-            width = pad + textWidth + pad;
-            parent.invalidate();
-        }
-    }
-
-    @Override
-    public boolean onMouseClicked(Click click, boolean used) {
-        boolean clicked =  super.onMouseClicked(
-                //? if >=1.21.9
-                click,
-                //? if <1.21.9
-                //mouseX, mouseY, button,
-                used
-        );
-
-        // Update widget width when text is cleared
-        if (clicked
-            && dynamicWidth
-            && !text.isEmpty()
-            //? if >=1.21.9
-            && click.button() == GLFW_MOUSE_BUTTON_LEFT
-            //? if <1.21.9
-            //&& button == GLFW_MOUSE_BUTTON_LEFT
-        ) {
-            onCalculateSize();
-        }
-
-        return clicked;
-    }
-
-    @Override
-    public boolean onKeyRepeated(KeyInput input) {
-        boolean repeated = super.onKeyRepeated(
-                //? if >=1.21.9
-                input
-                //? if <1.21.9
-                //key, mods
-        );
-
-        //? if >=1.21.9 {
-
-        if (repeated && dynamicWidth) {
-            boolean control = MacWindowUtil.IS_MAC ? input.modifiers() == GLFW_MOD_SUPER : input.modifiers() == GLFW_MOD_CONTROL;
-
-            if ((control && input.key() == GLFW_KEY_V)
-                    || input.key() == GLFW_KEY_BACKSPACE
-                    || input.key() == GLFW_KEY_DELETE)
-                onCalculateSize();
-        }
-
-        //? } else {
-
-        /*if (repeated && dynamicWidth) {
-            boolean control = IS_SYSTEM_MAC ? mods == GLFW_MOD_SUPER : mods == GLFW_MOD_CONTROL;
-
-            if ((control && key == GLFW_KEY_V)
-                    || key == GLFW_KEY_BACKSPACE
-                    || key == GLFW_KEY_DELETE)
-                onCalculateSize();
-        }
-
-        *///? }
-
-        return repeated;
-    }
-
-    @Override
-    public boolean onCharTyped(CharInput input) {
-        boolean typed = super.onCharTyped(input);
-        if (dynamicWidth) onCalculateSize();
-        return typed;
-    }
-
-    @Override
-    public void set(String text) {
-        super.set(text);
-        if (dynamicWidth) onCalculateSize();
+        width = padding + s + padding;
+        height = padding + s + padding;
     }
 
     @Override
@@ -156,11 +69,6 @@ public class WCatpuccinTextBox extends WTextBox implements CatpuccinWidget {
     @Override
     protected <T extends WWidget & ICompletionItem> T createCompletionsValueWidth(String completion, boolean selected) {
         return (T) new CompletionItem(completion, false, selected);
-    }
-
-    @Override
-    protected double getOverflowWidthForRender() {
-        return dynamicWidth ? 0 : super.getOverflowWidthForRender();
     }
 
     private static class CompletionItem extends WCatpuccinLabel implements ICompletionItem {
@@ -205,6 +113,8 @@ public class WCatpuccinTextBox extends WTextBox implements CatpuccinWidget {
     @Override
     protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
         CatpuccinGuiTheme theme = theme();
+        int HORIZONTAL_LIST_SPACING = 3;
+        double titleWidth = (hasTitle() ? pad() + theme.textWidth(title) + HORIZONTAL_LIST_SPACING : 0);
 
         if (cursorTimer >= 1) {
             cursorVisible = !cursorVisible;
@@ -215,40 +125,43 @@ public class WCatpuccinTextBox extends WTextBox implements CatpuccinWidget {
         }
 
         if (renderBackground) {
-            int bottomSize = 2;
-            Color highlightColor = focused ? theme.accentColor() :
-                    mouseOver ? theme.surface2Color() : theme.surface0Color();
+            // Title
+            if (hasTitle()) {
+                renderer().roundedRect(
+                        x - titleWidth, y,
+                        titleWidth, height,
+                        smallRadius(),
+                        theme.surface0Color(),
+                        CornerStyle.LEFT
+                );
+            }
 
-            // Background
-            catpuccinRenderer().roundedRect(x, y, width, height, smallCornerRadius, theme.mantleColor().copy().a(theme.backgroundOpacity()), CornerStyle.ALL);
-
-            renderer.scissorStart(x, y + height - bottomSize, width, bottomSize);
-
-            // Bottom highlight
-            catpuccinRenderer().roundedRect(x, y, width, height, smallCornerRadius, highlightColor, CornerStyle.BOTTOM);
-
-            renderer.scissorEnd();
+            // Outline
+            renderBackground(this, theme.surface0Color(), theme.baseColor(), true);
         }
 
-        double pad = pad();
         double overflowWidth = getOverflowWidthForRender();
 
-        renderer.scissorStart(x + pad, y + pad, width - pad * 2, height - pad * 2);
+        renderer.scissorStart(x + padding, y, width - padding * 2, height);
 
         // Text content
         if (!text.isEmpty()) {
-            this.renderer.render(renderer, x + pad - overflowWidth, y + pad, text, customColor != null ? customColor : theme.textColor());
+            Color textColor = customColor != null
+                    ? customColor
+                    : (focused ? theme.textColor() : ColorUtils.darker(theme.textSecondaryColor()));
+
+            this.renderer.render(renderer, x + padding - overflowWidth, y + padding, text, textColor);
         }
         else if (placeholder != null) {
-            this.renderer.render(renderer, x + pad - overflowWidth, y + pad, placeholder, theme.textSecondaryColor());
+            this.renderer.render(renderer, x + padding - overflowWidth, y + padding, placeholder, theme.textSecondaryColor());
         }
 
         // Text highlighting
         if (focused && (cursor != selectionStart || cursor != selectionEnd)) {
-            double selStart = x + pad + getTextWidth(selectionStart) - overflowWidth;
-            double selEnd = x + pad + getTextWidth(selectionEnd) - overflowWidth;
+            double selStart = x + padding + getTextWidth(selectionStart) - overflowWidth;
+            double selEnd = x + padding + getTextWidth(selectionEnd) - overflowWidth;
 
-            renderer.quad(selStart, y + pad, selEnd - selStart, theme.textHeight(), theme.textHighlightColor().copy().a(120));
+            renderer.quad(selStart, y + padding, selEnd - selStart, theme.textHeight(), theme.textHighlightColor().copy().a(120));
         }
 
         // Cursor
@@ -257,23 +170,28 @@ public class WCatpuccinTextBox extends WTextBox implements CatpuccinWidget {
 
         if ((focused && cursorVisible) || animProgress > 0) {
             renderer.setAlpha(animProgress);
-            renderer.quad(x + pad + getTextWidth(cursor) - overflowWidth, y + pad, theme.scale(1), theme.textHeight(), theme.textColor());
+            renderer.quad(x + padding + getTextWidth(cursor) - overflowWidth, y + padding, theme.scale(1), theme.textHeight(), theme.textColor());
             renderer.setAlpha(1);
         }
 
         renderer.scissorEnd();
     }
 
+    @Override
+    public CornerStyle cornerStyle() {
+        return hasTitle() ? CornerStyle.RIGHT : CornerStyle.ALL;
+    }
+
+    private boolean hasTitle() {
+        return title != null && !title.isEmpty();
+    }
+
     public int getCursor() {
         return cursor;
     }
 
-    public void setRenderBackground(boolean renderBackground) {
+    public void shouldRenderBackground(boolean renderBackground) {
         this.renderBackground = renderBackground;
-    }
-
-    public void setDynamicWidth(boolean dynamicWidth) {
-        this.dynamicWidth = dynamicWidth;
     }
 
     public void color(Color color) {

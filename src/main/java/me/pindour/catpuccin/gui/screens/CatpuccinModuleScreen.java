@@ -62,8 +62,8 @@ public class CatpuccinModuleScreen extends WindowScreen {
 
         if (module.addon != null && module.addon != MeteorClient.ADDON) {
             WHorizontalList addon = description.add(theme.horizontalList()).expandX().widget();
-            addon.add(theme.label("From: ").color(theme.textSecondaryColor())).widget();
-            addon.add(theme.label(module.addon.name).color(theme.accentColor())).widget();
+            addon.add(theme.label("From: ").color(theme.textSecondaryColor()));
+            addon.add(theme.label(module.addon.name).color(theme.accentColor()));
         }
 
         // Keybind

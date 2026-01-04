@@ -69,6 +69,7 @@ public class CatpuccinGuiTheme extends GuiTheme {
     private RichTextRenderer textRenderer;
 
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
+    private final SettingGroup sgCorners = settings.createGroup("Corners");
     private final SettingGroup sgAnimations = settings.createGroup("Animations");
     private final SettingGroup sgColors = settings.createGroup("Colors");
     private final SettingGroup sgSnapping = settings.createGroup("Snapping");
@@ -117,14 +118,34 @@ public class CatpuccinGuiTheme extends GuiTheme {
     public final Setting<Boolean> widgetOutline = sgGeneral.add(new BoolSetting.Builder()
             .name("widget-outline")
             .description("Renders a small outline around some UI elements for better visibility.")
-            .defaultValue(false)
+            .defaultValue(true)
             .build()
     );
 
-    public final Setting<Boolean> roundedCorners = sgGeneral.add(new BoolSetting.Builder()
+    // Corners
+
+    public final Setting<Boolean> roundedCorners = sgCorners.add(new BoolSetting.Builder()
             .name("rounded-corners")
-            .description("Makes the corners of most UI elements rounded.")
+            .description("Makes the corners of UI elements rounded or... not so round.")
             .defaultValue(true)
+            .build()
+    );
+
+    public final Setting<Integer> cornerRadius = sgCorners.add(new IntSetting.Builder()
+            .name("corner-radius")
+            .description("Controls how rounded the corners should be for large UI elements.")
+            .defaultValue(10)
+            .sliderRange(1, 25)
+            .visible(roundedCorners::get)
+            .build()
+    );
+
+    public final Setting<Integer> smallCornerRadius = sgCorners.add(new IntSetting.Builder()
+            .name("small-corner-radius")
+            .description("Controls how rounded the corners should be for small UI elements.")
+            .defaultValue(6)
+            .sliderRange(1, 25)
+            .visible(roundedCorners::get)
             .build()
     );
 
@@ -162,19 +183,21 @@ public class CatpuccinGuiTheme extends GuiTheme {
             .build()
     );
 
-    public final Setting<Integer> windowOpacity = sgColors.add(new IntSetting.Builder()
+    public final Setting<Double> windowOpacity = sgColors.add(new DoubleSetting.Builder()
             .name("window-opacity")
             .description("How much opaque the windows should be.")
-            .defaultValue(255)
-            .sliderRange(0, 255)
+            .defaultValue(1)
+            .sliderRange(0, 1)
+            .decimalPlaces(2)
             .build()
     );
 
-    public final Setting<Integer> backgroundOpacity = sgColors.add(new IntSetting.Builder()
+    public final Setting<Double> backgroundOpacity = sgColors.add(new DoubleSetting.Builder()
             .name("background-opacity")
             .description("How much opaque the backgrounds should be.")
-            .defaultValue(255)
-            .sliderRange(0, 255)
+            .defaultValue(1)
+            .sliderRange(0, 1)
+            .decimalPlaces(2)
             .build()
     );
 
@@ -207,21 +230,21 @@ public class CatpuccinGuiTheme extends GuiTheme {
     // Three state colors
 
     public final ThreeStateColor backgroundColor = new ThreeStateColor(
-            this::mantleColor,
             this::surface0Color,
-            this::surface0Color
+            this::surface1Color,
+            this::surface2Color
     );
 
     public final ThreeStateColor outlineColor = new ThreeStateColor(
-            this::surface0Color,
-            this::surface2Color,
-            this::surface2Color
+            this::overlay0Color,
+            this::overlay1Color,
+            this::overlay2Color
     );
 
     public final ThreeStateColor scrollbarColor = new ThreeStateColor(
             this::surface0Color,
             this::surface1Color,
-            this::overlay2Color
+            this::surface2Color
     );
 
     // Starscript
@@ -338,9 +361,21 @@ public class CatpuccinGuiTheme extends GuiTheme {
         return w(new WCatpuccinSlider(value, min, max));
     }
 
+    public WTextBox textBox(String text, String placeholder, String title, double padding, CharFilter filter, Class<? extends WTextBox.Renderer> renderer) {
+        return w(new WCatpuccinTextBox(text, placeholder, title, padding, filter, renderer));
+    }
+
+    public WTextBox textBox(String text, String placeholder, String title, CharFilter filter, Class<? extends WTextBox.Renderer> renderer) {
+        return textBox(text, placeholder, title, pad(), filter, renderer);
+    }
+
+    public WTextBox textBox(String text, CharFilter filter, double padding) {
+        return textBox(text, null, "", padding, filter, null);
+    }
+
     @Override
     public WTextBox textBox(String text, String placeholder, CharFilter filter, Class<? extends WTextBox.Renderer> renderer) {
-        return w(new WCatpuccinTextBox(text, placeholder, filter, renderer));
+        return textBox(text, placeholder, "", filter, renderer);
     }
 
     public <T> WDropdown<T> dropdown(String title, T[] values, T value) {
@@ -526,16 +561,12 @@ public class CatpuccinGuiTheme extends GuiTheme {
 
     // Colors - Text
 
-    public Color titleTextColor() {
+    public Color textColor() {
         return colorCache.get(CatppuccinColor.Text);
     }
 
-    public Color textColor() {
-        return colorCache.get(CatppuccinColor.Subtext1);
-    }
-
     public Color textSecondaryColor() {
-        return colorCache.get(CatppuccinColor.Subtext0);
+        return colorCache.get(CatppuccinColor.Subtext1);
     }
 
     public Color textHighlightColor() {
@@ -544,11 +575,11 @@ public class CatpuccinGuiTheme extends GuiTheme {
 
     // Opacity
 
-    public int windowOpacity() {
+    public double windowOpacity() {
         return windowOpacity.get();
     }
 
-    public int backgroundOpacity() {
+    public double backgroundOpacity() {
         return backgroundOpacity.get();
     }
 
@@ -731,17 +762,40 @@ public class CatpuccinGuiTheme extends GuiTheme {
             return normal.get();
         }
 
+        public Color get(float alpha) {
+            return withAlpha(normal.get(), alpha);
+        }
+
         public Color get(boolean pressed, boolean hovered, boolean bypassDisableHoverColor) {
             if (pressed) return this.pressed.get();
             return (hovered && (bypassDisableHoverColor || !disableHoverColor)) ? this.hovered.get() : this.normal.get();
+        }
+
+        public Color get(boolean pressed, boolean hovered, boolean bypassDisableHoverColor, float alpha) {
+            Color color = get(pressed, hovered, bypassDisableHoverColor);
+            return withAlpha(color, alpha);
         }
 
         public Color get(boolean pressed, boolean hovered) {
             return get(pressed, hovered, false);
         }
 
+        public Color get(boolean pressed, boolean hovered, float alpha) {
+            return get(pressed, hovered, false, alpha);
+        }
+
         public Color get(boolean hovered) {
             return get(false, hovered, false);
+        }
+
+        public Color get(boolean hovered, float alpha) {
+            return get(false, hovered, false, alpha);
+        }
+
+        private Color withAlpha(Color color, float alpha) {
+            Color result = color.copy().a((int) (255 * alpha));
+            result.validate();
+            return result;
         }
     }
 }

@@ -18,7 +18,7 @@ public class WCatpuccinMultiLabel extends WMultiLabel implements CatpuccinWidget
         Color defaultColor = theme().textColor();
 
         for (int i = 0; i < lines.size(); i++) {
-            catpuccinRenderer().text(
+            renderer().text(
                     RichText.of(lines.get(i)).boldIf(title),
                     x,
                     y + h * i,

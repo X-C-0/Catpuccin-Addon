@@ -18,7 +18,6 @@ public class WCatpuccinCheckbox extends WCheckbox implements CatpuccinWidget {
     @Override
     public void init() {
         super.init();
-
         animation = new Animation(theme().uiAnimationType(), theme().uiAnimationSpeed());
         animation.finishedAt(checked ? Direction.FORWARDS : Direction.BACKWARDS);
     }
@@ -26,7 +25,6 @@ public class WCatpuccinCheckbox extends WCheckbox implements CatpuccinWidget {
     @Override
     protected void onCalculateSize() {
         super.onCalculateSize();
-
         height *= 0.9;
         width *= 0.9;
     }
@@ -34,60 +32,60 @@ public class WCatpuccinCheckbox extends WCheckbox implements CatpuccinWidget {
     @Override
     protected void onPressed(int button) {
         super.onPressed(button);
-        startAnimation();
+        animation.start(checked ? Direction.FORWARDS : Direction.BACKWARDS);
     }
 
     @Override
     protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
-        // Render background only when it could be visible (when not checked or when animation is still running)
+        // Background is only visible when unchecked or animating
         if (!checked || animation.isRunning()) renderBackground(this, pressed, mouseOver);
 
-        // Early exit if there is nothing to render
+        // Skip checkmark if unchecked and animation finished
         if (!checked && animation.isFinished()) return;
 
+        renderCheckmark();
+    }
+
+    private void renderCheckmark() {
         CatpuccinGuiTheme theme = theme();
-        double size = width * animation.getProgress();
-        double outlineSize = theme.scale(3);
+        double progress = animation.getProgress();
+        double size = width * progress;
         double minSize = theme.scale(6);
 
         if (size <= minSize) return;
 
-        double offsetX = width / 2 - size / 2;
-        double offsetY = height / 2 - size / 2;
-        double innerSize = size - outlineSize * 2;
-        double innerOffset = outlineSize + offsetY;
+        double outlineSize = theme.scale(3);
+        double centerOffset = (width - size) / 2;
 
-        // Outline rectangle
-        catpuccinRenderer().roundedRect(
-                x + offsetX,
-                y + offsetY,
+        // Outline
+        renderer().roundedRect(
+                x + centerOffset,
+                y + centerOffset,
                 size,
                 size,
-                smallCornerRadius,
+                smallRadius(),
                 theme.accentColor().copy().a(mouseOver ? 140 : 80),
                 CornerStyle.ALL
         );
 
-        // Inner rectangle
-        catpuccinRenderer().roundedRect(
+        // Inner fill
+        double innerSize = size - outlineSize * 2;
+        double innerOffset = centerOffset + outlineSize;
+
+        renderer().roundedRect(
                 x + innerOffset,
                 y + innerOffset,
                 innerSize,
                 innerSize,
-                smallCornerRadius - outlineSize / 2,
+                smallRadius() - outlineSize / 2,
                 theme.accentColor(),
                 CornerStyle.ALL
         );
     }
 
-    private void startAnimation() {
-        animation.start(checked ? Direction.FORWARDS : Direction.BACKWARDS);
-    }
-
     public void setChecked(boolean checked) {
         if (this.checked == checked) return;
-
         this.checked = checked;
-        startAnimation();
+        animation.start(checked ? Direction.FORWARDS : Direction.BACKWARDS);
     }
 }

@@ -6,6 +6,7 @@ import me.pindour.catpuccin.gui.renderer.CornerStyle;
 import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinGuiTheme;
 import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinWidget;
 import me.pindour.catpuccin.gui.themes.catpuccin.icons.CatpuccinIcons;
+import me.pindour.catpuccin.utils.ColorUtils;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.widgets.WWidget;
 import meteordevelopment.meteorclient.gui.widgets.containers.WSection;
@@ -49,6 +50,11 @@ public class WCatpuccinSection extends WSection implements CatpuccinWidget {
     }
 
     @Override
+    protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
+        if (expanded || animation.isRunning()) renderBackground(this, false, false);
+    }
+
+    @Override
     public boolean render(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
         boolean isAnimationRunning = animation.isRunning();
         double progress = animation.getProgress();
@@ -86,6 +92,47 @@ public class WCatpuccinSection extends WSection implements CatpuccinWidget {
         return header;
     }
 
+    @Override
+    public CornerStyle cornerStyle() {
+        return CornerStyle.BOTTOM;
+    }
+
+    @Override
+    public void drawOutline(WWidget widget, Color color, int radius, CornerStyle style) {
+        Color outlineColor = ColorUtils.withAlpha(
+                theme().surface0Color(),
+                theme().backgroundOpacity()
+        );
+
+        renderer().roundedRect(
+                x,
+                y + header.height,
+                width,
+                height - header.height,
+                radius(),
+                outlineColor,
+                style
+        );
+    }
+
+    @Override
+    public void drawBackground(WWidget widget, int inset, Color color) {
+        Color backgroundColor = ColorUtils.withAlpha(
+                theme().baseColor(),
+                theme().backgroundOpacity()
+        );
+
+        renderer().roundedRect(
+                x + inset,
+                y + header.height,
+                width - inset * 2,
+                height - header.height - inset,
+                radius() - inset,
+                backgroundColor,
+                cornerStyle()
+        );
+    }
+
     protected class WCatpuccinHeader extends WHeader {
 
         public WCatpuccinHeader(String title) {
@@ -111,30 +158,18 @@ public class WCatpuccinSection extends WSection implements CatpuccinWidget {
             double pad = pad();
             double s = theme.textHeight() * 0.75;
 
-            // Background
-            catpuccinRenderer().roundedRect(
-                    this,
-                    smallCornerRadius,
-                    theme.backgroundColor.get(mouseOver).copy().a(theme.backgroundOpacity()),
-                    expanded || animation.isRunning() ? CornerStyle.TOP : CornerStyle.ALL
+            Color bgColor = ColorUtils.withAlpha(
+                    mouseOver ? theme.surface1Color() : theme.surface0Color(),
+                    theme.backgroundOpacity()
             );
 
-            // Shadow under the header
-            if (expanded || animation.getProgress() > 0) {
-                Color semiTransparentColor = theme.mantleColor().copy().a(160);
-                Color transparentColor = theme.mantleColor().copy().a(0);
-
-                renderer.quad(
-                        x,
-                        y + height,
-                        width,
-                        8 * animation.getProgress(),
-                        semiTransparentColor,
-                        semiTransparentColor,
-                        transparentColor,
-                        transparentColor
-                );
-            }
+            // Background
+            renderer().roundedRect(
+                    this,
+                    radius(),
+                    bgColor,
+                    expanded || animation.isRunning() ? CornerStyle.TOP : CornerStyle.ALL
+            );
 
             if (headerWidget != null) return;
 

@@ -39,7 +39,7 @@ public abstract class WMultiSelect<T> extends WVerticalList {
     private Predicate<T> selectionPredicate = item -> false;
     private BiConsumer<T, Boolean> selectionChangeHandler;
 
-    private WHeader header;
+    protected WHeader header;
     private WCatpuccinCheckbox selectAllCheckbox;
     private WVerticalList itemContainer;
 
@@ -61,7 +61,7 @@ public abstract class WMultiSelect<T> extends WVerticalList {
 
         // Select all
         if (items.size() > 1) {
-            WHorizontalList list = add(theme.horizontalList()).expandX().widget();
+            WHorizontalList list = add(theme.horizontalList()).expandX().pad(4).widget();
 
             selectAllCheckbox = (WCatpuccinCheckbox) list.add(theme.checkbox(false)).padLeft(8).widget();
             list.add(theme.label("Select all")).padLeft(pad()).expandX();
@@ -72,11 +72,11 @@ public abstract class WMultiSelect<T> extends WVerticalList {
                 refreshItems();
             };
 
-            add(theme.horizontalSeparator()).padBottom(4).expandX();
+            add(theme.horizontalSeparator()).expandX();
         }
 
         // Items container
-        itemContainer = add(theme.verticalList()).expandX().widget();
+        itemContainer = add(theme.verticalList()).expandX().pad(4).widget();
         itemContainer.spacing = 2;
 
         // Items

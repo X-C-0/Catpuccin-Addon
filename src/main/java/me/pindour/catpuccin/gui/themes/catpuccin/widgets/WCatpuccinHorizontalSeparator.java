@@ -35,8 +35,7 @@ public class WCatpuccinHorizontalSeparator extends WHorizontalSeparator implemen
     }
 
     private void renderWithoutText(GuiRenderer renderer) {
-        CatpuccinGuiTheme theme = theme();
-        double s = theme.scale(2);
+        double s = theme().scale(2);
         double w = width / 2;
 
         renderer.quad(x, y + s, w, s, color);
@@ -45,13 +44,13 @@ public class WCatpuccinHorizontalSeparator extends WHorizontalSeparator implemen
 
     private void renderWithText() {
         CatpuccinGuiTheme theme = theme();
+        double offsetX = width / 2 - textWidth / 2;
+        double offsetY = height / 2 - theme.textHeight() / 2;
 
-        double textStart = Math.round(width / 2.0 - textWidth / 2.0);
-
-        catpuccinRenderer().text(
-                RichText.bold(text),
-                x + textStart,
-                y,
+        renderer().text(
+                richText,
+                x + offsetX,
+                y + offsetY,
                 theme.accentColor()
         );
     }

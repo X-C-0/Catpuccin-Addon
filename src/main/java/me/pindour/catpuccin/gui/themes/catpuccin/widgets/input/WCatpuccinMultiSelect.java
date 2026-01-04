@@ -4,6 +4,7 @@ import me.pindour.catpuccin.gui.renderer.CornerStyle;
 import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinGuiTheme;
 import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinWidget;
 import me.pindour.catpuccin.gui.widgets.input.WMultiSelect;
+import me.pindour.catpuccin.utils.ColorUtils;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 
@@ -12,6 +13,18 @@ import java.util.List;
 public class WCatpuccinMultiSelect<T> extends WMultiSelect<T> implements CatpuccinWidget {
     public WCatpuccinMultiSelect(String title, List<T> items) {
         super(title, items);
+    }
+
+    @Override
+    protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
+        if (expanded || animation.isRunning())
+            renderer().roundedRect(
+                    x, y + header.height,
+                    width, height - header.height,
+                    radius(),
+                    ColorUtils.withAlpha(theme().baseColor(), theme().backgroundOpacity()),
+                    CornerStyle.BOTTOM
+            );
     }
 
     @Override
@@ -33,31 +46,18 @@ public class WCatpuccinMultiSelect<T> extends WMultiSelect<T> implements Catpucc
         @Override
         protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
             CatpuccinGuiTheme theme = theme();
-
-            // Background
-            catpuccinRenderer().roundedRect(
-                    this,
-                    smallCornerRadius,
-                    theme.backgroundColor.get(mouseOver).copy().a(theme.backgroundOpacity()),
-                    expanded || animation.isRunning() ? CornerStyle.TOP : CornerStyle.ALL
+            Color bgColor = ColorUtils.withAlpha(
+                    mouseOver ? theme.surface1Color() : theme.surface0Color(),
+                    theme.backgroundOpacity()
             );
 
-            // Shadow under the header
-            if (expanded || animation.getProgress() > 0) {
-                Color semiTransparentColor = theme.mantleColor().copy().a(160);
-                Color transparentColor = theme.mantleColor().copy().a(0);
-
-                renderer.quad(
-                        x,
-                        y + height,
-                        width,
-                        8 * animation.getProgress(),
-                        semiTransparentColor,
-                        semiTransparentColor,
-                        transparentColor,
-                        transparentColor
-                );
-            }
+            // Background
+            renderer().roundedRect(
+                    this,
+                    radius(),
+                    bgColor,
+                    expanded || animation.isRunning() ? CornerStyle.TOP : CornerStyle.ALL
+            );
         }
     }
 
@@ -71,9 +71,9 @@ public class WCatpuccinMultiSelect<T> extends WMultiSelect<T> implements Catpucc
         protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
             if (!mouseOver || checkbox.mouseOver) return;
 
-            catpuccinRenderer().roundedRect(
+            renderer().roundedRect(
                     this,
-                    smallCornerRadius,
+                    smallRadius(),
                     theme().surface0Color(),
                     CornerStyle.ALL
             );

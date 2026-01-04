@@ -182,7 +182,7 @@ public class CatpuccinModulesScreen extends TabScreen {
 
         WVerticalList l = theme.verticalList();
 
-        WTextBox text = w.add(theme.textBox("")).minWidth(140).expandX().padBottom(4).widget();
+        WTextBox text = w.add(theme.textBox("", "Search modules...")).minWidth(140).expandX().padBottom(4).widget();
         text.setFocused(true);
         text.action = () -> {
             l.clear();

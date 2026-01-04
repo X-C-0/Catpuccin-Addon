@@ -4,8 +4,10 @@ import me.pindour.catpuccin.gui.animation.Animation;
 import me.pindour.catpuccin.gui.animation.Direction;
 import me.pindour.catpuccin.gui.renderer.CornerStyle;
 import me.pindour.catpuccin.gui.screens.CatpuccinModulesScreen;
+import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinGuiTheme;
 import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinWidget;
 import me.pindour.catpuccin.gui.widgets.pressable.WOpenIndicator;
+import me.pindour.catpuccin.utils.ColorUtils;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.utils.Cell;
 import meteordevelopment.meteorclient.gui.utils.WindowConfig;
@@ -51,28 +53,30 @@ public class WCatpuccinWindow extends WWindow implements CatpuccinWidget {
 
     @Override
     protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
-        Color shadowColor = theme().baseColor().copy().a(80);
+        CatpuccinGuiTheme theme = theme();
+        Color shadowColor = ColorUtils.withAlpha(theme.baseColor(), 0.3);
+        Color backgroundColor = ColorUtils.withAlpha(theme.mantleColor(), theme.windowOpacity());
 
         // Shadow rectangle
-        catpuccinRenderer().roundedRect(
+        renderer().roundedRect(
                 x - shadowOffset,
                 y - shadowOffset,
                 width + shadowOffset * 2,
                 (expanded || animation.isRunning() ? height : header.height) + shadowOffset * 2,
-                cornerRadius,
+                radius() + shadowOffset,
                 shadowColor,
                 CornerStyle.ALL
         );
 
         // Inner rectangle
         if (expanded || animation.isRunning())
-            catpuccinRenderer().roundedRect(
+            renderer().roundedRect(
                     x,
                     y + header.height,
                     width,
                     height - header.height,
-                    cornerRadius - shadowOffset,
-                    theme().baseColor().copy().a(theme().windowOpacity()),
+                    radius() - shadowOffset,
+                    backgroundColor,
                     CornerStyle.BOTTOM
             );
     }
@@ -172,17 +176,19 @@ public class WCatpuccinWindow extends WWindow implements CatpuccinWidget {
 
         @Override
         protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
-            catpuccinRenderer().roundedRect(
+            CatpuccinGuiTheme theme = theme();
+
+            renderer().roundedRect(
                     this,
-                    cornerRadius,
-                    theme().crustColor(),
+                    radius(),
+                    theme.crustColor(),
                     !expanded && animation.isFinished() ? CornerStyle.ALL : CornerStyle.TOP
             );
 
             // Shadow under the header
             if (expanded || animation.isRunning()) {
-                Color transparentColor = theme().crustColor().copy().a(0);
-                Color semiTransparentColor = theme().crustColor().copy().a(120);
+                Color transparentColor = ColorUtils.withAlpha(theme.baseColor(), 0);
+                Color semiTransparentColor = ColorUtils.withAlpha(theme.baseColor(), 0.5);
 
                 renderer.quad(
                         x,
