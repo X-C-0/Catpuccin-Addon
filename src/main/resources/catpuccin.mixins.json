@@ -9,7 +9,9 @@
   },
   "mixins": [
     "meteorclient.FontsMixin",
+    "meteorclient.GuiRendererAccessor",
     "meteorclient.GuiRendererMixin",
+    "meteorclient.MeteorRenderPipelinesAccessor",
     "meteorclient.WHeaderMixin"
   ]
 }
