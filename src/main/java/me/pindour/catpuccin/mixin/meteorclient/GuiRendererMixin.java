@@ -11,6 +11,7 @@ import meteordevelopment.meteorclient.gui.renderer.operations.TextOperation;
 import meteordevelopment.meteorclient.renderer.Renderer2D;
 import meteordevelopment.meteorclient.renderer.Texture;
 import meteordevelopment.meteorclient.utils.render.color.Color;
+import me.pindour.catpuccin.mixin.meteorclient.GuiRendererAccessor;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -20,6 +21,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
+import it.unimi.dsi.fastutil.Stack;
 
 @Mixin(value = GuiRenderer.class, remap = false)
 public abstract class GuiRendererMixin {
@@ -101,5 +103,31 @@ public abstract class GuiRendererMixin {
         catpuccinRenderer.text(RichText.of(text).boldIf(title), x, y, color);
 
         ci.cancel();
+    }
+
+    @Inject(method = "scissorStart", at = @At("TAIL"))
+    private void onScissorStart(double x, double y, double width, double height, CallbackInfo ci) {
+        if (!(theme instanceof CatpuccinGuiTheme)) return;
+        Stack<Scissor> stack = ((GuiRendererAccessor) this).getScissorStack();
+        if (stack == null || stack.isEmpty()) {
+            catpuccinRenderer.clearClipRect();
+            return;
+        }
+
+        Scissor top = stack.top();
+        catpuccinRenderer.setClipRect(top.x, top.y, top.x + top.width, top.y + top.height);
+    }
+
+    @Inject(method = "scissorEnd", at = @At("TAIL"))
+    private void onScissorEnd(CallbackInfo ci) {
+        if (!(theme instanceof CatpuccinGuiTheme)) return;
+        Stack<Scissor> stack = ((GuiRendererAccessor) this).getScissorStack();
+        if (stack == null || stack.isEmpty()) {
+            catpuccinRenderer.clearClipRect();
+            return;
+        }
+
+        Scissor top = stack.top();
+        catpuccinRenderer.setClipRect(top.x, top.y, top.x + top.width, top.y + top.height);
     }
 }

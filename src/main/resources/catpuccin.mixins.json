@@ -3,13 +3,16 @@
   "package": "me.pindour.catpuccin.mixin",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "RenderSystemMixin"
   ],
   "injectors": {
     "defaultRequire": 1
   },
   "mixins": [
     "meteorclient.FontsMixin",
+    "meteorclient.GuiRendererAccessor",
     "meteorclient.GuiRendererMixin",
+    "meteorclient.MeteorRenderPipelinesAccessor",
     "meteorclient.WHeaderMixin"
   ]
 }
