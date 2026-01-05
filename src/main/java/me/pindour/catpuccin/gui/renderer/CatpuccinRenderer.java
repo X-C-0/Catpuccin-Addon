@@ -18,6 +18,9 @@ import com.mojang.blaze3d.buffers.Std140Builder;
 import com.mojang.blaze3d.buffers.Std140SizeCalculator;
 import net.minecraft.client.gl.DynamicUniformStorage;
 import net.minecraft.client.MinecraftClient;
+import org.joml.Vector2f;
+import org.joml.Vector4f;
+
 import java.nio.ByteBuffer;
 
 import java.util.ArrayList;
@@ -211,7 +214,9 @@ public class CatpuccinRenderer {
         return op;
     }
 
-    public record StyleKey(FontStyle style, double scale) { }
+    public static void flipFrame() {
+        ROUNDED_STORAGE.clear();
+    }
 
     private void updateRoundedUniforms(double width, double height, double radius, Color color,
                                        boolean topLeft, boolean topRight, boolean bottomLeft, boolean bottomRight) {
@@ -235,14 +240,16 @@ public class CatpuccinRenderer {
         }
     }
 
+    public record StyleKey(FontStyle style, double scale) { }
+
     private static final class RoundedRectData implements DynamicUniformStorage.Uploadable {
-        private final org.joml.Vector4f fillColor = new org.joml.Vector4f();
-        private final org.joml.Vector4f borderColor = new org.joml.Vector4f();
-        private final org.joml.Vector4f radii = new org.joml.Vector4f();
-        private final org.joml.Vector4f borderData = new org.joml.Vector4f();
-        private final org.joml.Vector2f halfSize = new org.joml.Vector2f();
-        private final org.joml.Vector2f padding = new org.joml.Vector2f();
-        private final org.joml.Vector4f clipRect = new org.joml.Vector4f();
+        private final Vector4f fillColor = new Vector4f();
+        private final Vector4f borderColor = new Vector4f();
+        private final Vector4f radii = new Vector4f();
+        private final Vector4f borderData = new Vector4f();
+        private final Vector2f halfSize = new Vector2f();
+        private final Vector2f padding = new Vector2f();
+        private final Vector4f clipRect = new Vector4f();
 
         @Override
         public void write(ByteBuffer buffer) {
