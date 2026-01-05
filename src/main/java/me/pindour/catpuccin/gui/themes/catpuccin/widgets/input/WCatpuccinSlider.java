@@ -25,14 +25,26 @@ public class WCatpuccinSlider extends WSlider implements CatpuccinWidget {
         double backgroundHeight = handleSize() / 3;
         double backgroundY = y + height / 2 - backgroundHeight / 2;
 
+        // Left
         renderer().roundedRect(
                 x,
                 backgroundY,
-                width,
+                valueWidth(),
+                backgroundHeight,
+                smallRadius(),
+                theme.surface2Color(),
+                CornerStyle.LEFT
+        );
+
+        // Right
+        renderer().roundedRect(
+                x + valueWidth(),
+                backgroundY,
+                width - valueWidth(),
                 backgroundHeight,
                 smallRadius(),
                 theme.surface0Color(),
-                CornerStyle.ALL
+                CornerStyle.RIGHT
         );
     }
 
@@ -40,6 +52,7 @@ public class WCatpuccinSlider extends WSlider implements CatpuccinWidget {
         Color color = (handleMouseOver ? theme.accentColor() : theme.surface2Color());
         double size = handleSize();
 
+        // TODO: FIX vlevo a vpravo neni gunguje drag
         double valueWidth = valueWidth();
         double handleX = x + valueWidth;
         double handleY = y + height / 2 - size / 2;

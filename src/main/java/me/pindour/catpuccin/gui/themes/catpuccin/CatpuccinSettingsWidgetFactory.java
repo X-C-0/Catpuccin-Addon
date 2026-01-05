@@ -6,7 +6,6 @@ import me.pindour.catpuccin.gui.text.RichText;
 import me.pindour.catpuccin.gui.text.TextSize;
 import me.pindour.catpuccin.gui.themes.catpuccin.icons.CatpuccinIcons;
 import me.pindour.catpuccin.gui.themes.catpuccin.widgets.WCatpuccinLabel;
-import me.pindour.catpuccin.gui.themes.catpuccin.widgets.pressable.WCatpuccinButton;
 import me.pindour.catpuccin.gui.themes.catpuccin.widgets.pressable.WCatpuccinCheckbox;
 import me.pindour.catpuccin.gui.themes.catpuccin.widgets.settings.WCatpuccinDoubleEdit;
 import me.pindour.catpuccin.gui.themes.catpuccin.widgets.settings.WCatpuccinIntEdit;
@@ -43,9 +42,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
+import static me.pindour.catpuccin.utils.WidgetUtils.reset;
 import static meteordevelopment.meteorclient.MeteorClient.mc;
 
 public class CatpuccinSettingsWidgetFactory extends SettingsWidgetFactory {
@@ -179,42 +178,21 @@ public class CatpuccinSettingsWidgetFactory extends SettingsWidgetFactory {
         WCatpuccinCheckbox checkbox = (WCatpuccinCheckbox) list.add(theme.checkbox(setting.get())).widget();
         checkbox.action = () -> setting.set(checkbox.checked);
 
-        title(list, setting).padLeft(theme.pad());
+        title(list, setting).padLeft(theme.pad()).expandCellX();
 
-        reset(table, setting, () -> checkbox.setChecked(setting.get()), () -> list.mouseOver);
+        reset(list, setting, () -> checkbox.setChecked(setting.get()), () -> list.mouseOver);
     }
 
     private void intW(WTable table, IntSetting setting) {
-        WCatpuccinIntEdit edit = table.add(theme.catpuccinIntEdit(
-                setting.title,
-                setting.description,
-                setting.get(),
-                setting.min,
-                setting.max,
-                setting.sliderMin,
-                setting.sliderMax,
-                setting.noSlider
-        )).expandX().widget();
+        WCatpuccinIntEdit edit = table.add(theme.catpuccinIntEdit(setting)).expandX().widget();
 
         edit.action = () -> {
             if (!setting.set(edit.get())) edit.set(setting.get());
         };
-
-        edit.header.add(reset(table, setting, () -> edit.set(setting.get()), edit::showReset).widget());
     }
 
     private void doubleW(WTable table, DoubleSetting setting) {
-        WCatpuccinDoubleEdit edit = table.add(theme.catpuccinDoubleEdit(
-                setting.title,
-                setting.description,
-                setting.get(),
-                setting.min,
-                setting.max,
-                setting.sliderMin,
-                setting.sliderMax,
-                setting.decimalPlaces,
-                setting.noSlider
-        )).expandX().widget();
+        WCatpuccinDoubleEdit edit = table.add(theme.catpuccinDoubleEdit(setting)).expandX().widget();
 
         Runnable action = () -> {
             if (!setting.set(edit.get())) edit.set(setting.get());
@@ -222,8 +200,6 @@ public class CatpuccinSettingsWidgetFactory extends SettingsWidgetFactory {
 
         if (setting.onSliderRelease) edit.actionOnRelease = action;
         else edit.action = action;
-
-        edit.header.add(reset(table, setting, () -> edit.set(setting.get()), edit::showReset).widget());
     }
 
     private void stringW(WTable table, StringSetting setting) {
@@ -234,11 +210,12 @@ public class CatpuccinSettingsWidgetFactory extends SettingsWidgetFactory {
         CharFilter filter = setting.filter == null ? (text, c) -> true : setting.filter;
         Cell<WTextBox> cell = list.add(theme.textBox(setting.get(), "", setting.title, filter, setting.renderer));
         if (setting.wide) cell.minWidth(Utils.getWindowWidth() - Utils.getWindowWidth() / 4.0);
+        else cell.minWidth(200);
 
         WTextBox textBox = cell.expandX().widget();
         textBox.action = () -> setting.set(textBox.get());
 
-        reset(table, setting, () -> textBox.set(setting.get()), () -> list.mouseOver);
+        reset(list, setting, () -> textBox.set(setting.get()), () -> list.mouseOver);
     }
 
     private void stringListW(WTable table, StringListSetting setting) {
@@ -257,6 +234,7 @@ public class CatpuccinSettingsWidgetFactory extends SettingsWidgetFactory {
 
         WDropdown<T> dropdown = list.add(theme.dropdown(setting.title, setting.get())).expandCellX().widget();
         dropdown.action = () -> setting.set(dropdown.get());
+        dropdown.tooltip = setting.description;
 
         reset(table, setting, () -> dropdown.set(setting.get()), () -> list.mouseOver);
     }
@@ -556,7 +534,7 @@ public class CatpuccinSettingsWidgetFactory extends SettingsWidgetFactory {
     }
 
     private WCatpuccinDoubleEdit addVectorComponent(WTable table, String label, double value, Consumer<Double> update, Vector3dSetting setting) {
-        WCatpuccinDoubleEdit component = table.add(theme.catpuccinDoubleEdit(label, setting.description, value, setting.min, setting.max, setting.sliderMin, setting.sliderMax, setting.decimalPlaces, setting.noSlider)).expandX().widget();
+        WCatpuccinDoubleEdit component = table.add(theme.catpuccinDoubleEdit(label, setting.description, value, setting.min, setting.max, setting.decimalPlaces, setting.sliderMin, setting.sliderMax, setting.noSlider)).expandX().widget();
         if (setting.onSliderRelease) {
             component.actionOnRelease = () -> update.accept(component.get());
         } else {
@@ -586,22 +564,7 @@ public class CatpuccinSettingsWidgetFactory extends SettingsWidgetFactory {
         reset(list, setting, null, () -> list.mouseOver);
     }
 
-    private Cell<WCatpuccinButton> reset(WContainer c, Setting<?> setting, Runnable action) {
-        return reset(c, setting, action, null);
-    }
 
-    private Cell<WCatpuccinButton> reset(WContainer c, Setting<?> setting, Runnable action, BooleanSupplier visibilityCondition) {
-        WCatpuccinButton button = (WCatpuccinButton) theme.button(CatpuccinIcons.RESET.texture());
-
-        button.setVisibilityCondition(visibilityCondition);
-        button.tooltip = "Reset";
-        button.action = () -> {
-            setting.reset();
-            if (action != null) action.run();
-        };
-
-        return c.add(button).right();
-    }
 
     private Cell<WLabel> title(WContainer c, Setting<?> setting) {
         return title(c, setting, false);

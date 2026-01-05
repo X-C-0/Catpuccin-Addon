@@ -128,8 +128,10 @@ public class WCatpuccinTextBox extends WTextBox implements CatpuccinWidget {
             // Title
             if (hasTitle()) {
                 renderer().roundedRect(
-                        x - titleWidth, y,
-                        titleWidth, height,
+                        x - titleWidth,
+                        y,
+                        titleWidth,
+                        height,
                         smallRadius(),
                         theme.surface0Color(),
                         CornerStyle.LEFT

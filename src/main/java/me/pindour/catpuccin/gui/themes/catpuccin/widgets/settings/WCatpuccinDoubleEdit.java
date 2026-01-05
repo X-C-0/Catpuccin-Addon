@@ -1,10 +1,15 @@
 package me.pindour.catpuccin.gui.themes.catpuccin.widgets.settings;
 
+import me.pindour.catpuccin.gui.text.RichText;
+import me.pindour.catpuccin.gui.text.TextSize;
 import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinWidget;
 import me.pindour.catpuccin.gui.themes.catpuccin.widgets.input.WCatpuccinTextBox;
+import me.pindour.catpuccin.utils.ColorUtils;
+import me.pindour.catpuccin.utils.WidgetUtils;
 import meteordevelopment.meteorclient.gui.widgets.containers.WHorizontalList;
 import meteordevelopment.meteorclient.gui.widgets.containers.WVerticalList;
 import meteordevelopment.meteorclient.gui.widgets.input.WSlider;
+import meteordevelopment.meteorclient.settings.DoubleSetting;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -12,8 +17,7 @@ import java.math.RoundingMode;
 public class WCatpuccinDoubleEdit extends WVerticalList implements CatpuccinWidget {
     private final String title;
     private final String description;
-    public WHorizontalList header;
-
+    private final DoubleSetting setting;
     private double value;
 
     private final double min, max;
@@ -28,9 +32,24 @@ public class WCatpuccinDoubleEdit extends WVerticalList implements CatpuccinWidg
     private WCatpuccinTextBox textBox;
     private WSlider slider;
 
-    public WCatpuccinDoubleEdit(String title, String description, double value, double min, double max, double sliderMin, double sliderMax, int decimalPlaces, boolean noSlider) {
+    public WCatpuccinDoubleEdit(DoubleSetting setting) {
+        this(setting.title,
+            setting.description,
+            setting,
+            setting.get(),
+            setting.min,
+            setting.max,
+            setting.decimalPlaces,
+            setting.sliderMin,
+            setting.sliderMax,
+            setting.noSlider
+        );
+    }
+
+    public WCatpuccinDoubleEdit(String title, String description, DoubleSetting setting, double value, double min, double max, int decimalPlaces, double sliderMin, double sliderMax, boolean noSlider) {
         this.title = title;
         this.description = description;
+        this.setting = setting;
         this.value = value;
         this.min = min;
         this.max = max;
@@ -43,25 +62,52 @@ public class WCatpuccinDoubleEdit extends WVerticalList implements CatpuccinWidg
 
     @Override
     public void init() {
-        header = add(theme.horizontalList()).expandX().widget();
+        WHorizontalList list = add(theme.horizontalList()).expandX().widget();
 
         // Buttons
         if (noSlider) {
-            header.add(theme.button("+")).minWidth(30).widget().action = () -> setButton(get() + 1);
-            header.add(theme.button("-")).minWidth(30).widget().action = () -> setButton(get() - 1);
+            list.add(theme.button("+")).minWidth(30).widget().action = () -> setButton(get() + 1);
+            list.add(theme.button("-")).minWidth(30).widget().action = () -> setButton(get() - 1);
         }
 
         // Title
-        header.add(theme().label(title + ":")).bottom().widget().tooltip = description;
+        list.add(theme().label(title + ":")).widget().tooltip = description;
 
         // Value
-        textBox = (WCatpuccinTextBox) header.add(theme().textBox(valueString(), this::filter, 0)).expandX().bottom().widget();
+        textBox = (WCatpuccinTextBox) list.add(theme().textBox(valueString(), this::filter, 0)).expandX().expandCellX().widget();
         textBox.shouldRenderBackground(false);
         textBox.color(theme().accentColor());
 
-        // Slider
+        // Reset
+        if (setting != null) WidgetUtils.reset(list, setting, () -> set(setting.get()), this::showReset);
+
         if (!noSlider) {
-            slider = add(theme.slider(value, sliderMin, sliderMax)).minWidth(200).expandX().widget();
+            WHorizontalList sliderList = add(theme.horizontalList()).expandX().padHorizontal(8).padBottom(6).widget();
+
+            // Min label
+            RichText minText = RichText
+                    .of(String.valueOf(sliderMin))
+                    .scale(TextSize.SMALL.get());
+
+            sliderList.add(theme().label(minText)
+                    .color(ColorUtils.withAlpha(theme().textSecondaryColor(), 0.5)))
+                    .padLeft(pad() / 2);
+
+            // Slider
+            slider = sliderList.add(theme.slider(value, sliderMin, sliderMax))
+                    .padHorizontal(6)
+                    .minWidth(200)
+                    .expandX()
+                    .widget();
+
+            // Max label
+            RichText maxText = RichText
+                    .of(String.valueOf(sliderMax))
+                    .scale(TextSize.SMALL.get());
+
+            sliderList.add(theme().label(maxText)
+                    .color(ColorUtils.withAlpha(theme().textSecondaryColor(), 0.5)))
+                    .padRight(pad() / 2);
         }
 
         textBox.actionOnUnfocused = () -> {
