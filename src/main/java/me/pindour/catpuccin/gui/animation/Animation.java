@@ -1,18 +1,26 @@
 package me.pindour.catpuccin.gui.animation;
 
 public class Animation {
-    private final AnimationType type;
+    private final Easing easing;
     private final long duration;
 
     private long startTime;
-    private boolean running = false;
-    private boolean finished = false;
+    private State state = State.IDLE;
     private Direction direction;
 
-    public Animation(AnimationType type, long durationMillis) {
-        this.type = type;
+    private enum State { IDLE, RUNNING, FINISHED }
+
+    public Animation(Easing easing, long durationMillis) {
+        this.easing = easing;
         this.duration = durationMillis;
         this.direction = Direction.FORWARDS;
+    }
+
+    public Animation(Easing easing, long durationMillis, Direction initialDirection) {
+        this.easing = easing;
+        this.duration = durationMillis;
+        this.direction = initialDirection;
+        finishedAt(initialDirection);
     }
 
     public void start() {
@@ -21,80 +29,61 @@ public class Animation {
 
     public void start(Direction direction) {
         this.startTime = System.currentTimeMillis();
-        this.running = true;
-        this.finished = false;
+        this.state = State.RUNNING;
         this.direction = direction;
     }
 
     public void finishedAt(Direction dir) {
-        running = false;
-        finished = true;
+        state = State.FINISHED;
         direction = dir;
         startTime = System.currentTimeMillis() - (dir.isForwards() ? duration : 0);
     }
 
     public void reverse() {
-        double currentProgress = getProgress();
+        double progress = getProgress();
         direction = direction.opposite();
 
-        long newElapsed;
-        if (direction.isForwards()) newElapsed = (long)(currentProgress * duration);
-        else newElapsed = (long)((1.0 - currentProgress) * duration);
+        double remainingProgress = direction.isForwards() ?
+                (1.0 - progress) : progress;
 
+        long newElapsed = (long)((1.0 - remainingProgress) * duration);
         startTime = System.currentTimeMillis() - newElapsed;
-        running = true;
-        finished = false;
+
+        state = State.RUNNING;
     }
 
     public void reset() {
         startTime = System.currentTimeMillis();
-        running = false;
-        finished = false;
+        state = State.IDLE;
         direction = Direction.FORWARDS;
     }
 
     public double getProgress() {
         boolean forward = direction.isForwards();
 
-        if (!running) {
-            if (finished) return forward ? 1.0 : 0.0;
-            else return forward ? 0.0 : 1.0;
+        if (state != State.RUNNING) {
+            if (state == State.FINISHED) return forward ? 1.0 : 0.0;
+            return forward ? 0.0 : 1.0;
         }
 
         long elapsed = System.currentTimeMillis() - startTime;
 
         if (elapsed >= duration) {
-            running = false;
-            finished = true;
+            state = State.FINISHED;
             return forward ? 1.0 : 0.0;
         }
 
         double t = (double) elapsed / duration;
-        double easedProgress = applyEasing(t);
+        double easedProgress = easing.apply(t);
 
         return forward ? easedProgress : 1.0 - easedProgress;
     }
 
     public boolean isRunning() {
-        return running;
+        return state == State.RUNNING;
     }
 
     public boolean isFinished() {
-        return finished;
-    }
-
-    public Direction getDirection() {
-        return direction;
-    }
-
-    private double applyEasing(double t) {
-        return switch (type) {
-            case Linear -> t;
-            case EaseIn -> t * t;
-            case EaseOut -> 1.0 - Math.pow(1.0 - t, 2);
-            case EaseInOut -> t < 0.5
-                    ? 2.0 * t * t
-                    : 1.0 - 2.0 * Math.pow(1.0 - t, 2);
-        };
+        return state == State.FINISHED;
     }
 }

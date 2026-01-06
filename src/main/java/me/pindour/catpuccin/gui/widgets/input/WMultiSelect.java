@@ -53,8 +53,11 @@ public abstract class WMultiSelect<T> extends WVerticalList {
     public void init() {
         CatpuccinGuiTheme theme = (CatpuccinGuiTheme) getTheme();
 
-        animation = new Animation(theme.uiAnimationType(), theme.uiAnimationSpeed());
-        animation.finishedAt(expanded ? Direction.FORWARDS : Direction.BACKWARDS);
+        animation = new Animation(
+                theme.guiAnimationEasing(),
+                theme.guiAnimationSpeed(),
+                expanded ? Direction.FORWARDS : Direction.BACKWARDS
+        );
 
         // Header
         header = add(createHeader()).padBottom(pad()).expandX().widget();

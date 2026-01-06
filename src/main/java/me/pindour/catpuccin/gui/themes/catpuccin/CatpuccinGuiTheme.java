@@ -1,6 +1,6 @@
 package me.pindour.catpuccin.gui.themes.catpuccin;
 
-import me.pindour.catpuccin.gui.animation.AnimationType;
+import me.pindour.catpuccin.gui.animation.Easing;
 import me.pindour.catpuccin.gui.renderer.CatpuccinRenderer;
 import me.pindour.catpuccin.gui.screens.CatpuccinModuleScreen;
 import me.pindour.catpuccin.gui.screens.CatpuccinModulesScreen;
@@ -151,10 +151,10 @@ public class CatpuccinGuiTheme extends GuiTheme {
 
     // Animations
 
-    public final Setting<AnimationType> guiAnimation = sgAnimations.add(new EnumSetting.Builder<AnimationType>()
+    public final Setting<Easing> guiAnimation = sgAnimations.add(new EnumSetting.Builder<Easing>()
             .name("animation-type")
             .description("Animation to play when interacting with the UI.")
-            .defaultValue(AnimationType.EaseOut)
+            .defaultValue(Easing.QUART_OUT)
             .build()
     );
 
@@ -170,7 +170,7 @@ public class CatpuccinGuiTheme extends GuiTheme {
 
     public final Setting<CatppuccinFlavors> flavor = sgColors.add(new EnumSetting.Builder<CatppuccinFlavors>()
             .name("Flavor")
-            .description("Main color (flavor) of the UI.")
+            .description("Main theme of the UI.")
             .defaultValue(CatppuccinFlavors.Macchiato)
             .onChanged(this::updateCache)
             .build()
@@ -489,11 +489,11 @@ public class CatpuccinGuiTheme extends GuiTheme {
 
     // Animations
 
-    public AnimationType uiAnimationType() {
+    public Easing guiAnimationEasing() {
         return guiAnimation.get();
     }
 
-    public int uiAnimationSpeed() {
+    public int guiAnimationSpeed() {
         return guiAnimationSpeed.get();
     }
 

@@ -46,10 +46,13 @@ public class WCatpuccinModule extends WPressable implements CatpuccinWidget {
         boolean isActive = module.isActive();
         wasActive = isActive;
 
-        glowAnimation = new Animation(theme().uiAnimationType(), theme().uiAnimationSpeed());
-        glowAnimation.finishedAt(isActive ? Direction.FORWARDS : Direction.BACKWARDS);
+        glowAnimation = new Animation(
+                theme().guiAnimationEasing(),
+                theme().guiAnimationSpeed(),
+                isActive ? Direction.FORWARDS : Direction.BACKWARDS
+        );
 
-        hoverAnimation = new Animation(theme().uiAnimationType(), theme().uiAnimationSpeed());
+        hoverAnimation = new Animation(theme().guiAnimationEasing(), theme().guiAnimationSpeed());
 
         highlightedColor = theme().accentColor().copy();
         transparentColor = highlightedColor.copy().a(10);

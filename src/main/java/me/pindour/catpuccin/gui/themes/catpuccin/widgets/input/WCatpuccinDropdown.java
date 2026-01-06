@@ -47,8 +47,11 @@ public class WCatpuccinDropdown<T> extends WDropdown<T> implements CatpuccinWidg
             if (i == values.length - 1) cell.padBottom(pad);
         }
 
-        animation = new Animation(theme().uiAnimationType(), theme().uiAnimationSpeed());
-        animation.finishedAt(Direction.BACKWARDS);
+        animation = new Animation(
+                theme().guiAnimationEasing(),
+                theme().guiAnimationSpeed(),
+                Direction.BACKWARDS
+        );
     }
 
     @Override
