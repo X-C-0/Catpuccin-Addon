@@ -34,8 +34,13 @@ import meteordevelopment.meteorclient.renderer.Fonts;
 import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.render.color.SettingColor;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resource.language.I18n;
+#if MC_VER < MC_1_21_11
+import org.apache.commons.lang3.StringUtils;
+#else
 import org.apache.commons.lang3.Strings;
+#endif
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -96,6 +101,14 @@ public class CatpuccinSettingsWidgetFactory extends SettingsWidgetFactory {
         return theme.textHeight() / 3;
     }
 
+    private boolean matchesFilter(String title, String filter) {
+        #if MC_VER < MC_1_21_11
+        return StringUtils.containsIgnoreCase(title, filter);
+        #else
+        return Strings.CI.contains(title, filter);
+        #endif
+    }
+
     // Setting groups
 
     @Override
@@ -132,7 +145,7 @@ public class CatpuccinSettingsWidgetFactory extends SettingsWidgetFactory {
         RemoveInfo removeInfo = null;
 
         for (Setting<?> setting : group) {
-            if (!Strings.CI.contains(setting.title, filter)) continue;
+            if (!matchesFilter(setting.title, filter)) continue;
 
             boolean visible = setting.isVisible();
             setting.lastWasVisible = visible;
@@ -258,9 +271,7 @@ public class CatpuccinSettingsWidgetFactory extends SettingsWidgetFactory {
         WHorizontalList list = table.add(theme.horizontalList()).expandX().widget();
 
         WButton edit = list.add(theme.button(CatpuccinIcons.EDIT.texture())).widget();
-        edit.action = () -> mc.setScreen(
-                setting/*? if <=1.21.4 >>+ '()' *//*.get()*/.createScreen(theme)
-        );
+        edit.action = () -> mc.setScreen(createGenericScreen(setting));
 
         title(list, setting).padLeft(theme.pad());
     }
@@ -396,13 +407,29 @@ public class CatpuccinSettingsWidgetFactory extends SettingsWidgetFactory {
         WHorizontalList list = table.add(theme.horizontalList()).expandX().widget();
 
         WButton button = list.add(theme.button(GuiRenderer.EDIT)).widget();
-        button.action = () -> mc.setScreen(
-                new BlockDataSettingScreen/*? if >= 1.21.11 >>+ '<>'*/<>(theme, setting)
-        );
+        button.action = () -> mc.setScreen(createBlockDataScreen(setting));
 
         title(list, setting).padLeft(theme.pad());
 
         reset(list, setting, null);
+    }
+
+    private Screen createGenericScreen(GenericSetting<?> setting) {
+        #if MC_VER >= MC_1_21_10
+        return ((IGeneric) setting.get()).createScreen(theme, (GenericSetting) setting);
+        #elif MC_VER < MC_1_21_11
+        return setting.get().createScreen(theme);
+        #else
+        return setting.createScreen(theme);
+        #endif
+    }
+
+    private Screen createBlockDataScreen(BlockDataSetting<?> setting) {
+        #if MC_VER >= MC_1_21_11
+        return new BlockDataSettingScreen<>(theme, setting);
+        #else
+        return new BlockDataSettingScreen(theme, setting);
+        #endif
     }
 
     private void potionW(WTable table, PotionSetting setting) {

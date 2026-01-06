@@ -27,8 +27,9 @@ import java.util.Set;
 import static meteordevelopment.meteorclient.utils.Utils.getWindowHeight;
 import static meteordevelopment.meteorclient.utils.Utils.getWindowWidth;
 
-//? if >=1.21.5
+#if MC_VER > MC_1_21_4
 import net.minecraft.util.Pair;
+#endif
 
 public class CatpuccinModulesScreen extends TabScreen {
     private final CatpuccinGuiTheme theme;
@@ -119,31 +120,17 @@ public class CatpuccinModulesScreen extends TabScreen {
     protected void createSearchW(WContainer w, String text) {
         if (!text.isEmpty()) {
             // Titles
-            //? if <=1.21.4 {
-            /*Set<Module> modules = Modules.get().searchTitles(text);
-            *///?} else {
+            #if MC_VER < MC_1_21_11
+            Set<Module> modules = Modules.get().searchTitles(text);
+            #else
             List<Pair<Module, String>> modules = Modules.get().searchTitles(text);
-            //?}
+            #endif
             
             if (!modules.isEmpty()) {
                 WSection section = w.add(theme.section("Modules")).expandX().widget();
                 section.spacing = 0;
 
-                int count = 0;
-
-                //? if <=1.21.4 {
-                /*for (Module module : modules) {
-                    if (count >= Config.get().moduleSearchCount.get() || count >= modules.size()) break;
-                    section.add(theme.module(module)).expandX();
-                    count++;
-                }
-                *///?} else {
-                for (Pair<Module, String> p : modules) {
-                    if (count >= Config.get().moduleSearchCount.get() || count >= modules.size()) break;
-                    section.add(theme.module(p.getLeft(), p.getRight())).expandX();
-                    count++;
-                }
-                //?}
+                addModuleSearchResults(section, modules, Config.get().moduleSearchCount.get());
             }
 
             // Settings
@@ -194,6 +181,26 @@ public class CatpuccinModulesScreen extends TabScreen {
 
         return w;
     }
+
+    #if MC_VER < MC_1_21_11
+    private void addModuleSearchResults(WSection section, Set<Module> modules, int limit) {
+        int count = 0;
+        for (Module module : modules) {
+            if (count >= limit || count >= modules.size()) break;
+            section.add(theme.module(module)).expandX();
+            count++;
+        }
+    }
+    #else
+    private void addModuleSearchResults(WSection section, List<Pair<Module, String>> modules, int limit) {
+        int count = 0;
+        for (Pair<Module, String> p : modules) {
+            if (count >= limit || count >= modules.size()) break;
+            section.add(theme.module(p.getLeft(), p.getRight())).expandX();
+            count++;
+        }
+    }
+    #endif
 
     // Favorites
 
@@ -265,9 +272,13 @@ public class CatpuccinModulesScreen extends TabScreen {
             List<Module> moduleList = new ArrayList<>();
             for (Category category : Modules.loopCategories()) {
                 for (Module module : Modules.get().getGroup(category)) {
+                    #if MC_VER >= MC_1_21_4
                     if (!Config.get().hiddenModules.get().contains(module)) {
                         moduleList.add(module);
                     }
+                    #else
+                    moduleList.add(module);
+                    #endif
                 }
 
                 // Ensure empty categories are not shown

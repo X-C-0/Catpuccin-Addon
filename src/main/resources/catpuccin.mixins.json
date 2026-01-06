@@ -2,14 +2,19 @@
   "required": true,
   "package": "me.pindour.catpuccin.mixin",
   "compatibilityLevel": "JAVA_21",
+  "plugin": "me.pindour.catpuccin.mixin.CatpuccinMixinPlugin",
   "client": [
+    "RenderSystemMixin"
   ],
   "injectors": {
     "defaultRequire": 1
   },
   "mixins": [
+    "RenderSystemMixin",
     "meteorclient.FontsMixin",
+    "meteorclient.GuiRendererAccessor",
     "meteorclient.GuiRendererMixin",
+    "meteorclient.MeteorRenderPipelinesAccessor",
     "meteorclient.WHeaderMixin"
   ]
 }

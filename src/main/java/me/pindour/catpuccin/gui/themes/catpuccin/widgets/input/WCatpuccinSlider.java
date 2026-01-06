@@ -9,8 +9,9 @@ import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.widgets.input.WSlider;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 
-//? if >=1.21.9
+#if MC_VER >= MC_1_21_10
 import net.minecraft.client.gui.Click;
+#endif
 
 public class WCatpuccinSlider extends WSlider implements CatpuccinWidget {
     private double handlePadding;
@@ -37,31 +38,33 @@ public class WCatpuccinSlider extends WSlider implements CatpuccinWidget {
     }
 
     @Override
+#if MC_VER >= MC_1_21_10
     public boolean onMouseClicked(Click click, boolean used) {
-        boolean clicked = super.onMouseClicked(
-                //? if >=1.21.9
-                click,
-                //? if <=1.21.8
-                //mouseX, mouseY, button,
-                used
-        );
-
-        if (clicked) animation.start(Direction.FORWARDS);
+        boolean clicked = super.onMouseClicked(click, used);
+        handleClick(clicked);
         return clicked;
     }
 
     @Override
     public boolean onMouseReleased(Click click) {
-        boolean released = super.onMouseReleased(
-                //? if >=1.21.9
-                click
-                //? if <=1.21.8
-                //mouseX, mouseY, button
-        );
-
-        if (released) animation.start(Direction.BACKWARDS);
+        boolean released = super.onMouseReleased(click);
+        handleRelease(released);
         return released;
     }
+#else
+    public boolean onMouseClicked(double mouseX, double mouseY, int button, boolean used) {
+        boolean clicked = super.onMouseClicked(mouseX, mouseY, button, used);
+        handleClick(clicked);
+        return clicked;
+    }
+
+    @Override
+    public boolean onMouseReleased(double mouseX, double mouseY, int button) {
+        boolean released = super.onMouseReleased(mouseX, mouseY, button);
+        handleRelease(released);
+        return released;
+    }
+#endif
 
     @Override
     protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
@@ -110,7 +113,18 @@ public class WCatpuccinSlider extends WSlider implements CatpuccinWidget {
         double handleX = x + valueWidth + handlePadding + handleTextureSize / 2 - size / 2;
         double handleY = y + height / 2 - size / 2;
 
-        if (theme().roundedCorners.get()) renderer.quad(handleX, handleY, size, size, GuiRenderer.CIRCLE, color);
-        else renderer.quad(handleX, handleY, size, size, color);
+        if (theme().roundedCorners.get()) {
+            catpuccinRenderer().roundedRect(handleX, handleY, size, size, size * 0.5, color, CornerStyle.ALL);
+        } else {
+            renderer.quad(handleX, handleY, size, size, color);
+        }
+    }
+
+    private void handleClick(boolean clicked) {
+        if (clicked) animation.start(Direction.FORWARDS);
+    }
+
+    private void handleRelease(boolean released) {
+        if (released) animation.start(Direction.BACKWARDS);
     }
 }

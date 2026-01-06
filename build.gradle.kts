@@ -1,13 +1,62 @@
 plugins {
     id("fabric-loom")
+    id("systems.manifold.manifold-gradle-plugin") version "0.0.2-alpha"
 }
 
-val minecraftVersion = stonecutter.current.version
-val yarnMappings = project.property("yarn_mappings") as String
+val minecraftVersion = gradle.extra["minecraft_version"] as String
+val yarnMappings = gradle.extra["yarn_mappings"] as String
 val loaderVersion = project.property("fabric_loader") as String
 val modVersion = project.property("mod_version") as String
 val mavenGroup = project.property("mod_group") as String
-val meteorVersion = project.property("meteor_version") as String
+val meteorVersion = gradle.extra["meteor_version"] as String
+val manifoldVersion = project.property("manifold_version") as String
+
+@Suppress("UNCHECKED_CAST")
+val mcVers = gradle.extra["mcVers"] as List<String>
+val mcIndex = gradle.extra["mcIndex"] as Int
+
+fun versionToInt(version: String): Int {
+    val parts = version.split(".")
+    val major = parts.getOrNull(0)?.toIntOrNull() ?: 0
+    val minor = parts.getOrNull(1)?.toIntOrNull() ?: 0
+    val patch = parts.getOrNull(2)?.toIntOrNull() ?: 0
+    return major * 10000 + minor * 100 + patch
+}
+
+fun writeBuildProperties() {
+    val byMajorMinor = mcVers.groupBy { ver ->
+        val parts = ver.split(".")
+        val major = parts.getOrNull(0)?.toIntOrNull() ?: 0
+        val minor = parts.getOrNull(1)?.toIntOrNull() ?: 0
+        Pair(major, minor)
+    }
+
+    val macros = mutableSetOf<String>()
+    for ((key, versions) in byMajorMinor) {
+        val patches = versions.map { ver ->
+            ver.split(".").getOrNull(2)?.toIntOrNull() ?: 0
+        }
+        val minPatch = patches.minOrNull() ?: 0
+        val maxPatch = patches.maxOrNull() ?: 0
+        for (patch in minPatch..maxPatch) {
+            macros.add("${key.first}.${key.second}.${patch}")
+        }
+    }
+
+    val sb = StringBuilder()
+    sb.append("# DON'T TOUCH THIS FILE, This is handled by the build script\n")
+    macros.sortedWith { a, b ->
+        versionToInt(a).compareTo(versionToInt(b))
+    }.forEach { ver ->
+        val macroName = "MC_" + ver.replace(".", "_")
+        sb.append(macroName).append("=").append(versionToInt(ver)).append("\n")
+    }
+    sb.append("MC_VER=").append(versionToInt(minecraftVersion)).append("\n")
+
+    file("build.properties").writeText(sb.toString())
+}
+
+writeBuildProperties()
 
 base {
     archivesName = project.property("mod_id") as String
@@ -34,33 +83,19 @@ dependencies {
 
     // Meteor
     modImplementation("meteordevelopment:meteor-client:$meteorVersion")
+
+    annotationProcessor("systems.manifold:manifold-preprocessor:$manifoldVersion")
 }
 
-stonecutter {
-    replacements {
-        string(current.parsed <= "1.21.8") {
-            // Click -> mouseX, mouseY, button
-            replace("onMouseClicked(Click click", "onMouseClicked(double mouseX, double mouseY, int button")
-            replace("onMouseReleased(Click click", "onMouseReleased(double mouseX, double mouseY, int button")
-            replace("mouseReleased(Click click", "mouseReleased(double mouseX, double mouseY, int button")
-            // CharInput -> char
-            replace("onCharTyped(CharInput input)", "onCharTyped(char input)")
-            // KeyInput -> key, mods
-            replace("onKeyRepeated(KeyInput input)", "onKeyRepeated(int key, int mods)")
-        }
-        string(current.parsed <= "1.21.4") {
-            // String utils
-            replace("org.apache.commons.lang3.Strings", "org.apache.commons.lang3.StringUtils")
-            replace("Strings.CI.contains", "StringUtils.containsIgnoreCase")
-        }
-    }
+manifold {
+    manifoldVersion = manifoldVersion
 }
 
 tasks {
     processResources {
         val propertyMap = mapOf(
             "version" to project.property("mod_version"),
-            "mc_version" to project.property("mod_mc_dep")
+            "mc_version" to gradle.extra["mod_mc_dep"]
         )
 
         inputs.properties(propertyMap)
@@ -94,6 +129,9 @@ tasks {
     }
 
     withType<JavaCompile> {
+        inputs.property("mcVer", minecraftVersion)
+        inputs.file(file("build.properties"))
+
         options.encoding = "UTF-8"
         options.release = 21
         options.compilerArgs.add("-Xlint:deprecation")
