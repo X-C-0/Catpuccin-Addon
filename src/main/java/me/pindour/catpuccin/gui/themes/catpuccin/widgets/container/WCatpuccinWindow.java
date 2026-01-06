@@ -13,8 +13,9 @@ import meteordevelopment.meteorclient.gui.widgets.WWidget;
 import meteordevelopment.meteorclient.gui.widgets.containers.WHorizontalList;
 import meteordevelopment.meteorclient.gui.widgets.containers.WWindow;
 import meteordevelopment.meteorclient.utils.render.color.Color;
-//? if >=1.21.9
+#if MC_VER >= MC_1_21_10
 import net.minecraft.client.gui.Click;
+#endif
 
 public class WCatpuccinWindow extends WWindow implements CatpuccinWidget {
     private final int shadowOffset = 2;
@@ -205,37 +206,44 @@ public class WCatpuccinWindow extends WWindow implements CatpuccinWidget {
         }
 
         @Override
+#if MC_VER >= MC_1_21_10
         public boolean onMouseClicked(Click click, boolean used) {
-            boolean clicked = super.onMouseClicked(
-                    //? if >=1.21.9
-                    click,
-                    //? if <=1.21.8
-                    //mouseX, mouseY, button,
-                    used
-            );
+            boolean clicked = super.onMouseClicked(click, used);
 
-            if (clicked && shouldSnap) {
-                //? if >=1.21.9 {
-                mouseOffsetX = click.x() - x;
-                mouseOffsetY = click.y() - y;
-                //? } else {
-                /*mouseOffsetX = mouseX - x;
-                mouseOffsetY = mouseY - y;
-                *///? }
-            }
+            if (clicked) updateMouseOffsets(click.x(), click.y());
 
             return clicked;
         }
 
         @Override
         public boolean mouseReleased(Click click) {
+            handleRelease();
+            return super.mouseReleased(click);
+        }
+#else
+        public boolean onMouseClicked(double mouseX, double mouseY, int button, boolean used) {
+            boolean clicked = super.onMouseClicked(mouseX, mouseY, button, used);
+
+            if (clicked) updateMouseOffsets(mouseX, mouseY);
+
+            return clicked;
+        }
+
+        @Override
+        public boolean mouseReleased(double mouseX, double mouseY, int button) {
+            handleRelease();
+            return super.mouseReleased(mouseX, mouseY, button);
+        }
+#endif
+
+        private void updateMouseOffsets(double mouseX, double mouseY) {
+            if (!shouldSnap) return;
+            mouseOffsetX = mouseX - x;
+            mouseOffsetY = mouseY - y;
+        }
+
+        private void handleRelease() {
             if (shouldSnap) modulesScreen.showGrid(false);
-            return super.mouseReleased(
-                    //? if >=1.21.9
-                    click
-                    //? if <=1.21.8
-                    //mouseX, mouseY, button
-            );
         }
 
         @Override

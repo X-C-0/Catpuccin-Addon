@@ -26,8 +26,9 @@ import meteordevelopment.meteorclient.utils.render.prompts.OkPrompt;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.nbt.NbtCompound;
 
-//? if >=1.21.5
+#if MC_VER >= MC_1_21_5
 import java.util.Optional;
+#endif
 
 import static meteordevelopment.meteorclient.utils.Utils.getWindowWidth;
 
@@ -161,31 +162,54 @@ public class CatpuccinModuleScreen extends WindowScreen {
         NbtCompound settingsTag = module.settings.toTag();
         if (!settingsTag.isEmpty()) tag.put("settings", settingsTag);
 
-        return NbtUtils.toClipboard(tag);
+        return writeClipboardTag(tag);
     }
 
     @Override
     public boolean fromClipboard() {
-        NbtCompound tag = NbtUtils.fromClipboard();
+        NbtCompound tag = readClipboardTag();
         if (tag == null) return false;
 
-        //? if <=1.21.4 {
-        /*if (!tag.contains("name") || !tag.getString("name").equals(module.name)) return false;
-        module.settings.fromTag(tag.getCompound("settings"));
-
-        *///?} else {
-        if (!tag.getString("name", "").equals(module.name)) return false;
-
-        Optional<NbtCompound> settings = tag.getCompound("settings");
-
-        if (settings.isPresent()) module.settings.fromTag(settings.get());
-        else module.settings.reset();
-        //?}
+        if (!applySettingsFromTag(tag)) return false;
 
         if (parent instanceof WidgetScreen p) p.reload();
         reload();
 
         return true;
+    }
+
+    private NbtCompound readClipboardTag() {
+        #if MC_VER <= MC_1_21_3
+        NbtCompound schema = new NbtCompound();
+        schema.putString("name", module.name);
+        NbtCompound schemaSettings = module.settings.toTag();
+        if (!schemaSettings.isEmpty()) schema.put("settings", schemaSettings);
+        return NbtUtils.fromClipboard(schema);
+        #else
+        return NbtUtils.fromClipboard();
+        #endif
+    }
+
+    private boolean applySettingsFromTag(NbtCompound tag) {
+        #if MC_VER < MC_1_21_5
+        if (!tag.contains("name") || !tag.getString("name").equals(module.name)) return false;
+        module.settings.fromTag(tag.getCompound("settings"));
+        return true;
+        #else
+        if (!tag.getString("name", "").equals(module.name)) return false;
+        Optional<NbtCompound> settings = tag.getCompound("settings");
+        if (settings.isPresent()) module.settings.fromTag(settings.get());
+        else module.settings.reset();
+        return true;
+        #endif
+    }
+
+    private boolean writeClipboardTag(NbtCompound tag) {
+        #if MC_VER <= MC_1_21_3
+        return NbtUtils.toClipboard(module.name, tag);
+        #else
+        return NbtUtils.toClipboard(tag);
+        #endif
     }
 
     private enum BindAction {

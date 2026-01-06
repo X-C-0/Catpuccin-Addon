@@ -58,10 +58,12 @@ import java.util.function.Supplier;
 
 import static meteordevelopment.meteorclient.MeteorClient.mc;
 
-//? if <1.21.9
-//import static net.minecraft.client.MinecraftClient.IS_SYSTEM_MAC;
-//? if >=1.21.10
+#if MC_VER < MC_1_21_10
+import static net.minecraft.client.MinecraftClient.IS_SYSTEM_MAC;
+#endif
+#if MC_VER >= MC_1_21_10
 import net.minecraft.client.util.MacWindowUtil;
+#endif
 
 public class CatpuccinGuiTheme extends GuiTheme {
     private final Map<CatppuccinColor, Color> colorCache;
@@ -304,24 +306,24 @@ public class CatpuccinGuiTheme extends GuiTheme {
         return w(new WCatpuccinButton(texture));
     }
 
-    //? if >=1.21.11 {
+    #if MC_VER >= MC_1_21_8
     @Override
     protected WConfirmedButton confirmedButton(String text, String confirmText, GuiTexture texture) {
         return w(new WCatpuccinConfirmedButton(text, confirmText, texture));
     }
-    //? }
+    #endif
 
     @Override
     public WMinus minus() {
         return w(new WCatpuccinMinus());
     }
 
-    //? if >=1.21.11 {
+    #if MC_VER >= MC_1_21_8
     @Override
     public WConfirmedMinus confirmedMinus() {
         return w(new WCatpuccinConfirmedMinus());
     }
-    //? }
+    #endif
 
     @Override
     public WPlus plus() {
@@ -386,14 +388,15 @@ public class CatpuccinGuiTheme extends GuiTheme {
 
     @Override
     public WWidget module(Module module) {
-        return w(module(module, module.title));
+        return w(createModuleWidget(module, module.title));
     }
 
-    //? if >= 1.21.11
+    #if MC_VER >= MC_1_21_11
     @Override
     public WWidget module(Module module, String title) {
-        return w(new WCatpuccinModule(module, title));
+        return w(createModuleWidget(module, title));
     }
+    #endif
 
     @Override
     public WQuad quad(Color color) {
@@ -697,11 +700,7 @@ public class CatpuccinGuiTheme extends GuiTheme {
     public double scale(double value) {
         double scaled = value * scale.get();
 
-        if (//? if >=1.21.9
-            MacWindowUtil.IS_MAC
-            //? if <1.21.9
-            //IS_SYSTEM_MAC
-        ) {
+        if (isMac()) {
             scaled /= (double) mc.getWindow().getWidth() / mc.getWindow().getFramebufferWidth();
         }
 
@@ -716,6 +715,14 @@ public class CatpuccinGuiTheme extends GuiTheme {
     @Override
     public boolean hideHUD() {
         return hideHUD.get();
+    }
+
+    private boolean isMac() {
+        #if MC_VER >= MC_1_21_10
+        return MacWindowUtil.IS_MAC;
+        #else
+        return IS_SYSTEM_MAC;
+        #endif
     }
 
     public class ThreeStateColor {
@@ -743,5 +750,9 @@ public class CatpuccinGuiTheme extends GuiTheme {
         public Color get(boolean hovered) {
             return get(false, hovered, false);
         }
+    }
+
+    private WWidget createModuleWidget(Module module, String title) {
+        return new WCatpuccinModule(module, title);
     }
 }

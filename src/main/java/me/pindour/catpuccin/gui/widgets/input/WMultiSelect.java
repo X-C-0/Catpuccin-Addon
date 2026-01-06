@@ -20,8 +20,9 @@ import java.util.function.Predicate;
 
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 
-//? if >=1.21.9
+#if MC_VER >= MC_1_21_10
 import net.minecraft.client.gui.Click;
+#endif
 
 public abstract class WMultiSelect<T> extends WVerticalList {
     protected final String title;
@@ -262,23 +263,27 @@ public abstract class WMultiSelect<T> extends WVerticalList {
         }
 
         @Override
+#if MC_VER >= MC_1_21_10
         public boolean onMouseClicked(Click click, boolean used) {
-            if (mouseOver
-                //? if >=1.21.9
-                && click.button() == GLFW_MOUSE_BUTTON_LEFT
-                //? if <1.21.9
-                //&& button == GLFW_MOUSE_BUTTON_LEFT
-                && !used
-            ) {
+            return handleHeaderClick(click.button() == GLFW_MOUSE_BUTTON_LEFT, used);
+        }
+#else
+        public boolean onMouseClicked(double mouseX, double mouseY, int button, boolean used) {
+            return handleHeaderClick(button == GLFW_MOUSE_BUTTON_LEFT, used);
+        }
+#endif
+
+        protected void onClick() {
+            setExpanded(!expanded);
+        }
+
+        private boolean handleHeaderClick(boolean leftButton, boolean used) {
+            if (mouseOver && leftButton && !used) {
                 onClick();
                 return true;
             }
 
             return false;
-        }
-
-        protected void onClick() {
-            setExpanded(!expanded);
         }
 
         protected RichText getSizeLabel() {
@@ -311,22 +316,15 @@ public abstract class WMultiSelect<T> extends WVerticalList {
         }
 
         @Override
+#if MC_VER >= MC_1_21_10
         public boolean onMouseClicked(Click click, boolean used) {
-            if (mouseOver
-                //? if >= 1.21.9
-                && click.button() == GLFW_MOUSE_BUTTON_LEFT
-                //? if < 1.21.9
-                //&& button == GLFW_MOUSE_BUTTON_LEFT
-                && !used
-                && !checkbox.mouseOver
-            ) {
-                checkbox.setChecked(!checkbox.checked);
-                onSelection();
-                return true;
-            }
-
-            return false;
+            return handleItemClick(click.button() == GLFW_MOUSE_BUTTON_LEFT, used);
         }
+#else
+        public boolean onMouseClicked(double mouseX, double mouseY, int button, boolean used) {
+            return handleItemClick(button == GLFW_MOUSE_BUTTON_LEFT, used);
+        }
+#endif
 
         private void onSelection() {
             boolean selected = checkbox.checked;
@@ -338,6 +336,16 @@ public abstract class WMultiSelect<T> extends WVerticalList {
             updateHeaderLabel();
 
             handleSelectionChange(item, selected);
+        }
+
+        private boolean handleItemClick(boolean leftButton, boolean used) {
+            if (mouseOver && leftButton && !used && !checkbox.mouseOver) {
+                checkbox.setChecked(!checkbox.checked);
+                onSelection();
+                return true;
+            }
+
+            return false;
         }
     }
 

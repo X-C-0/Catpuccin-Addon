@@ -14,14 +14,14 @@ import meteordevelopment.meteorclient.gui.widgets.input.WTextBox;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 import net.minecraft.util.math.MathHelper;
 
-//? if >=1.21.9 {
+#if MC_VER >= MC_1_21_10
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.input.CharInput;
 import net.minecraft.client.input.KeyInput;
 import net.minecraft.client.util.MacWindowUtil;
-//? } else {
-/*import static net.minecraft.client.MinecraftClient.IS_SYSTEM_MAC;
-*///? }
+#else
+import static net.minecraft.client.MinecraftClient.IS_SYSTEM_MAC;
+#endif
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -56,62 +56,21 @@ public class WCatpuccinTextBox extends WTextBox implements CatpuccinWidget {
     }
 
     @Override
+#if MC_VER >= MC_1_21_10
     public boolean onMouseClicked(Click click, boolean used) {
-        boolean clicked =  super.onMouseClicked(
-                //? if >=1.21.9
-                click,
-                //? if <1.21.9
-                //mouseX, mouseY, button,
-                used
-        );
+        boolean clicked =  super.onMouseClicked(click, used);
 
-        // Update widget width when text is cleared
-        if (clicked
-            && dynamicWidth
-            && !text.isEmpty()
-            //? if >=1.21.9
-            && click.button() == GLFW_MOUSE_BUTTON_LEFT
-            //? if <1.21.9
-            //&& button == GLFW_MOUSE_BUTTON_LEFT
-        ) {
-            onCalculateSize();
-        }
+        handleDynamicWidthClick(clicked, click.button() == GLFW_MOUSE_BUTTON_LEFT);
 
         return clicked;
     }
 
     @Override
     public boolean onKeyRepeated(KeyInput input) {
-        boolean repeated = super.onKeyRepeated(
-                //? if >=1.21.9
-                input
-                //? if <1.21.9
-                //key, mods
-        );
+        boolean repeated = super.onKeyRepeated(input);
 
-        //? if >=1.21.9 {
-
-        if (repeated && dynamicWidth) {
-            boolean control = MacWindowUtil.IS_MAC ? input.modifiers() == GLFW_MOD_SUPER : input.modifiers() == GLFW_MOD_CONTROL;
-
-            if ((control && input.key() == GLFW_KEY_V)
-                    || input.key() == GLFW_KEY_BACKSPACE
-                    || input.key() == GLFW_KEY_DELETE)
-                onCalculateSize();
-        }
-
-        //? } else {
-
-        /*if (repeated && dynamicWidth) {
-            boolean control = IS_SYSTEM_MAC ? mods == GLFW_MOD_SUPER : mods == GLFW_MOD_CONTROL;
-
-            if ((control && key == GLFW_KEY_V)
-                    || key == GLFW_KEY_BACKSPACE
-                    || key == GLFW_KEY_DELETE)
-                onCalculateSize();
-        }
-
-        *///? }
+        boolean control = MacWindowUtil.IS_MAC ? input.modifiers() == GLFW_MOD_SUPER : input.modifiers() == GLFW_MOD_CONTROL;
+        handleDynamicWidthKey(repeated, control, input.key());
 
         return repeated;
     }
@@ -122,11 +81,52 @@ public class WCatpuccinTextBox extends WTextBox implements CatpuccinWidget {
         if (dynamicWidth) onCalculateSize();
         return typed;
     }
+#else
+    public boolean onMouseClicked(double mouseX, double mouseY, int button, boolean used) {
+        boolean clicked = super.onMouseClicked(mouseX, mouseY, button, used);
+
+        handleDynamicWidthClick(clicked, button == GLFW_MOUSE_BUTTON_LEFT);
+
+        return clicked;
+    }
+
+    @Override
+    public boolean onKeyRepeated(int key, int mods) {
+        boolean repeated = super.onKeyRepeated(key, mods);
+
+        boolean control = IS_SYSTEM_MAC ? mods == GLFW_MOD_SUPER : mods == GLFW_MOD_CONTROL;
+        handleDynamicWidthKey(repeated, control, key);
+
+        return repeated;
+    }
+
+    @Override
+    public boolean onCharTyped(char input) {
+        boolean typed = super.onCharTyped(input);
+        if (dynamicWidth) onCalculateSize();
+        return typed;
+    }
+#endif
 
     @Override
     public void set(String text) {
         super.set(text);
         if (dynamicWidth) onCalculateSize();
+    }
+
+    private void handleDynamicWidthClick(boolean clicked, boolean leftButton) {
+        if (clicked && dynamicWidth && !text.isEmpty() && leftButton) {
+            onCalculateSize();
+        }
+    }
+
+    private void handleDynamicWidthKey(boolean repeated, boolean control, int key) {
+        if (!repeated || !dynamicWidth) return;
+        if ((control && key == GLFW_KEY_V)
+            || key == GLFW_KEY_BACKSPACE
+            || key == GLFW_KEY_DELETE) {
+            onCalculateSize();
+        }
     }
 
     @Override

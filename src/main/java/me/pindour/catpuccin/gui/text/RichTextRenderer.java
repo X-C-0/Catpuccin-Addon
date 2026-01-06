@@ -8,20 +8,20 @@ import org.lwjgl.BufferUtils;
 
 import java.nio.ByteBuffer;
 
-//? if <=1.21.4 {
-/*import net.minecraft.client.util.math.MatrixStack;
-*///?} else {
+#if MC_VER <= MC_1_21_4
+import net.minecraft.client.util.math.MatrixStack;
+#else
 import net.minecraft.client.MinecraftClient;
-//?}
+#endif
 
 public class RichTextRenderer implements TextRenderer {
     public static final Color SHADOW_COLOR = new Color(60, 60, 60, 180);
 
-    //? if <=1.21.4 {
-    /*private final Mesh mesh = new ShaderMesh(Shaders.TEXT, DrawMode.Triangles, Mesh.Attrib.Vec2, Mesh.Attrib.Vec2, Mesh.Attrib.Color);
-    *///?} else {
+    #if MC_VER <= MC_1_21_4
+    private final Mesh mesh = new ShaderMesh(Shaders.TEXT, DrawMode.Triangles, Mesh.Attrib.Vec2, Mesh.Attrib.Vec2, Mesh.Attrib.Color);
+    #else
     private final MeshBuilder mesh = new MeshBuilder(MeteorRenderPipelines.UI_TEXT);
-    //?}
+    #endif
 
     public final FontFace fontFace;
 
@@ -38,11 +38,31 @@ public class RichTextRenderer implements TextRenderer {
     private double fontScale = 1;
     private double scale = 1;
 
+    public void destroy() {
+        #if MC_VER <= MC_1_21_4
+        mesh.destroy();
+        #else
+        if (mesh.isBuilding()) mesh.end();
+        #endif
+    }
+
+    public RichTextRenderer(FontFace regularFace, FontFace boldFace, FontFace italicFace) {
+        if (boldFace == null || italicFace == null) {
+            FontFamily fontFamily = findFontFamily(regularFace);
+
+            regularFace = fontFamily.get(FontInfo.Type.Regular);
+            boldFace = fontFamily.get(FontInfo.Type.Bold);
+            italicFace = fontFamily.get(FontInfo.Type.Italic);
+        }
+
+        this.fontFace = regularFace;
+        this.regularFonts = loadFonts(regularFace);
+        this.boldFonts = boldFace != null ? loadFonts(boldFace) : regularFonts;
+        this.italicFonts = italicFace != null ? loadFonts(italicFace) : regularFonts;
+    }
+
     public RichTextRenderer(FontFace fontFace) {
-        this.fontFace = fontFace;
-        this.regularFonts = loadFonts(fontFace);
-        this.boldFonts = resolveVariant(fontFace, FontInfo.Type.Bold);
-        this.italicFonts = resolveVariant(fontFace, FontInfo.Type.Italic);
+        this(fontFace, null, null);
     }
 
     @Override
@@ -56,36 +76,38 @@ public class RichTextRenderer implements TextRenderer {
 
         if (!scaleOnly) mesh.begin();
 
-        int scaleIndex;
-        if (scale >= 3) scaleIndex = 4;
-        else if (scale >= 2.5) scaleIndex = 3;
-        else if (scale >= 2) scaleIndex = 2;
-        else if (scale >= 1.5) scaleIndex = 1;
-        else scaleIndex = 0;
+        Font[] fonts = getFonts(currentStyle);
+        int scaleIndex = calculateScaleIndex(scale);
+
+        if (scaleIndex >= fonts.length) scaleIndex = fonts.length - 1;
 
         currentFontIndex = scaleIndex;
-        Font[] fonts = getFonts(currentStyle);
-
-        if (currentFontIndex >= fonts.length) currentFontIndex = fonts.length - 1;
         currentFont = fonts[currentFontIndex];
 
         building = true;
-        this.scaleOnly = scaleOnly;
 
         fontScale = currentFont.getHeight() / 27.0;
+        this.scaleOnly = scaleOnly;
         this.scale = 1 + (scale - fontScale) / fontScale;
+    }
+
+    private int calculateScaleIndex(double scale) {
+        double scaleTruncated = Math.floor(scale * 10) / 10;
+
+        if (scaleTruncated >= 3) return 4;
+        if (scaleTruncated >= 2.5) return 3;
+        if (scaleTruncated >= 2) return 2;
+        if (scaleTruncated >= 1.5) return 1;
+        return 0;
     }
 
     // Width Calculations
 
     public double getWidth(RichTextSegment segment, int length) {
         Font[] fonts = getFonts(segment.getStyle());
-        Font font = building ? (currentFontIndex < fonts.length ? fonts[currentFontIndex] : fonts[0]) : fonts[0];
+        Font font = building ? getCurrentFont(fonts) : fonts[0];
 
-        double width = font.getWidth(segment.getText(), length);
-        if (segment.hasShadow()) width += 1;
-
-        return width * (segment.getScale() / 1.5);
+        return (font.getWidth(segment.getText(), length) + (segment.hasShadow() ? 1 : 0)) * segment.getScale() / 1.5;
     }
 
     public double getWidth(RichText text, int length) {
@@ -95,15 +117,21 @@ public class RichTextRenderer implements TextRenderer {
         int remainingLength = length;
 
         for (RichTextSegment segment : text.getSegments()) {
+            if (remainingLength == 0) break;
+
             String segText = segment.getText();
             if (segText.isEmpty()) continue;
 
             int segLength = Math.min(segText.length(), remainingLength);
 
-            totalWidth += getWidth(segment, segLength);
+            Font[] fonts = getFonts(segment.getStyle());
+            Font font = building ? getCurrentFont(fonts) : fonts[0];
 
+            double segmentWidth = font.getWidth(segText, segLength);
+            if (segment.hasShadow()) segmentWidth += 1;
+
+            totalWidth += segmentWidth * (segment.getScale() / 1.5);
             remainingLength -= segLength;
-            if (remainingLength == 0) break;
         }
 
         return totalWidth;
@@ -123,33 +151,31 @@ public class RichTextRenderer implements TextRenderer {
 
     public double getHeight(RichTextSegment segment) {
         Font[] fonts = getFonts(segment.getStyle());
-        Font font = building ? (currentFontIndex < fonts.length ? fonts[currentFontIndex] : fonts[0]) : fonts[0];
+        Font font = building ? getCurrentFont(fonts) : fonts[0];
 
         return (font.getHeight() + 1 + (segment.hasShadow() ? 1 : 0)) * segment.getScale() / 1.5;
     }
 
     public double getHeight(RichText text) {
-        double largestSegment = 0;
         if (text.getSegments().isEmpty()) return 0;
 
-        for (RichTextSegment segment : text.getSegments()) {
-            double h = getHeight(segment);
-            if (h > largestSegment) largestSegment = h;
-        }
+        double largestSegment = 0;
+        for (RichTextSegment segment : text.getSegments())
+            largestSegment = Math.max(largestSegment, getHeight(segment));
 
         return largestSegment;
     }
 
     @Override
     public double getHeight(boolean shadow) {
-        Font font = building ? currentFont : regularFonts[0];
+        Font font = building ? currentFont : getFonts(FontStyle.REGULAR)[0];
         return (font.getHeight() + 1 + (shadow ? 1 : 0)) * scale / 1.5;
     }
 
     // Rendering
 
     public void renderTextWithStyle(String text, double x, double y, Color color, boolean shadow, FontStyle fontStyle) {
-        if (currentStyle != fontStyle) setStyleInternal(fontStyle);
+        if (currentStyle != fontStyle) setFontStyle(fontStyle);
         render(text, x, y, color, shadow);
     }
 
@@ -158,25 +184,28 @@ public class RichTextRenderer implements TextRenderer {
         boolean wasBuilding = building;
         if (!wasBuilding) begin();
 
+        double width = renderText(text, x, y, color, shadow);
+
+        if (!wasBuilding) end();
+        return width;
+    }
+
+    private double renderText(String text, double x, double y, Color color, boolean shadow) {
         double renderScale = scale / 1.5;
-        double width;
 
         if (shadow) {
             int originalShadowAlpha = SHADOW_COLOR.a;
             SHADOW_COLOR.a = (int) (color.a / 255.0 * originalShadowAlpha);
 
             double shadowOffset = fontScale * renderScale;
-
-            width = currentFont.render(mesh, text, x + shadowOffset, y + shadowOffset, SHADOW_COLOR, renderScale);
+            double width = currentFont.render(mesh, text, x + shadowOffset, y + shadowOffset, SHADOW_COLOR, renderScale);
             currentFont.render(mesh, text, x, y, color, renderScale);
 
             SHADOW_COLOR.a = originalShadowAlpha;
+            return width;
         } else {
-            width = currentFont.render(mesh, text, x, y, color, renderScale);
+            return currentFont.render(mesh, text, x, y, color, renderScale);
         }
-
-        if (!wasBuilding) end();
-        return width;
     }
 
     @Override
@@ -185,28 +214,63 @@ public class RichTextRenderer implements TextRenderer {
     }
 
     @Override
-    public void end(/*? <=1.21.4 >> ')'*//*MatrixStack matrices*/) {
+    #if MC_VER <= MC_1_21_4
+    public void end(MatrixStack matrices) {
+    #else
+    public void end() {
+    #endif
         if (!building) throw new RuntimeException("end() called without calling begin()");
 
         if (!scaleOnly) {
             mesh.end();
 
-            //? if <=1.21.4 {
-            /*GL.bindTexture(currentFont.texture.getGlId());
-            mesh.render(matrices);
-
-            *///?} else {
-            MeshRenderer.begin()
-                    .attachments(MinecraftClient.getInstance().getFramebuffer())
-                    .pipeline(MeteorRenderPipelines.UI_TEXT)
-                    .mesh(mesh)
-                    .sampler("u_Texture", currentFont.texture.getGlTextureView(), currentFont.texture.getSampler())
-                    .end();
-             //?}
+            renderBuiltMesh(
+                #if MC_VER <= MC_1_21_4
+                matrices
+                #endif
+            );
         }
 
         building = false;
         scale = 1;
+    }
+
+    private void renderBuiltMesh(
+        #if MC_VER <= MC_1_21_4
+        MatrixStack matrices
+        #endif
+    ) {
+        #if MC_VER <= MC_1_21_4
+        GL.bindTexture(currentFont.texture.getGlId());
+        mesh.render(matrices);
+        #else
+        renderMesh();
+        #endif
+    }
+
+    #if MC_VER >= MC_1_21_5
+    private void renderMesh() {
+        MeshRenderer.begin()
+            .attachments(MinecraftClient.getInstance().getFramebuffer())
+            .pipeline(MeteorRenderPipelines.UI_TEXT)
+            .mesh(mesh)
+            #if MC_VER >= MC_1_21_11
+            .sampler("u_Texture", currentFont.texture.getGlTextureView(), currentFont.texture.getSampler())
+            #elif MC_VER >= MC_1_21_6
+            .sampler("u_Texture", currentFont.texture.getGlTextureView())
+            #else
+            .setupCallback(pass -> pass.bindSampler("u_Texture", currentFont.texture.getGlTexture()))
+            #endif
+            .end();
+    }
+    #endif
+
+    public void setFontStyle(FontStyle style) {
+        if (this.currentStyle == style) return;
+        this.currentStyle = style;
+
+        Font[] fonts = getFonts(style);
+        if (building) currentFont = getCurrentFont(fonts);
     }
 
     // Helpers
@@ -223,31 +287,6 @@ public class RichTextRenderer implements TextRenderer {
         return fonts;
     }
 
-    private Font[] resolveVariant(FontFace regularFace, FontInfo.Type type) {
-        FontFamily family = Fonts.getFamily(regularFace.info.family());
-        FontFace fontVariant = family.get(type);
-
-        if (fontVariant != null && fontVariant != regularFace)
-            return loadFonts(fontVariant);
-
-        return regularFonts; // Fallback
-    }
-
-    public void setFontStyle(FontStyle style) {
-        if (this.currentStyle == style) return;
-        setStyleInternal(style);
-    }
-
-    private void setStyleInternal(FontStyle style) {
-        this.currentStyle = style;
-        Font[] fonts = getFonts(style);
-
-        if (building) {
-            if (currentFontIndex < fonts.length) currentFont = fonts[currentFontIndex];
-            else currentFont = fonts[0];
-        }
-    }
-
     private Font[] getFonts(FontStyle style) {
         return switch (style) {
             case BOLD -> boldFonts;
@@ -256,18 +295,18 @@ public class RichTextRenderer implements TextRenderer {
         };
     }
 
-    public void destroy() {
-        for (Font font : regularFonts)
-            font.texture.close();
+    private Font getCurrentFont(Font[] fonts) {
+        if (currentFontIndex >= 0 && currentFontIndex < fonts.length)
+            return fonts[currentFontIndex];
 
-        if (boldFonts != regularFonts) {
-            for (Font font : boldFonts)
-                font.texture.close();
-        }
+        return fonts[0];
+    }
 
-        if (italicFonts != regularFonts) {
-            for (Font font : italicFonts)
-                font.texture.close();
-        }
+    private FontFamily findFontFamily(FontFace fontFace) {
+        for (FontFamily fontFamily : Fonts.FONT_FAMILIES)
+            if (fontFamily.getName().equalsIgnoreCase(fontFace.info.family()))
+                return fontFamily;
+
+        return Fonts.FONT_FAMILIES.getFirst();
     }
 }
