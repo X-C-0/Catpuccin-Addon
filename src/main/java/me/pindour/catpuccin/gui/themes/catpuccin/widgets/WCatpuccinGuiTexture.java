@@ -1,14 +1,14 @@
 package me.pindour.catpuccin.gui.themes.catpuccin.widgets;
 
 import me.pindour.catpuccin.gui.themes.catpuccin.CatpuccinWidget;
-import me.pindour.catpuccin.gui.widgets.WIcon;
+import me.pindour.catpuccin.gui.widgets.WGuiTexture;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.renderer.packer.GuiTexture;
 
-public class WCatpuccinIcon extends WIcon implements CatpuccinWidget {
+public class WCatpuccinGuiTexture extends WGuiTexture implements CatpuccinWidget {
 
-    public WCatpuccinIcon(double size, GuiTexture texture) {
-        super(size, texture);
+    public WCatpuccinGuiTexture(GuiTexture texture, double size) {
+        super(texture, size);
     }
 
     @Override

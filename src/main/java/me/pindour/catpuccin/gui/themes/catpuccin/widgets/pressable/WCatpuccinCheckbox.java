@@ -21,7 +21,7 @@ public class WCatpuccinCheckbox extends WCheckbox implements CatpuccinWidget {
 
         animation = new Animation(
                 theme().guiAnimationEasing(),
-                theme().guiAnimationSpeed(),
+                theme().guiAnimationDuration(),
                 checked ? Direction.FORWARDS : Direction.BACKWARDS
         );
     }

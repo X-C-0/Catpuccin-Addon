@@ -1,8 +1,8 @@
-package me.pindour.catpuccin.gui.themes.catpuccin.flavor;
+package me.pindour.catpuccin.gui.themes.catpuccin.flavors;
 
 import me.pindour.catpuccin.CatpuccinAddon;
 import me.pindour.catpuccin.gui.themes.catpuccin.colors.CatppuccinColor;
-import me.pindour.catpuccin.gui.themes.catpuccin.flavor.flavors.*;
+import me.pindour.catpuccin.gui.themes.catpuccin.flavors.flavor.*;
 import meteordevelopment.meteorclient.utils.render.color.SettingColor;
 
 public enum CatppuccinFlavors {

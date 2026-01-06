@@ -9,8 +9,7 @@ import me.pindour.catpuccin.gui.text.RichTextRenderer;
 import me.pindour.catpuccin.gui.text.RichTextSegment;
 import me.pindour.catpuccin.gui.themes.catpuccin.colors.CatppuccinAccentColor;
 import me.pindour.catpuccin.gui.themes.catpuccin.colors.CatppuccinColor;
-import me.pindour.catpuccin.gui.themes.catpuccin.flavor.CatppuccinFlavors;
-import me.pindour.catpuccin.gui.themes.catpuccin.icons.CatpuccinIcons;
+import me.pindour.catpuccin.gui.themes.catpuccin.flavors.CatppuccinFlavors;
 import me.pindour.catpuccin.gui.themes.catpuccin.widgets.*;
 import me.pindour.catpuccin.gui.themes.catpuccin.widgets.container.WCatpuccinSection;
 import me.pindour.catpuccin.gui.themes.catpuccin.widgets.container.WCatpuccinView;
@@ -23,7 +22,7 @@ import me.pindour.catpuccin.gui.themes.catpuccin.widgets.pressable.*;
 import me.pindour.catpuccin.gui.themes.catpuccin.widgets.settings.WCatpuccinDoubleEdit;
 import me.pindour.catpuccin.gui.themes.catpuccin.widgets.settings.WCatpuccinIntEdit;
 import me.pindour.catpuccin.gui.themes.catpuccin.widgets.settings.WCatpuccinKeybind;
-import me.pindour.catpuccin.gui.widgets.WIcon;
+import me.pindour.catpuccin.gui.widgets.WGuiTexture;
 import me.pindour.catpuccin.gui.widgets.input.WMultiSelect;
 import me.pindour.catpuccin.gui.widgets.pressable.WColorPicker;
 import me.pindour.catpuccin.gui.widgets.pressable.WOpenIndicator;
@@ -100,7 +99,7 @@ public class CatpuccinGuiTheme extends GuiTheme {
 
     public final Setting<Boolean> categoryIcons = sgGeneral.add(new BoolSetting.Builder()
             .name("category-icons")
-            .description("Adds item icons to module categories.")
+            .description("Displays icons next to module categories.")
             .defaultValue(true)
             .build()
     );
@@ -117,7 +116,7 @@ public class CatpuccinGuiTheme extends GuiTheme {
 
     public final Setting<Boolean> widgetOutline = sgGeneral.add(new BoolSetting.Builder()
             .name("widget-outline")
-            .description("Renders a small outline around some UI elements for better visibility.")
+            .description("Renders a subtle outline around UI elements.")
             .defaultValue(true)
             .build()
     );
@@ -126,14 +125,14 @@ public class CatpuccinGuiTheme extends GuiTheme {
 
     public final Setting<Boolean> roundedCorners = sgCorners.add(new BoolSetting.Builder()
             .name("rounded-corners")
-            .description("Makes the corners of UI elements rounded or... not so round.")
+            .description("Toggles rounded corners on UI elements.")
             .defaultValue(true)
             .build()
     );
 
     public final Setting<Integer> cornerRadius = sgCorners.add(new IntSetting.Builder()
             .name("corner-radius")
-            .description("Controls how rounded the corners should be for large UI elements.")
+            .description("The radius of corners for large UI elements.")
             .defaultValue(10)
             .sliderRange(1, 25)
             .visible(roundedCorners::get)
@@ -142,7 +141,7 @@ public class CatpuccinGuiTheme extends GuiTheme {
 
     public final Setting<Integer> smallCornerRadius = sgCorners.add(new IntSetting.Builder()
             .name("small-corner-radius")
-            .description("Controls how rounded the corners should be for small UI elements.")
+            .description("The radius of corners for small UI elements.")
             .defaultValue(6)
             .sliderRange(1, 25)
             .visible(roundedCorners::get)
@@ -152,15 +151,15 @@ public class CatpuccinGuiTheme extends GuiTheme {
     // Animations
 
     public final Setting<Easing> guiAnimation = sgAnimations.add(new EnumSetting.Builder<Easing>()
-            .name("animation-type")
-            .description("Animation to play when interacting with the UI.")
+            .name("gui-animation-easing")
+            .description("The easing function used for UI animations.")
             .defaultValue(Easing.QUART_OUT)
             .build()
     );
 
-    public final Setting<Integer> guiAnimationSpeed = sgAnimations.add(new IntSetting.Builder()
-            .name("animation-speed")
-            .description("Speed of the animation in milliseconds.")
+    public final Setting<Integer> guiAnimationDuration = sgAnimations.add(new IntSetting.Builder()
+            .name("gui-animation-duration")
+            .description("Duration of the animation in milliseconds.")
             .defaultValue(300)
             .sliderRange(1, 1000)
             .build()
@@ -170,7 +169,7 @@ public class CatpuccinGuiTheme extends GuiTheme {
 
     public final Setting<CatppuccinFlavors> flavor = sgColors.add(new EnumSetting.Builder<CatppuccinFlavors>()
             .name("Flavor")
-            .description("Main theme of the UI.")
+            .description("The specific Catppuccin flavor (palette) to use.")
             .defaultValue(CatppuccinFlavors.Macchiato)
             .onChanged(this::updateCache)
             .build()
@@ -178,14 +177,14 @@ public class CatpuccinGuiTheme extends GuiTheme {
 
     private final Setting<CatppuccinAccentColor> accentColor = sgColors.add(new EnumSetting.Builder<CatppuccinAccentColor>()
             .name("Accent")
-            .description("Main color of the UI.")
+            .description("The main accent color used throughout the UI.")
             .defaultValue(CatppuccinAccentColor.Mauve)
             .build()
     );
 
     public final Setting<Double> windowOpacity = sgColors.add(new DoubleSetting.Builder()
             .name("window-opacity")
-            .description("How much opaque the windows should be.")
+            .description("Controls the opacity of the windows.")
             .defaultValue(1)
             .sliderRange(0, 1)
             .decimalPlaces(2)
@@ -194,7 +193,7 @@ public class CatpuccinGuiTheme extends GuiTheme {
 
     public final Setting<Double> backgroundOpacity = sgColors.add(new DoubleSetting.Builder()
             .name("background-opacity")
-            .description("How much opaque the backgrounds should be.")
+            .description("Controls the opacity of the backgrounds of UI elements.")
             .defaultValue(1)
             .sliderRange(0, 1)
             .decimalPlaces(2)
@@ -205,14 +204,14 @@ public class CatpuccinGuiTheme extends GuiTheme {
 
     public final Setting<Boolean> snapModuleCategories = sgSnapping.add(new BoolSetting.Builder()
             .name("snap-module-categories")
-            .description("Makes the category windows snap to the grid.")
+            .description("Snaps category windows to the grid.")
             .defaultValue(true)
             .build()
     );
 
     public final Setting<Integer> snappingGridSize = sgSnapping.add(new IntSetting.Builder()
             .name("grid-size")
-            .description("How big should the snapping grid be.")
+            .description("The size of the snapping grid.")
             .defaultValue(10)
             .sliderRange(5, 50)
             .build()
@@ -222,7 +221,7 @@ public class CatpuccinGuiTheme extends GuiTheme {
 
     public final Setting<Boolean> catpuccinEntityTypeListScreen = sgScreens.add(new BoolSetting.Builder()
             .name("entity-type-list-screen")
-            .description("Replace Meteor's screen with a Catpuccin screen. This screen is used to select entities for a setting.")
+            .description("Replaces Meteor's entity selection screen with the Catpuccin version.")
             .defaultValue(true)
             .build()
     );
@@ -461,8 +460,8 @@ public class CatpuccinGuiTheme extends GuiTheme {
         return w(new WCatpuccinOpenIndicator(open));
     }
 
-    public WIcon icon(double size, CatpuccinIcons icon) {
-        return w(new WCatpuccinIcon(size, icon.texture()));
+    public WGuiTexture texture(GuiTexture texture, double size) {
+        return w(new WCatpuccinGuiTexture(texture, size));
     }
 
     public WColorPicker colorPicker(Color color, GuiTexture overlayTexture) {
@@ -493,8 +492,8 @@ public class CatpuccinGuiTheme extends GuiTheme {
         return guiAnimation.get();
     }
 
-    public int guiAnimationSpeed() {
-        return guiAnimationSpeed.get();
+    public int guiAnimationDuration() {
+        return guiAnimationDuration.get();
     }
 
     // Colors - Accent

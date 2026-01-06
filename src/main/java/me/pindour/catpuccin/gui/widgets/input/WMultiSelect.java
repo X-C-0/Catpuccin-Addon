@@ -55,7 +55,7 @@ public abstract class WMultiSelect<T> extends WVerticalList {
 
         animation = new Animation(
                 theme.guiAnimationEasing(),
-                theme.guiAnimationSpeed(),
+                theme.guiAnimationDuration(),
                 expanded ? Direction.FORWARDS : Direction.BACKWARDS
         );
 

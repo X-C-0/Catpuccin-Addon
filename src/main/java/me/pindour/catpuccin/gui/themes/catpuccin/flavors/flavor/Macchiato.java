@@ -1,7 +1,7 @@
-package me.pindour.catpuccin.gui.themes.catpuccin.flavor.flavors;
+package me.pindour.catpuccin.gui.themes.catpuccin.flavors.flavor;
 
 import me.pindour.catpuccin.gui.themes.catpuccin.colors.CatppuccinColor;
-import me.pindour.catpuccin.gui.themes.catpuccin.flavor.FlavorColorProvider;
+import me.pindour.catpuccin.gui.themes.catpuccin.flavors.FlavorColorProvider;
 import meteordevelopment.meteorclient.utils.render.color.SettingColor;
 
 public enum Macchiato implements FlavorColorProvider {

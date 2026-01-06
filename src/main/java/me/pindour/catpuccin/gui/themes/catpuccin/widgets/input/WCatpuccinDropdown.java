@@ -49,7 +49,7 @@ public class WCatpuccinDropdown<T> extends WDropdown<T> implements CatpuccinWidg
 
         animation = new Animation(
                 theme().guiAnimationEasing(),
-                theme().guiAnimationSpeed(),
+                theme().guiAnimationDuration(),
                 Direction.BACKWARDS
         );
     }

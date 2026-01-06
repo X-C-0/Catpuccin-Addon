@@ -30,7 +30,7 @@ public class WCatpuccinSection extends WSection implements CatpuccinWidget {
 
         animation = new Animation(
                 theme().guiAnimationEasing(),
-                theme().guiAnimationSpeed(),
+                theme().guiAnimationDuration(),
                 expanded ? Direction.FORWARDS : Direction.BACKWARDS
         );
     }
