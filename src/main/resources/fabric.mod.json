@@ -1,24 +1,24 @@
 {
   "schemaVersion": 1,
-  "id": "catpuccin-addon",
+  "id": "catppuccin-addon",
   "version": "${version}",
-  "name": "Catpuccin Addon",
-  "description": "Meteor Client theme based on Catpuccin.",
+  "name": "Catppuccin Addon",
+  "description": "Meteor Client theme based on Catppuccin.",
   "authors": [
     "Pindour"
   ],
   "contact": {
-    "sources": "https://github.com/X-C-0/Catpuccin-Addon"
+    "sources": "https://github.com/X-C-0/Catppuccin-Addon"
   },
-  "icon": "assets/catpuccin-addon/icon.png",
+  "icon": "assets/catppuccin-addon/icon.png",
   "environment": "client",
   "entrypoints": {
     "meteor": [
-      "me.pindour.catpuccin.CatpuccinAddon"
+      "me.pindour.catppuccin.CatppuccinAddon"
     ]
   },
   "mixins": [
-    "catpuccin.mixins.json"
+    "catppuccin.mixins.json"
   ],
   "custom": {
     "meteor-client:color": "203,166,247",

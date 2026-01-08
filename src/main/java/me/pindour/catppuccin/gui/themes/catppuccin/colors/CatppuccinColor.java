@@ -1,0 +1,30 @@
+package me.pindour.catppuccin.gui.themes.catppuccin.colors;
+
+public enum CatppuccinColor {
+    Rosewater,
+    Flamingo,
+    Pink,
+    Mauve,
+    Maroon,
+    Peach,
+    Teal,
+    Sky,
+    Sapphire,
+    Lavender,
+    Red,
+    Blue,
+    Yellow,
+    Green,
+    Text,
+    Subtext1,
+    Subtext0,
+    Overlay2,
+    Overlay1,
+    Overlay0,
+    Surface2,
+    Surface1,
+    Surface0,
+    Base,
+    Mantle,
+    Crust;
+}

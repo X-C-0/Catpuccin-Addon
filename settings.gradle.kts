@@ -24,4 +24,4 @@ stonecutter {
         vcsVersion = "1.21.11"
     }
 }
-rootProject.name = "catpuccin-addon"
+rootProject.name = "catppuccin-addon"

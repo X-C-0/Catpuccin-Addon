@@ -1,0 +1,233 @@
+package me.pindour.catppuccin.gui.themes.catppuccin.widgets.input;
+
+import me.pindour.catppuccin.gui.animation.Animation;
+import me.pindour.catppuccin.gui.animation.Direction;
+import me.pindour.catppuccin.gui.renderer.CornerStyle;
+import me.pindour.catppuccin.gui.text.RichText;
+import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
+import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinWidget;
+import me.pindour.catppuccin.gui.themes.catppuccin.icons.CatppuccinIcons;
+import me.pindour.catppuccin.utils.ColorUtils;
+import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
+import meteordevelopment.meteorclient.gui.utils.Cell;
+import meteordevelopment.meteorclient.gui.widgets.input.WDropdown;
+import meteordevelopment.meteorclient.utils.Utils;
+import meteordevelopment.meteorclient.utils.render.color.Color;
+
+public class WCatppuccinDropdown<T> extends WDropdown<T> implements CatppuccinWidget {
+    private final RichText titleText;
+    private RichText valueText;
+
+    private Animation animation;
+
+    public WCatppuccinDropdown(String title, T[] values, T value) {
+        super(values, value);
+        titleText = RichText.of(title);
+        valueText = RichText.of(getNameFor(value));
+    }
+
+    @Override
+    public void init() {
+        double pad = 6;
+
+        root = createRootWidget();
+        root.theme = theme;
+        root.spacing = pad;
+        maxValueWidth = 0;
+
+        for (int i = 0; i < values.length; i++) {
+            WValue widget = new WValue(values[i]);
+            widget.theme = theme;
+
+            double valueWidth = theme().textWidth(widget.valueName);
+            maxValueWidth = Math.max(maxValueWidth, valueWidth);
+
+            Cell<?> cell = root.add(widget).padHorizontal(pad).expandWidgetX();
+            if (i == 0) cell.padTop(pad);
+            if (i == values.length - 1) cell.padBottom(pad);
+        }
+
+        animation = new Animation(
+                theme().guiAnimationEasing(),
+                theme().guiAnimationDuration(),
+                Direction.BACKWARDS
+        );
+    }
+
+    @Override
+    protected WDropdownRoot createRootWidget() {
+        return new WRoot();
+    }
+
+    @Override
+    protected WDropdownValue createValueWidget() {
+        return null;
+    }
+
+    @Override
+    protected void onCalculateSize() {
+        double pad = pad();
+
+        root.calculateSize();
+
+        double titleWidth = pad + theme().textWidth(titleText) + pad;
+        double valueWidth = pad + maxValueWidth + pad;
+        double arrowWidth = pad + theme.textHeight() + pad;
+
+        width = titleWidth + valueWidth + arrowWidth;
+        height = pad + theme.textHeight() + pad;
+
+        root.width = width;
+    }
+
+    @Override
+    protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
+        CatppuccinGuiTheme theme = theme();
+        double pad = pad();
+        double s = theme.textHeight() * 0.75;
+
+        renderBackground(this, pressed, mouseOver);
+
+        // Title text
+        renderer().text(
+                titleText,
+                x + pad,
+                y + pad,
+                theme.textColor()
+        );
+
+        // Value text
+        renderer().text(
+                valueText,
+                x + pad + theme.textWidth(titleText) + pad,
+                y + pad,
+                theme.accentColor()
+        );
+
+        // Open indicator
+        renderer.rotatedQuad(
+                x + width - pad - s,
+                y + height / 2 - s / 2,
+                s,
+                s,
+                180 * (1 - animation.getProgress()),
+                CatppuccinIcons.ARROW.texture(),
+                theme.textColor()
+        );
+    }
+
+    @Override
+    public boolean render(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
+        animProgress = -8008135; // Small hack to cancel out WDropdown scissors, so we can use our animation
+
+        boolean render = super.render(renderer, mouseX, mouseY, delta);
+        double progress = animation.getProgress();
+
+        if (!render && progress > 0) {
+            renderer.absolutePost(() -> {
+                renderer.scissorStart(root.x, root.y, root.width, root.height * progress);
+                root.render(renderer, mouseX, mouseY, delta);
+                renderer.scissorEnd();
+            });
+        }
+
+        return render;
+    }
+
+    @Override
+    protected void onPressed(int button) {
+        super.onPressed(button);
+        handlePressed();
+    }
+
+    @Override
+    public void set(T value) {
+        super.set(value);
+
+        if (animation == null) return;
+
+        animation.reset();
+        handlePressed();
+    }
+
+    private void handlePressed() {
+        valueText = RichText.of(getNameFor(value));
+        animation.reverse();
+    }
+
+    private String getNameFor(T value) {
+        String name = value.toString();
+
+        // ENUM_NAME -> Enum Name
+        if (name.contains("_")) return Utils.nameToTitle(name.toLowerCase().replace("_", "-"));
+
+        // EnumName -> Enum Name
+        return Utils.nameToTitle(name.replaceAll("(?<=[a-z])([A-Z])", "-$1").toLowerCase());
+    }
+
+    private static class WRoot extends WDropdownRoot implements CatppuccinWidget {
+        private static final int DROPDOWN_Y_OFFSET = 6;
+
+        @Override
+        protected void onCalculateWidgetPositions() {
+            this.y += DROPDOWN_Y_OFFSET;
+            super.onCalculateWidgetPositions();
+        }
+
+        @Override
+        protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
+            CatppuccinGuiTheme theme = theme();
+            Color outlineColor = ColorUtils.withAlpha(theme.accentColor(), theme.backgroundOpacity() * 0.4);
+
+            renderBackground(this, outlineColor, getBackgroundColor(false, false), true);
+        }
+    }
+
+    private class WValue extends WDropdownValue implements CatppuccinWidget {
+        private final RichText valueName;
+
+        public WValue(T value) {
+            this.value = value;
+            this.valueName = RichText.of(getNameFor(value));
+        }
+
+        @Override
+        protected void onCalculateSize() {
+            double pad = pad();
+
+            width = pad + theme().textWidth(valueName) + pad;
+            height = pad + theme.textHeight() + pad;
+        }
+
+        @Override
+        protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
+            CatppuccinGuiTheme theme = theme();
+
+            if (mouseOver)
+                renderer().roundedRect(
+                        x, y,
+                        width, height,
+                        smallRadius(),
+                        ColorUtils.withAlpha(theme.accentColor(), 0.4),
+                        CornerStyle.ALL
+                );
+
+            boolean isSelected = get() == this.value;
+            RichText text = valueName.boldIf(isSelected);
+            Color textColor = isSelected ? theme.accentColor() : theme.textColor();
+
+            renderer().text(
+                    text,
+                    x + width / 2 - theme.textWidth(text) / 2,
+                    y + pad(),
+                    textColor
+            );
+        }
+
+        @Override
+        protected void onPressed(int button) {
+            super.onPressed(button);
+            handlePressed();
+        }
+    }
+}
