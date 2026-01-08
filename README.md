@@ -6,10 +6,15 @@
 </h3>
 
 <p align="center">
-	<a href="https://github.com/X-C-0/Catpuccin-Addon/stargazers"><img src="https://img.shields.io/github/stars/X-C-0/Catpuccin-Addon?colorA=363a4f&colorB=b7bdf8&style=for-the-badge"></a>
-	<a href="https://github.com/X-C-0/Catpuccin-Addon/issues"><img src="https://img.shields.io/github/issues/X-C-0/Catpuccin-Addon?colorA=363a4f&colorB=f5a97f&style=for-the-badge"></a>
-	<a href="https://github.com/X-C-0/Catpuccin-Addon/contributors"><img src="https://img.shields.io/github/contributors/X-C-0/Catpuccin-Addon?colorA=363a4f&colorB=a6da95&style=for-the-badge"></a>
-  <a href="https://github.com/X-C-0/Catpuccin-Addon/releases"><img src="https://img.shields.io/github/downloads/X-C-0/Catpuccin-Addon/total?style=for-the-badge&labelColor=363a4f&color=f5c2e7"></a>
+    <a href="https://github.com/X-C-0/Catppuccin-Addon/stargazers"><img src="https://img.shields.io/github/stars/X-C-0/Catppuccin-Addon?colorA=363a4f&colorB=b7bdf8&style=for-the-badge"></a>
+    <a href="https://github.com/X-C-0/Catppuccin-Addon/issues"><img src="https://img.shields.io/github/issues/X-C-0/Catppuccin-Addon?colorA=363a4f&colorB=f5a97f&style=for-the-badge"></a>
+    <a href="https://github.com/X-C-0/Catppuccin-Addon/contributors"><img src="https://img.shields.io/github/contributors/X-C-0/Catppuccin-Addon?colorA=363a4f&colorB=a6da95&style=for-the-badge"></a>
+  <a href="https://github.com/X-C-0/Catppuccin-Addon/releases"><img src="https://img.shields.io/github/downloads/X-C-0/Catppuccin-Addon/total?style=for-the-badge&labelColor=363a4f&color=f5c2e7"></a>
+</p>
+
+<p align="center">
+  <b>⚠️ v2.0 IS HERE! COMPLETE VISUAL OVERHAUL ⚠️</b><br>
+  <i>Harder, Better, Faster, Stronger</i>
 </p>
 
 <p align="center">
@@ -46,48 +51,45 @@
 
 > Requires [Meteor Client](https://meteorclient.com) (duh).
 
-1. 🡒 Go to the [**Releases tab**](../../releases) and download the latest `.jar` file for your Minecraft version.
-2. 🡒 Move the file into your `mods` folder.
-3. 🡒 Launch Minecraft with Meteor Client.
-4. 🡒 Open the **ClickGUI** (`Right Shift` by default).
-5. 🡒 Go to the **"GUI"** tab and select the **"Catppuccin"** theme from the **"Theme"** dropdown.
-6. 🡒 (Optional) In the **"Config"** tab, set your font to **Arial** or another one that supports multiple font styles (bold, italic...).
-
-> 💡 *Pro Tip: Use the search bar in the releases tab to find your exact Minecraft version (e.g. "1.21.4 build").*
+1. 🡒 Go to the [**Releases tab**](../../releases) and download the latest `.jar` file.
+2. 🡒 Move the file into your `.minecraft/mods` folder.
+3. 🡒 Launch Minecraft.
+4. 🡒 Open ClickGUI (`Right Shift`), go to the **"GUI"** tab.
+5. 🡒 Select **"Catppuccin"** from the **"Theme"** dropdown.
+6. 🡒 **Recommended:** In the **"Config"** tab, set your custom font to **Arial** (or any font that supports bold/italic styles) for the full experience.
 
 ## ✨ Features
 
-- 🟣 **Epic rounded corners**  
-  *(Kinda janky, but that can be fixed later if I find a better way to do it)*
+- 🟣 **Epic rounded corners™**  
+  *(Powered by custom shaders and meshes. Perfectly smooth rounded corners with configurable radius)*
 
 
-- 🌈 **Epic flavors** from the [Catppuccin Palette](https://catppuccin.com/palette/)  
-  *(Latte, Frappé, Macchiato, Mocha)*
+- 🌈 **Epic flavors and colors** from the [Catppuccin Palette](https://catppuccin.com/palette/)  
+  *(Latte, Frappé, Macchiato, Mocha and all the colors)*
 
 
-- 🌀 **Epic smooth animations**  
-  *(Configurable duration and type: Linear, Ease In, Ease Out, etc.)*
+- 🌀 **Epic smooth animations™**  
+  *(Configurable duration and easing, now even better and smoother after v2 update)*
 
 
-- 🔤 **Epic font rendering**  
+- 🔤 **Epic font rendering™**  
   *(Supports bold, italic, and dynamic font style switching)*
 
 
-- 🧲 **Epic snap-to-grid for Modules Screen**  
+- 🧲 **Epic snap-to-grid for Modules Screen™**  
   *(Keeps your GUI very epic looking and organized)*
-
-> ⚠️ *I used some funny workarounds to make this work (see mixins). If you know a better way – hit me up!*
 
 ## 🛠️ Planned
 
 - Fix bugs
-- Custom hud elements (Module List, Status bar, Inventory, etc.)
+- Custom HUD elements (Module List, Status bar, Inventory, Nametags etc.)
 - im buggin out
 
 ## 💬 Support
-- You can find me on Meteor's discord (@Pindour) or join our freaky ahh [discord server](https://discord.gg/njM9JFPnT5).
-- Or use GitHub issues, but I have no clue how those work so glhf
+
+- Find me on Meteor's discord (`@Pindour`) or join my silly [Discord Server](https://discord.gg/njM9JFPnT5) if you want to hang out.
+- Found a bug? Open an [Issue](https://github.com/X-C-0/Catppuccin-Addon/issues) (please include logs/screenshots).
 
 <p align="center">
-	<img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/footers/gray0_ctp_on_line.svg?sanitize=true" />
+    <img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/footers/gray0_ctp_on_line.svg?sanitize=true" />
 </p>
