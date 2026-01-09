@@ -1,9 +1,11 @@
 package me.pindour.catppuccin.gui.screens;
 
+import me.pindour.catppuccin.api.icons.CatppuccinIcons;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import me.pindour.catppuccin.gui.themes.catppuccin.icons.CatppuccinBuiltinIcons;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.container.WCatppuccinWindow;
 import meteordevelopment.meteorclient.gui.GuiTheme;
+import meteordevelopment.meteorclient.gui.renderer.packer.GuiTexture;
 import meteordevelopment.meteorclient.gui.tabs.TabScreen;
 import meteordevelopment.meteorclient.gui.tabs.Tabs;
 import meteordevelopment.meteorclient.gui.utils.Cell;
@@ -98,7 +100,7 @@ public class CatppuccinModulesScreen extends TabScreen {
         double size = theme.scale(16);
 
         if (theme.categoryIcons()) {
-            w.beforeHeaderInit = wContainer -> wContainer.add(theme.texture(getIconForCategory(category).texture(), size)).centerY().pad(4).padHorizontal(10);
+            w.beforeHeaderInit = wContainer -> wContainer.add(theme.texture(getIconForCategory(category), size)).centerY().pad(4).padHorizontal(10);
         }
 
         c.add(w);
@@ -337,18 +339,9 @@ public class CatppuccinModulesScreen extends TabScreen {
         }
     }
 
-    private CatppuccinBuiltinIcons getIconForCategory(Category category) {
-        CatppuccinBuiltinIcons icon;
-        switch (category.name) {
-            case "Combat" -> icon = CatppuccinBuiltinIcons.SWORDS;
-            case "Player" -> icon = CatppuccinBuiltinIcons.USER;
-            case "Movement" -> icon = CatppuccinBuiltinIcons.MOVEMENT;
-            case "Render" -> icon = CatppuccinBuiltinIcons.EYE;
-            case "World" -> icon = CatppuccinBuiltinIcons.CUBE;
-            default -> icon = CatppuccinBuiltinIcons.QUESTION_MARK;
-        }
-
-        return icon;
+    private GuiTexture getIconForCategory(Category category) {
+        GuiTexture icon = CatppuccinIcons.getCategoryIcon(category.name);
+        return icon != null ? icon : CatppuccinBuiltinIcons.QUESTION_MARK.texture();
     }
 
     public void showGrid(boolean show) {
