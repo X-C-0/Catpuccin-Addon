@@ -30,7 +30,7 @@ import static meteordevelopment.meteorclient.utils.Utils.getWindowHeight;
 import static meteordevelopment.meteorclient.utils.Utils.getWindowWidth;
 
 //? if >=1.21.5
-import net.minecraft.util.Pair;
+//import net.minecraft.util.Pair;
 
 public class CatppuccinModulesScreen extends TabScreen {
     private final CatppuccinGuiTheme theme;
@@ -122,10 +122,10 @@ public class CatppuccinModulesScreen extends TabScreen {
         if (!text.isEmpty()) {
             // Titles
             //? if <=1.21.4 {
-            /*Set<Module> modules = Modules.get().searchTitles(text);
-            *///?} else {
-            List<Pair<Module, String>> modules = Modules.get().searchTitles(text);
-            //?}
+            Set<Module> modules = Modules.get().searchTitles(text);
+            //?} else {
+            /*List<Pair<Module, String>> modules = Modules.get().searchTitles(text);
+            *///?}
             
             if (!modules.isEmpty()) {
                 WSection section = w.add(theme.section("Modules")).expandX().widget();
@@ -134,18 +134,18 @@ public class CatppuccinModulesScreen extends TabScreen {
                 int count = 0;
 
                 //? if <=1.21.4 {
-                /*for (Module module : modules) {
+                for (Module module : modules) {
                     if (count >= Config.get().moduleSearchCount.get() || count >= modules.size()) break;
                     section.add(theme.module(module)).expandX();
                     count++;
                 }
-                *///?} else {
-                for (Pair<Module, String> p : modules) {
+                //?} else {
+                /*for (Pair<Module, String> p : modules) {
                     if (count >= Config.get().moduleSearchCount.get() || count >= modules.size()) break;
                     section.add(theme.module(p.getLeft(), p.getRight())).expandX();
                     count++;
                 }
-                //?}
+                *///?}
             }
 
             // Settings

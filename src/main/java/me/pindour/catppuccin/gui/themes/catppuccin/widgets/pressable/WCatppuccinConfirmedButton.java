@@ -1,6 +1,6 @@
 package me.pindour.catppuccin.gui.themes.catppuccin.widgets.pressable;
 //? if >=1.21.11 {
-import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
+/*import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinWidget;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.renderer.packer.GuiTexture;
@@ -35,4 +35,4 @@ public class WCatppuccinConfirmedButton extends WConfirmedButton implements Catp
         }
     }
 }
-//?}
+*///?}

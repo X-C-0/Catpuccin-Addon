@@ -16,7 +16,7 @@ import meteordevelopment.meteorclient.gui.widgets.containers.WHorizontalList;
 import meteordevelopment.meteorclient.gui.widgets.containers.WWindow;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 //? if >=1.21.9
-import net.minecraft.client.gui.Click;
+//import net.minecraft.client.gui.Click;
 
 public class WCatppuccinWindow extends WWindow implements CatppuccinWidget {
     private final int shadowOffset = 2;
@@ -214,36 +214,36 @@ public class WCatppuccinWindow extends WWindow implements CatppuccinWidget {
         }
 
         @Override
-        public boolean onMouseClicked(Click click, boolean used) {
+        public boolean onMouseClicked(double mouseX, double mouseY, int button, boolean used) {
             boolean clicked = super.onMouseClicked(
                     //? if >=1.21.9
-                    click,
+                    //click,
                     //? if <=1.21.8
-                    //mouseX, mouseY, button,
+                    mouseX, mouseY, button,
                     used
             );
 
             if (clicked && shouldSnap) {
                 //? if >=1.21.9 {
-                mouseOffsetX = click.x() - x;
+                /*mouseOffsetX = click.x() - x;
                 mouseOffsetY = click.y() - y;
-                //?} else {
-                /*mouseOffsetX = mouseX - x;
+                *///?} else {
+                mouseOffsetX = mouseX - x;
                 mouseOffsetY = mouseY - y;
-                *///?}
+                //?}
             }
 
             return clicked;
         }
 
         @Override
-        public boolean mouseReleased(Click click) {
+        public boolean mouseReleased(double mouseX, double mouseY, int button) {
             if (shouldSnap) modulesScreen.showGrid(false);
             return super.mouseReleased(
                     //? if >=1.21.9
-                    click
+                    //click
                     //? if <=1.21.8
-                    //mouseX, mouseY, button
+                    mouseX, mouseY, button
             );
         }
 

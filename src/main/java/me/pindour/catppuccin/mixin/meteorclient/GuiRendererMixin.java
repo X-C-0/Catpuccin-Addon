@@ -7,6 +7,7 @@ import me.pindour.catppuccin.gui.themes.catppuccin.icons.CatppuccinBuiltinIcons;
 import meteordevelopment.meteorclient.gui.GuiTheme;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.renderer.operations.TextOperation;
+import meteordevelopment.meteorclient.gui.renderer.Scissor;
 import meteordevelopment.meteorclient.renderer.Renderer2D;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 import org.spongepowered.asm.mixin.Final;
@@ -20,20 +21,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.List;
 
 //? if <=1.21.9 {
-//import java.util.Stack;
+import java.util.Stack;
 //?} else {
-import it.unimi.dsi.fastutil.Stack;
-//?}
+/*import it.unimi.dsi.fastutil.Stack;
+*///?}
 
 //? if <=1.21.4 {
-/*import meteordevelopment.meteorclient.renderer.GL;
-import meteordevelopment.meteorclient.utils.render.ByteTexture;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
-*///?} else {
-import meteordevelopment.meteorclient.gui.renderer.Scissor;
-import meteordevelopment.meteorclient.renderer.Texture;
-//?}
+//?} else {
+/*import meteordevelopment.meteorclient.renderer.Texture;
+*///?}
 
 @Mixin(value = GuiRenderer.class, remap = false)
 public abstract class GuiRendererMixin {
@@ -41,16 +39,13 @@ public abstract class GuiRendererMixin {
     private static CatppuccinRenderer catppuccinRenderer = CatppuccinRenderer.get();
 
     //? if <=1.21.4 {
-    /*@Shadow
+    @Shadow
     private DrawContext drawContext;
 
-    @Shadow
-    private static ByteTexture TEXTURE;
-
-    *///?} else {
-    @Shadow
+    //?} else {
+    /*@Shadow
     private static Texture TEXTURE;
-    //?}
+    *///?}
 
     @Shadow
     @Final
@@ -79,9 +74,9 @@ public abstract class GuiRendererMixin {
 
     @Inject(
         //? if <=1.21.4
-        //method = "endRender()V",
+        method = "endRender()V",
         //? if >=1.21.5
-        method = "endRender(Lmeteordevelopment/meteorclient/gui/renderer/Scissor;)V",
+        //method = "endRender(Lmeteordevelopment/meteorclient/gui/renderer/Scissor;)V",
 
         at = @At(
             value = "INVOKE",
@@ -93,30 +88,27 @@ public abstract class GuiRendererMixin {
     )
     private void onEndRender(
             //? if >=1.21.5
-            Scissor scissor,
+            //Scissor scissor,
             CallbackInfo ci
     ) {
         if (!(theme instanceof CatppuccinGuiTheme)) return;
 
         //? if <=1.21.4 {
-        /*MatrixStack matrices = drawContext.getMatrices();
+        MatrixStack matrices = drawContext.getMatrices();
 
         catppuccinRenderer.end();
         catppuccinRenderer.render(matrices);
 
-        GL.bindTexture(TEXTURE.getGlId());
-        catppuccinRenderer.renderTexture(matrices);
-
         r.render(matrices);
         rTex.render(matrices);
 
-        *///?} else {
-        catppuccinRenderer.end();
+        //?} else {
+        /*catppuccinRenderer.end();
         catppuccinRenderer.render();
 
         r.render();
         rTex.render("u_Texture", TEXTURE.getGlTextureView(), TEXTURE.getSampler());
-        //?}
+        *///?}
 
         // From GuiRenderer
         texts.clear();
@@ -125,7 +117,7 @@ public abstract class GuiRendererMixin {
 
         // From GuiRenderer
         //? if >=1.21.5
-        if (scissor != null) scissor.pop(); 
+        //if (scissor != null) scissor.pop(); 
         ci.cancel();
     }
 
@@ -158,9 +150,9 @@ public abstract class GuiRendererMixin {
     @Unique
     private static Scissor peekScissor(Stack<Scissor> stack) {
         //? if <=1.21.9
-        //return stack.peek();
+        return stack.peek();
         //? if >=1.21.10
-        return stack.top();
+        //return stack.top();
     }
 
     @Unique
