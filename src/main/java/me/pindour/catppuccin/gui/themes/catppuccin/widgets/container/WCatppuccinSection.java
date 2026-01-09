@@ -2,10 +2,10 @@ package me.pindour.catppuccin.gui.themes.catppuccin.widgets.container;
 
 import me.pindour.catppuccin.gui.animation.Animation;
 import me.pindour.catppuccin.gui.animation.Direction;
-import me.pindour.catppuccin.gui.renderer.CornerStyle;
+import me.pindour.catppuccin.gui.themes.catppuccin.icons.CatppuccinBuiltinIcons;
+import me.pindour.catppuccin.renderer.rounded.CornerStyle;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinWidget;
-import me.pindour.catppuccin.gui.themes.catppuccin.icons.CatppuccinIcons;
 import me.pindour.catppuccin.utils.ColorUtils;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.widgets.WWidget;
@@ -183,7 +183,7 @@ public class WCatppuccinSection extends WSection implements CatppuccinWidget {
                     s,
                     s,
                     90 + 90 * animation.getProgress(),
-                    CatppuccinIcons.ARROW.texture(),
+                    CatppuccinBuiltinIcons.ARROW.texture(),
                     theme.textColor()
             );
         }

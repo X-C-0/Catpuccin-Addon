@@ -22,4 +22,4 @@ public class WCatppuccinConfirmedMinus extends WConfirmedMinus implements Catppu
         renderer.quad(x + pad, y + height / 2 - s / 2, width - pad * 2, s, fg);
     }
 }
-//? }
+//?}

@@ -2,7 +2,7 @@ package me.pindour.catppuccin.gui.screens;
 
 import me.pindour.catppuccin.gui.text.RichText;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
-import me.pindour.catppuccin.gui.themes.catppuccin.icons.CatppuccinIcons;
+import me.pindour.catppuccin.gui.themes.catppuccin.icons.CatppuccinBuiltinIcons;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.settings.WCatppuccinKeybind;
 import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.events.meteor.ActiveModulesChangedEvent;
@@ -75,7 +75,7 @@ public class CatppuccinModuleScreen extends WindowScreen {
         WDropdown<BindAction> bindAction = bind.add(theme.dropdown(module.toggleOnBindRelease ? BindAction.HOLD : BindAction.TOGGLE)).widget();
         bindAction.action = () -> module.toggleOnBindRelease = bindAction.get().isHold();
 
-        WButton reset = bind.add(theme.button(CatppuccinIcons.RESET.texture())).right().widget();
+        WButton reset = bind.add(theme.button(CatppuccinBuiltinIcons.RESET.texture())).right().widget();
         reset.action = keybind::resetBind;
 
         view.add(theme.horizontalSeparator()).padVertical(pad).expandX();
@@ -111,7 +111,7 @@ public class CatppuccinModuleScreen extends WindowScreen {
 
         // Config sharing
         WHorizontalList sharing = bottom.add(theme.horizontalList()).right().widget();
-        WButton copy = sharing.add(theme.button(CatppuccinIcons.COPY.texture())).widget();
+        WButton copy = sharing.add(theme.button(CatppuccinBuiltinIcons.COPY.texture())).widget();
         copy.action = () -> {
             if (toClipboard()) {
                 OkPrompt.create()
@@ -125,7 +125,7 @@ public class CatppuccinModuleScreen extends WindowScreen {
         };
         copy.tooltip = "Copy config";
 
-        WButton paste = sharing.add(theme.button(CatppuccinIcons.IMPORT.texture())).widget();
+        WButton paste = sharing.add(theme.button(CatppuccinBuiltinIcons.IMPORT.texture())).widget();
         paste.action = this::fromClipboard;
         paste.tooltip = "Paste config";
     }

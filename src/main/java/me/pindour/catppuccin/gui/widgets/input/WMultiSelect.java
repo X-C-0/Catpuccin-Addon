@@ -316,9 +316,9 @@ public abstract class WMultiSelect<T> extends WVerticalList {
         @Override
         public boolean onMouseClicked(Click click, boolean used) {
             if (mouseOver
-                //? if >= 1.21.9
+                //? if >=1.21.9
                 && click.button() == GLFW_MOUSE_BUTTON_LEFT
-                //? if < 1.21.9
+                //? if <=1.21.8
                 //&& button == GLFW_MOUSE_BUTTON_LEFT
                 && !used
                 && !checkbox.mouseOver

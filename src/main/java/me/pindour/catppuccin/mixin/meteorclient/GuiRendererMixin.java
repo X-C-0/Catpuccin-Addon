@@ -1,9 +1,9 @@
 package me.pindour.catppuccin.mixin.meteorclient;
 
-import me.pindour.catppuccin.gui.renderer.CatppuccinRenderer;
+import me.pindour.catppuccin.renderer.CatppuccinRenderer;
 import me.pindour.catppuccin.gui.text.RichText;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
-import me.pindour.catppuccin.gui.themes.catppuccin.icons.CatppuccinIcons;
+import me.pindour.catppuccin.gui.themes.catppuccin.icons.CatppuccinBuiltinIcons;
 import meteordevelopment.meteorclient.gui.GuiTheme;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.renderer.operations.TextOperation;
@@ -19,12 +19,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 
+//? if <=1.21.9 {
+//import java.util.Stack;
+//?} else {
+import it.unimi.dsi.fastutil.Stack;
+//?}
+
 //? if <=1.21.4 {
 /*import meteordevelopment.meteorclient.renderer.GL;
 import meteordevelopment.meteorclient.utils.render.ByteTexture;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
-
 *///?} else {
 import meteordevelopment.meteorclient.gui.renderer.Scissor;
 import meteordevelopment.meteorclient.renderer.Texture;
@@ -62,19 +67,12 @@ public abstract class GuiRendererMixin {
     public GuiTheme theme;
 
     @Inject(method = "init", at = @At("HEAD"))
-    private static void onPreInit(CallbackInfo ci) {
-        CatppuccinIcons.init();
+    private static void catppuccin$preInit(CallbackInfo ci) {
+        CatppuccinBuiltinIcons.init();
     }
-
-    //? if >=1.21.5 {
-    @Inject(method = "init", at = @At("TAIL"))
-    private static void onPostInit(CallbackInfo ci) {
-        CatppuccinRenderer.init(TEXTURE);
-    }
-    //?}
 
     @Inject(method = "beginRender", at = @At("HEAD"))
-    private void onBeginRender(CallbackInfo ci) {
+    private void catppuccin$beginRender(CallbackInfo ci) {
         if (!(theme instanceof CatppuccinGuiTheme)) return;
         catppuccinRenderer.begin();
     }
@@ -132,16 +130,48 @@ public abstract class GuiRendererMixin {
     }
 
     @Inject(method = "setAlpha", at = @At("HEAD"))
-    private void onSetAlpha(double a, CallbackInfo ci) {
+    private void catppuccin$setAlpha(double a, CallbackInfo ci) {
         catppuccinRenderer.setAlpha(a);
     }
 
     @Inject(method = "text", at = @At("HEAD"), cancellable = true)
-    private void onText(String text, double x, double y, Color color, boolean title, CallbackInfo ci) {
+    private void catppuccin$text(String text, double x, double y, Color color, boolean title, CallbackInfo ci) {
         if (!(theme instanceof CatppuccinGuiTheme)) return;
 
         catppuccinRenderer.text(RichText.of(text).boldIf(title), x, y, color);
 
         ci.cancel();
+    }
+
+    @Inject(method = "scissorStart", at = @At("TAIL"))
+    private void catppuccin$scissorStart(double x, double y, double width, double height, CallbackInfo ci) {
+        if (!(theme instanceof CatppuccinGuiTheme)) return;
+        updateClipFromStack();
+    }
+
+    @Inject(method = "scissorEnd", at = @At("TAIL"))
+    private void catppuccin$scissorEnd(CallbackInfo ci) {
+        if (!(theme instanceof CatppuccinGuiTheme)) return;
+        updateClipFromStack();
+    }
+
+    @Unique
+    private static Scissor peekScissor(Stack<Scissor> stack) {
+        //? if <=1.21.9
+        //return stack.peek();
+        //? if >=1.21.10
+        return stack.top();
+    }
+
+    @Unique
+    private void updateClipFromStack() {
+        Stack<Scissor> stack = ((GuiRendererAccessor) this).getScissorStack();
+        if (stack == null || stack.isEmpty()) {
+            catppuccinRenderer.clearClipRect();
+            return;
+        }
+
+        Scissor top = peekScissor(stack);
+        catppuccinRenderer.setClipRect(top.x, top.y, top.x + top.width, top.y + top.height);
     }
 }

@@ -1,7 +1,7 @@
 package me.pindour.catppuccin.gui.themes.catppuccin;
 
 import me.pindour.catppuccin.gui.animation.Easing;
-import me.pindour.catppuccin.gui.renderer.CatppuccinRenderer;
+import me.pindour.catppuccin.renderer.CatppuccinRenderer;
 import me.pindour.catppuccin.gui.screens.CatppuccinModuleScreen;
 import me.pindour.catppuccin.gui.screens.CatppuccinModulesScreen;
 import me.pindour.catppuccin.gui.text.RichText;
@@ -12,7 +12,6 @@ import me.pindour.catppuccin.gui.themes.catppuccin.colors.CatppuccinColor;
 import me.pindour.catppuccin.gui.themes.catppuccin.flavors.CatppuccinFlavors;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.*;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.pressable.*;
-import me.pindour.catppuccin.gui.themes.catppuccin.widgets.*;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.container.WCatppuccinSection;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.container.WCatppuccinView;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.container.WCatppuccinWindow;
@@ -20,7 +19,6 @@ import me.pindour.catppuccin.gui.themes.catppuccin.widgets.input.WCatppuccinDrop
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.input.WCatppuccinMultiSelect;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.input.WCatppuccinSlider;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.input.WCatppuccinTextBox;
-import me.pindour.catppuccin.gui.themes.catppuccin.widgets.pressable.*;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.settings.WCatppuccinDoubleEdit;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.settings.WCatppuccinIntEdit;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.settings.WCatppuccinKeybind;
@@ -333,7 +331,7 @@ public class CatppuccinGuiTheme extends GuiTheme {
     protected WConfirmedButton confirmedButton(String text, String confirmText, GuiTexture texture) {
         return w(new WCatppuccinConfirmedButton(text, confirmText, texture));
     }
-    //? }
+    //?}
 
     @Override
     public WMinus minus() {
@@ -345,7 +343,7 @@ public class CatppuccinGuiTheme extends GuiTheme {
     public WConfirmedMinus confirmedMinus() {
         return w(new WCatppuccinConfirmedMinus());
     }
-    //? }
+    //?}
 
     @Override
     public WPlus plus() {
@@ -425,7 +423,7 @@ public class CatppuccinGuiTheme extends GuiTheme {
         return w(module(module, module.title));
     }
 
-    //? if >= 1.21.11
+    //? if >=1.21.11
     @Override
     public WWidget module(Module module, String title) {
         return w(new WCatppuccinModule(module, title));
@@ -735,7 +733,7 @@ public class CatppuccinGuiTheme extends GuiTheme {
 
         if (//? if >=1.21.9
             MacWindowUtil.IS_MAC
-            //? if <1.21.9
+            //? if <=1.21.8
             //IS_SYSTEM_MAC
         ) {
             scaled /= (double) mc.getWindow().getWidth() / mc.getWindow().getFramebufferWidth();

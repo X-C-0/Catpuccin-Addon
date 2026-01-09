@@ -1,7 +1,7 @@
 package me.pindour.catppuccin.gui.screens;
 
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
-import me.pindour.catppuccin.gui.themes.catppuccin.icons.CatppuccinIcons;
+import me.pindour.catppuccin.gui.themes.catppuccin.icons.CatppuccinBuiltinIcons;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.container.WCatppuccinWindow;
 import meteordevelopment.meteorclient.gui.GuiTheme;
 import meteordevelopment.meteorclient.gui.tabs.TabScreen;
@@ -172,7 +172,7 @@ public class CatppuccinModulesScreen extends TabScreen {
         double size = theme.scale(16);
 
         if (theme.categoryIcons()) {
-            w.beforeHeaderInit = wContainer -> wContainer.add(theme.texture(CatppuccinIcons.SEARCH.texture(), size)).centerY().pad(4).padHorizontal(10);
+            w.beforeHeaderInit = wContainer -> wContainer.add(theme.texture(CatppuccinBuiltinIcons.SEARCH.texture(), size)).centerY().pad(4).padHorizontal(10);
         }
 
         c.add(w);
@@ -211,7 +211,7 @@ public class CatppuccinModulesScreen extends TabScreen {
         double size = theme.scale(16);
 
         if (theme.categoryIcons()) {
-            w.beforeHeaderInit = wContainer -> wContainer.add(theme.texture(CatppuccinIcons.BOOKMARK_YES.texture(), size)).centerY().pad(4).padHorizontal(10);
+            w.beforeHeaderInit = wContainer -> wContainer.add(theme.texture(CatppuccinBuiltinIcons.BOOKMARK_YES.texture(), size)).centerY().pad(4).padHorizontal(10);
         }
 
         Cell<WWindow> cell = c.add(w);
@@ -337,15 +337,15 @@ public class CatppuccinModulesScreen extends TabScreen {
         }
     }
 
-    private CatppuccinIcons getIconForCategory(Category category) {
-        CatppuccinIcons icon;
+    private CatppuccinBuiltinIcons getIconForCategory(Category category) {
+        CatppuccinBuiltinIcons icon;
         switch (category.name) {
-            case "Combat" -> icon = CatppuccinIcons.SWORDS;
-            case "Player" -> icon = CatppuccinIcons.USER;
-            case "Movement" -> icon = CatppuccinIcons.MOVEMENT;
-            case "Render" -> icon = CatppuccinIcons.EYE;
-            case "World" -> icon = CatppuccinIcons.CUBE;
-            default -> icon = CatppuccinIcons.QUESTION_MARK;
+            case "Combat" -> icon = CatppuccinBuiltinIcons.SWORDS;
+            case "Player" -> icon = CatppuccinBuiltinIcons.USER;
+            case "Movement" -> icon = CatppuccinBuiltinIcons.MOVEMENT;
+            case "Render" -> icon = CatppuccinBuiltinIcons.EYE;
+            case "World" -> icon = CatppuccinBuiltinIcons.CUBE;
+            default -> icon = CatppuccinBuiltinIcons.QUESTION_MARK;
         }
 
         return icon;

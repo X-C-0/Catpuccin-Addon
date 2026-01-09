@@ -1,7 +1,7 @@
 package me.pindour.catppuccin.gui.themes.catppuccin.widgets.pressable;
 
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinWidget;
-import me.pindour.catppuccin.gui.themes.catppuccin.icons.CatppuccinIcons;
+import me.pindour.catppuccin.gui.themes.catppuccin.icons.CatppuccinBuiltinIcons;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.widgets.pressable.WTriangle;
 
@@ -17,7 +17,7 @@ public class WCatppuccinTriangle extends WTriangle implements CatppuccinWidget {
                 s,
                 s,
                 rotation,
-                CatppuccinIcons.ARROW.texture(),
+                CatppuccinBuiltinIcons.ARROW.texture(),
                 theme.textColor()
         );
     }

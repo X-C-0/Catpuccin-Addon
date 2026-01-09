@@ -185,7 +185,10 @@ public class RichTextRenderer implements TextRenderer {
     }
 
     @Override
-    public void end(/*? <=1.21.4 >> ')'*//*MatrixStack matrices*/) {
+    public void end(
+            //? if <=1.21.4
+            //MatrixStack matrices
+    ) {
         if (!building) throw new RuntimeException("end() called without calling begin()");
 
         if (!scaleOnly) {

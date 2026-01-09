@@ -1,10 +1,10 @@
 package me.pindour.catppuccin.gui.themes.catppuccin;
 
-import me.pindour.catppuccin.gui.renderer.CornerStyle;
+import me.pindour.catppuccin.gui.themes.catppuccin.icons.CatppuccinBuiltinIcons;
+import me.pindour.catppuccin.renderer.rounded.CornerStyle;
 import me.pindour.catppuccin.gui.screens.settings.CatppuccinEntityTypeListSettingScreen;
 import me.pindour.catppuccin.gui.text.RichText;
 import me.pindour.catppuccin.gui.text.TextSize;
-import me.pindour.catppuccin.gui.themes.catppuccin.icons.CatppuccinIcons;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.WCatppuccinLabel;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.pressable.WCatppuccinCheckbox;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.settings.WCatppuccinDoubleEdit;
@@ -251,7 +251,7 @@ public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
     private void genericW(WTable table, GenericSetting<?> setting) {
         WHorizontalList list = table.add(theme.horizontalList()).expandX().widget();
 
-        WButton edit = list.add(theme.button(CatppuccinIcons.EDIT.texture())).widget();
+        WButton edit = list.add(theme.button(CatppuccinBuiltinIcons.EDIT.texture())).widget();
         edit.action = () -> mc.setScreen(
                 setting/*? if <=1.21.4 >>+ '()' *//*.get()*/.createScreen(theme)
         );
@@ -263,7 +263,7 @@ public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
     private void colorW(WTable table, ColorSetting setting) {
         WHorizontalList list = table.add(theme.horizontalList()).expandX().widget();
 
-        WColorPicker colorPicker = list.add(theme.colorPicker(setting.get(), CatppuccinIcons.EDIT.texture())).widget();
+        WColorPicker colorPicker = list.add(theme.colorPicker(setting.get(), CatppuccinBuiltinIcons.EDIT.texture())).widget();
         colorPicker.action = () -> mc.setScreen(new ColorSettingScreen(theme, setting));
 
         title(list, setting).padLeft(theme.pad()).expandCellX();
@@ -390,7 +390,7 @@ public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
     private void blockDataW(WTable table, BlockDataSetting<?> setting) {
         WHorizontalList list = table.add(theme.horizontalList()).expandX().widget();
 
-        WButton button = list.add(theme.button(CatppuccinIcons.EDIT.texture())).widget();
+        WButton button = list.add(theme.button(CatppuccinBuiltinIcons.EDIT.texture())).widget();
         button.action = () -> mc.setScreen(
                 new BlockDataSettingScreen/*? if >= 1.21.11 >>+ '<>'*/<>(theme, setting)
         );
@@ -480,7 +480,7 @@ public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
 
             list.add(theme.label(String.valueOf(_i))).padLeft(theme.pad());
 
-            WColorPicker colorPicker = list.add(theme.colorPicker(color, CatppuccinIcons.EDIT.texture())).padHorizontal(theme.pad()).widget();
+            WColorPicker colorPicker = list.add(theme.colorPicker(color, CatppuccinBuiltinIcons.EDIT.texture())).padHorizontal(theme.pad()).widget();
             colorPicker.action = () -> {
                 SettingColor defaultValue = WHITE;
 

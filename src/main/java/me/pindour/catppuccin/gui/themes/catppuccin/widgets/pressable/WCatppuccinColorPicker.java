@@ -1,6 +1,6 @@
 package me.pindour.catppuccin.gui.themes.catppuccin.widgets.pressable;
 
-import me.pindour.catppuccin.gui.renderer.CornerStyle;
+import me.pindour.catppuccin.renderer.rounded.CornerStyle;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinWidget;
 import me.pindour.catppuccin.gui.widgets.pressable.WColorPicker;
 import me.pindour.catppuccin.utils.ColorUtils;

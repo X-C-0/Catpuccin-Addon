@@ -1,7 +1,7 @@
 package me.pindour.catppuccin.gui.themes.catppuccin.widgets.pressable;
 
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinWidget;
-import me.pindour.catppuccin.gui.themes.catppuccin.icons.CatppuccinIcons;
+import me.pindour.catppuccin.gui.themes.catppuccin.icons.CatppuccinBuiltinIcons;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.widgets.pressable.WFavorite;
 import meteordevelopment.meteorclient.utils.render.color.Color;
@@ -21,7 +21,7 @@ public class WCatppuccinFavorite extends WFavorite implements CatppuccinWidget {
                 y + pad,
                 s,
                 s,
-                checked ? CatppuccinIcons.BOOKMARK_YES.texture() : CatppuccinIcons.BOOKMARK_NO.texture(),
+                checked ? CatppuccinBuiltinIcons.BOOKMARK_YES.texture() : CatppuccinBuiltinIcons.BOOKMARK_NO.texture(),
                 getColor()
         );
     }
