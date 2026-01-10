@@ -2,7 +2,7 @@ package me.pindour.catppuccin.gui.themes.catppuccin.widgets.container;
 
 import me.pindour.catppuccin.gui.animation.Animation;
 import me.pindour.catppuccin.gui.animation.Direction;
-import me.pindour.catppuccin.renderer.rounded.CornerStyle;
+import me.pindour.catppuccin.renderer.CornerStyle;
 import me.pindour.catppuccin.gui.screens.CatppuccinModulesScreen;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinWidget;

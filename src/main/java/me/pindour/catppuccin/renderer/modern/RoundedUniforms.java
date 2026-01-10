@@ -1,4 +1,4 @@
-package me.pindour.catppuccin.renderer.rounded;
+package me.pindour.catppuccin.renderer.modern;
 
 //? if >=1.21.5 {
 /*import com.mojang.blaze3d.buffers.GpuBufferSlice;

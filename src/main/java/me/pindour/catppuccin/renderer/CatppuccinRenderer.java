@@ -2,7 +2,6 @@ package me.pindour.catppuccin.renderer;
 
 import me.pindour.catppuccin.gui.text.RichText;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
-import me.pindour.catppuccin.renderer.rounded.CornerStyle;
 import me.pindour.catppuccin.renderer.text.CatppuccinTextRenderer;
 import meteordevelopment.meteorclient.gui.widgets.WWidget;
 import meteordevelopment.meteorclient.renderer.Renderer2D;

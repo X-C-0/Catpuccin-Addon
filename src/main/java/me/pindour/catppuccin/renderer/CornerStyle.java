@@ -1,4 +1,4 @@
-package me.pindour.catppuccin.renderer.rounded;
+package me.pindour.catppuccin.renderer;
 
 public enum CornerStyle {
     NONE(false, false, false, false),

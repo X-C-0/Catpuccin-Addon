@@ -1,7 +1,7 @@
 package me.pindour.catppuccin.gui.themes.catppuccin;
 
 import me.pindour.catppuccin.gui.themes.catppuccin.icons.CatppuccinBuiltinIcons;
-import me.pindour.catppuccin.renderer.rounded.CornerStyle;
+import me.pindour.catppuccin.renderer.CornerStyle;
 import me.pindour.catppuccin.gui.screens.settings.CatppuccinEntityTypeListSettingScreen;
 import me.pindour.catppuccin.gui.text.RichText;
 import me.pindour.catppuccin.gui.text.TextSize;

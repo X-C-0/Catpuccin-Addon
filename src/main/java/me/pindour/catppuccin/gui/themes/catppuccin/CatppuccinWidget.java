@@ -1,7 +1,7 @@
 package me.pindour.catppuccin.gui.themes.catppuccin;
 
 import me.pindour.catppuccin.renderer.CatppuccinRenderer;
-import me.pindour.catppuccin.renderer.rounded.CornerStyle;
+import me.pindour.catppuccin.renderer.CornerStyle;
 import me.pindour.catppuccin.utils.ColorUtils;
 import meteordevelopment.meteorclient.gui.utils.BaseWidget;
 import meteordevelopment.meteorclient.gui.widgets.WWidget;
