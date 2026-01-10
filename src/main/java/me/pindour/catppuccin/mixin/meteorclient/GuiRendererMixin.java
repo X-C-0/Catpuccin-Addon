@@ -27,6 +27,8 @@ import java.util.Stack;
 *///?}
 
 //? if <=1.21.4 {
+import meteordevelopment.meteorclient.renderer.GL;
+import meteordevelopment.meteorclient.utils.render.ByteTexture;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 //?} else {
@@ -41,6 +43,9 @@ public abstract class GuiRendererMixin {
     //? if <=1.21.4 {
     @Shadow
     private DrawContext drawContext;
+
+    @Shadow
+    private static ByteTexture TEXTURE;
 
     //?} else {
     /*@Shadow
@@ -62,7 +67,7 @@ public abstract class GuiRendererMixin {
     public GuiTheme theme;
 
     @Inject(method = "init", at = @At("HEAD"))
-    private static void catppuccin$preInit(CallbackInfo ci) {
+    private static void catppuccin$init(CallbackInfo ci) {
         CatppuccinBuiltinIcons.init();
     }
 
@@ -78,12 +83,7 @@ public abstract class GuiRendererMixin {
         //? if >=1.21.5
         //method = "endRender(Lmeteordevelopment/meteorclient/gui/renderer/Scissor;)V",
 
-        at = @At(
-            value = "INVOKE",
-            target = "Lmeteordevelopment/meteorclient/renderer/Renderer2D;end()V",
-            ordinal = 1,
-            shift = At.Shift.AFTER
-        ),
+        at = @At("HEAD"),
         cancellable = true
     )
     private void onEndRender(
@@ -93,6 +93,9 @@ public abstract class GuiRendererMixin {
     ) {
         if (!(theme instanceof CatppuccinGuiTheme)) return;
 
+        r.end();
+        rTex.end();
+
         //? if <=1.21.4 {
         MatrixStack matrices = drawContext.getMatrices();
 
@@ -100,6 +103,8 @@ public abstract class GuiRendererMixin {
         catppuccinRenderer.render(matrices);
 
         r.render(matrices);
+
+        GL.bindTexture(TEXTURE.getGlId());
         rTex.render(matrices);
 
         //?} else {
@@ -110,12 +115,10 @@ public abstract class GuiRendererMixin {
         rTex.render("u_Texture", TEXTURE.getGlTextureView(), TEXTURE.getSampler());
         *///?}
 
-        // From GuiRenderer
         texts.clear();
 
         catppuccinRenderer.renderText();
 
-        // From GuiRenderer
         //? if >=1.21.5
         //if (scissor != null) scissor.pop(); 
         ci.cancel();
