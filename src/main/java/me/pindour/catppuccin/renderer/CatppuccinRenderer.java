@@ -8,8 +8,8 @@ import meteordevelopment.meteorclient.renderer.Renderer2D;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 
 //? if >=1.21.5 {
-import me.pindour.catppuccin.renderer.rounded.RoundedRenderer;
-import me.pindour.catppuccin.renderer.rounded.RoundedUniforms;
+import me.pindour.catppuccin.renderer.modern.RoundedRenderer;
+import me.pindour.catppuccin.renderer.modern.RoundedUniforms;
 //?} else {
 /*import me.pindour.catppuccin.renderer.legacy.RoundedRendererLegacy;
 import net.minecraft.client.util.math.MatrixStack;

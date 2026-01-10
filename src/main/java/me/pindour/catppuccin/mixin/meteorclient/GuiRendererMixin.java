@@ -93,6 +93,9 @@ public abstract class GuiRendererMixin {
     ) {
         if (!(theme instanceof CatppuccinGuiTheme)) return;
 
+        //? if >=1.21.5
+        if (scissor != null) scissor.push();
+
         r.end();
         rTex.end();
 
@@ -116,11 +119,11 @@ public abstract class GuiRendererMixin {
         //?}
 
         texts.clear();
-
         catppuccinRenderer.renderText();
 
         //? if >=1.21.5
-        if (scissor != null) scissor.pop(); 
+        if (scissor != null) scissor.pop();
+
         ci.cancel();
     }
 

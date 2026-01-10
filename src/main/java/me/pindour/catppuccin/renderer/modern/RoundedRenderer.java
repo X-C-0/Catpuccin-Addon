@@ -1,7 +1,6 @@
 package me.pindour.catppuccin.renderer.modern;
 
 //? if >=1.21.5 {
-import me.pindour.catppuccin.renderer.CatppuccinRenderPipelines;
 import meteordevelopment.meteorclient.renderer.MeshBuilder;
 import meteordevelopment.meteorclient.renderer.MeshRenderer;
 import meteordevelopment.meteorclient.utils.render.color.Color;
