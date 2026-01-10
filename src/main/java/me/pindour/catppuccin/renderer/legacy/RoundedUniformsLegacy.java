@@ -1,7 +1,7 @@
 package me.pindour.catppuccin.renderer.legacy;
 
 //? if <=1.21.4 {
-import meteordevelopment.meteorclient.utils.render.color.Color;
+/*import meteordevelopment.meteorclient.utils.render.color.Color;
 
 public class RoundedUniformsLegacy {
     private static final Color tmpFillColor = new Color();
@@ -72,4 +72,4 @@ public class RoundedUniformsLegacy {
         }
     }
 }
-//?}
+*///?}

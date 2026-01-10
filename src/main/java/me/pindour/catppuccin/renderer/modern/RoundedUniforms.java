@@ -1,7 +1,7 @@
 package me.pindour.catppuccin.renderer.modern;
 
 //? if >=1.21.5 {
-/*import com.mojang.blaze3d.buffers.GpuBufferSlice;
+import com.mojang.blaze3d.buffers.GpuBufferSlice;
 import com.mojang.blaze3d.buffers.Std140Builder;
 import com.mojang.blaze3d.buffers.Std140SizeCalculator;
 import me.pindour.catppuccin.renderer.CatppuccinRenderer;
@@ -88,4 +88,4 @@ public class RoundedUniforms {
         }
     }
 }
-*///?}
+//?}

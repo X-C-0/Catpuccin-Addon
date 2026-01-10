@@ -219,7 +219,7 @@ public class WCatppuccinDoubleEdit extends WVerticalList implements CatppuccinWi
     public boolean showReset() {
         return mouseOver || (slider != null
                 //? if >=1.21.11
-                //&& slider.focused
+                && slider.focused
         );
     }
 }

@@ -8,12 +8,12 @@ import meteordevelopment.meteorclient.renderer.Renderer2D;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 
 //? if >=1.21.5 {
-/*import me.pindour.catppuccin.renderer.rounded.RoundedRenderer;
+import me.pindour.catppuccin.renderer.rounded.RoundedRenderer;
 import me.pindour.catppuccin.renderer.rounded.RoundedUniforms;
-*///?} else {
-import me.pindour.catppuccin.renderer.legacy.RoundedRendererLegacy;
+//?} else {
+/*import me.pindour.catppuccin.renderer.legacy.RoundedRendererLegacy;
 import net.minecraft.client.util.math.MatrixStack;
-//?}
+*///?}
 
 public class CatppuccinRenderer {
     private static final CatppuccinRenderer INSTANCE = new CatppuccinRenderer();
@@ -21,9 +21,9 @@ public class CatppuccinRenderer {
     private CatppuccinGuiTheme theme;
 
     //? if >=1.21.5
-    //private final RoundedRenderer roundedRenderer = new RoundedRenderer();
+    private final RoundedRenderer roundedRenderer = new RoundedRenderer();
     //? if <=1.21.4
-    private final RoundedRendererLegacy roundedRenderer = new RoundedRendererLegacy();
+    //private final RoundedRendererLegacy roundedRenderer = new RoundedRendererLegacy();
 
     private final CatppuccinTextRenderer textRenderer = new CatppuccinTextRenderer();
     private final Renderer2D r = new Renderer2D(false);
@@ -53,15 +53,15 @@ public class CatppuccinRenderer {
     }
 
     //? if <=1.21.4 {
-    public void render(MatrixStack matrices) {
+    /*public void render(MatrixStack matrices) {
         roundedRenderer.render(matrices);
         r.render(matrices);
     }
-    //?} else {
-    /*public void render() {
+    *///?} else {
+    public void render() {
         r.render();
     }
-    *///?}
+    //?}
 
     public void renderText() {
         if (theme == null) return;
@@ -143,6 +143,6 @@ public class CatppuccinRenderer {
 
     public static void flipFrame() {
         //? if >=1.21.5
-        //RoundedUniforms.flipFrame();
+        RoundedUniforms.flipFrame();
     }
 }

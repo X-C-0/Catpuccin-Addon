@@ -1,7 +1,7 @@
 package me.pindour.catppuccin.renderer.legacy;
 
 //? if <=1.21.4 {
-import com.mojang.blaze3d.systems.RenderSystem;
+/*import com.mojang.blaze3d.systems.RenderSystem;
 import me.pindour.catppuccin.renderer.CatppuccinRenderer;
 import meteordevelopment.meteorclient.renderer.GL;
 import meteordevelopment.meteorclient.utils.misc.Pool;
@@ -84,4 +84,4 @@ public class RoundedRendererLegacy {
         GL.restoreState();
     }
 }
-//?}
+*///?}

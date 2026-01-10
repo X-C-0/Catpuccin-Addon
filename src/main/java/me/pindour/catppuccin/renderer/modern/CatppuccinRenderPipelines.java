@@ -1,7 +1,7 @@
 package me.pindour.catppuccin.renderer.modern;
 
 //? if >=1.21.5 {
-/*import com.mojang.blaze3d.pipeline.BlendFunction;
+import com.mojang.blaze3d.pipeline.BlendFunction;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.platform.DepthTestFunction;
 import com.mojang.blaze3d.vertex.VertexFormat;
@@ -42,4 +42,4 @@ public class CatppuccinRenderPipelines {
         }
     }
 }
-*///?}
+//?}

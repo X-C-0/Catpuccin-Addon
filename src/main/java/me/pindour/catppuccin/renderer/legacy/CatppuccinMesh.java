@@ -1,7 +1,7 @@
 package me.pindour.catppuccin.renderer.legacy;
 
 //? if <=1.21.4 {
-import meteordevelopment.meteorclient.renderer.GL;
+/*import meteordevelopment.meteorclient.renderer.GL;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL32C;
 
@@ -68,4 +68,4 @@ public class CatppuccinMesh {
         vertexBuffer.put(x).put(y).put(localX).put(localY).put(1f).put(1f).put(1f).put(1f);
     }
 }
-//?}
+*///?}

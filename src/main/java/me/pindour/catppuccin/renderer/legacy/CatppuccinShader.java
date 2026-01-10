@@ -1,7 +1,7 @@
 package me.pindour.catppuccin.renderer.legacy;
 
 //? if <=1.21.4 {
-import com.mojang.blaze3d.systems.RenderSystem;
+/*import com.mojang.blaze3d.systems.RenderSystem;
 import me.pindour.catppuccin.CatppuccinAddon;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 import net.minecraft.client.MinecraftClient;
@@ -114,4 +114,4 @@ public class CatppuccinShader {
         return bound;
     }
 }
-//?}
+*///?}

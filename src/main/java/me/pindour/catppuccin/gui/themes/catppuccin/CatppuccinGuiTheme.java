@@ -58,9 +58,9 @@ import java.util.function.Supplier;
 import static meteordevelopment.meteorclient.MeteorClient.mc;
 
 //? if <1.21.9
-import static net.minecraft.client.MinecraftClient.IS_SYSTEM_MAC;
+//import static net.minecraft.client.MinecraftClient.IS_SYSTEM_MAC;
 //? if >=1.21.10
-//import net.minecraft.client.util.MacWindowUtil;
+import net.minecraft.client.util.MacWindowUtil;
 
 public class CatppuccinGuiTheme extends GuiTheme {
     private final Map<CatppuccinColor, Color> colorCache;
@@ -327,11 +327,11 @@ public class CatppuccinGuiTheme extends GuiTheme {
     }
 
     //? if >=1.21.11 {
-    /*@Override
+    @Override
     protected WConfirmedButton confirmedButton(String text, String confirmText, GuiTexture texture) {
         return w(new WCatppuccinConfirmedButton(text, confirmText, texture));
     }
-    *///?}
+    //?}
 
     @Override
     public WMinus minus() {
@@ -339,11 +339,11 @@ public class CatppuccinGuiTheme extends GuiTheme {
     }
 
     //? if >=1.21.11 {
-    /*@Override
+    @Override
     public WConfirmedMinus confirmedMinus() {
         return w(new WCatppuccinConfirmedMinus());
     }
-    *///?}
+    //?}
 
     @Override
     public WPlus plus() {
@@ -424,7 +424,7 @@ public class CatppuccinGuiTheme extends GuiTheme {
     }
 
     //? if >=1.21.11
-    //@Override
+    @Override
     public WWidget module(Module module, String title) {
         return w(new WCatppuccinModule(module, title));
     }
@@ -732,9 +732,9 @@ public class CatppuccinGuiTheme extends GuiTheme {
         double scaled = value * scale.get();
 
         if (//? if >=1.21.9
-            //MacWindowUtil.IS_MAC
+            MacWindowUtil.IS_MAC
             //? if <=1.21.8
-            IS_SYSTEM_MAC
+            //IS_SYSTEM_MAC
         ) {
             scaled /= (double) mc.getWindow().getWidth() / mc.getWindow().getFramebufferWidth();
         }

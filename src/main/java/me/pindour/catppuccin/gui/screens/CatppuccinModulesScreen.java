@@ -30,7 +30,7 @@ import static meteordevelopment.meteorclient.utils.Utils.getWindowHeight;
 import static meteordevelopment.meteorclient.utils.Utils.getWindowWidth;
 
 //? if >=1.21.5
-//import net.minecraft.util.Pair;
+import net.minecraft.util.Pair;
 
 public class CatppuccinModulesScreen extends TabScreen {
     private final CatppuccinGuiTheme theme;
@@ -121,11 +121,13 @@ public class CatppuccinModulesScreen extends TabScreen {
     protected void createSearchW(WContainer w, String text) {
         if (!text.isEmpty()) {
             // Titles
+
             //? if <=1.21.4 {
-            Set<Module> modules = Modules.get().searchTitles(text);
-            //?} else {
-            /*List<Pair<Module, String>> modules = Modules.get().searchTitles(text);
-            *///?}
+            /*Set<Module> modules = Modules.get().searchTitles(text);
+
+            *///?} else {
+            List<Pair<Module, String>> modules = Modules.get().searchTitles(text);
+            //?}
             
             if (!modules.isEmpty()) {
                 WSection section = w.add(theme.section("Modules")).expandX().widget();
@@ -134,18 +136,19 @@ public class CatppuccinModulesScreen extends TabScreen {
                 int count = 0;
 
                 //? if <=1.21.4 {
-                for (Module module : modules) {
+                /*for (Module module : modules) {
                     if (count >= Config.get().moduleSearchCount.get() || count >= modules.size()) break;
                     section.add(theme.module(module)).expandX();
                     count++;
                 }
-                //?} else {
-                /*for (Pair<Module, String> p : modules) {
+
+                *///?} else {
+                for (Pair<Module, String> p : modules) {
                     if (count >= Config.get().moduleSearchCount.get() || count >= modules.size()) break;
                     section.add(theme.module(p.getLeft(), p.getRight())).expandX();
                     count++;
                 }
-                *///?}
+                //?}
             }
 
             // Settings
@@ -264,18 +267,17 @@ public class CatppuccinModulesScreen extends TabScreen {
 
         @Override
         public void init() {
-            List<Module> moduleList = new ArrayList<>();
             for (Category category : Modules.loopCategories()) {
-                for (Module module : Modules.get().getGroup(category)) {
-                    if (!Config.get().hiddenModules.get().contains(module)) {
-                        moduleList.add(module);
-                    }
-                }
+                List<Module> modules = Modules.get().getGroup(category);
 
-                // Ensure empty categories are not shown
-                if (!moduleList.isEmpty()) {
-                    windows.add(createCategory(this, category, moduleList));
-                    moduleList.clear();
+                //? if >=1.21.4 {
+                modules = modules.stream()
+                        .filter(m -> !Config.get().hiddenModules.get().contains(m))
+                        .toList();
+                //?}
+
+                if (!modules.isEmpty()) {
+                    windows.add(createCategory(this, category, modules));
                 }
             }
 

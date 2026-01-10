@@ -36,7 +36,7 @@ import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.render.color.SettingColor;
 import net.minecraft.client.resource.language.I18n;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -129,7 +129,7 @@ public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
         RemoveInfo removeInfo = null;
 
         for (Setting<?> setting : group) {
-            if (!StringUtils.containsIgnoreCase(setting.title, filter)) continue;
+            if (!Strings.CI.contains(setting.title, filter)) continue;
 
             boolean visible = setting.isVisible();
             setting.lastWasVisible = visible;
@@ -253,7 +253,7 @@ public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
 
         WButton edit = list.add(theme.button(CatppuccinBuiltinIcons.EDIT.texture())).widget();
         edit.action = () -> mc.setScreen(
-                setting/*? if <=1.21.4 >>+ '()' */.get().createScreen(theme)
+                setting/*? if <=1.21.4 >>+ '()' *//*.get()*/.createScreen(theme)
         );
 
         title(list, setting).padLeft(theme.pad()).expandCellX();
@@ -392,7 +392,7 @@ public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
 
         WButton button = list.add(theme.button(CatppuccinBuiltinIcons.EDIT.texture())).widget();
         button.action = () -> mc.setScreen(
-                new BlockDataSettingScreen/*? if >= 1.21.11 >>+ '<>'*//*<>*/(theme, setting)
+                new BlockDataSettingScreen/*? if >= 1.21.11 >>+ '<>'*/<>(theme, setting)
         );
 
         title(list, setting).padLeft(theme.pad()).expandCellX();
