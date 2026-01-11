@@ -56,11 +56,4 @@ public class CatppuccinIcons {
     public static GuiTexture getCategoryIcon(String categoryName) {
         return CATEGORY_ICONS.get(categoryName);
     }
-
-    /**
-     * Check if a category has a custom icon registered.
-     */
-    public static boolean hasCategoryIcon(String categoryName) {
-        return CATEGORY_ICONS.containsKey(categoryName);
-    }
 }
