@@ -3,19 +3,13 @@ pluginManagement {
         mavenLocal()
         mavenCentral()
         gradlePluginPortal()
-        maven {
-            name = "Fabric"
-            url = uri("https://maven.fabricmc.net/")
-        }
-        maven {
-            name = "KikuGie Snapshots"
-            url = uri("https://maven.kikugie.dev/snapshots")
-        }
+        maven("https://maven.fabricmc.net/")
+        maven("https://maven.kikugie.dev/snapshots")
     }
 }
 
 plugins {
-    id("dev.kikugie.stonecutter") version "0.8.1"
+    id("dev.kikugie.stonecutter") version "0.8.2"
 }
 
 stonecutter {
@@ -24,4 +18,5 @@ stonecutter {
         vcsVersion = "1.21.11"
     }
 }
+
 rootProject.name = "catppuccin-addon"

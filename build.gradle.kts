@@ -59,8 +59,8 @@ stonecutter {
 tasks {
     processResources {
         val propertyMap = mapOf(
-            "version" to project.property("mod_version"),
-            "mc_version" to project.property("mod_mc_dep")
+            "version" to project.property("mod.version"),
+            "mc_targets" to project.property("mod.mc_targets")
         )
 
         inputs.properties(propertyMap)
