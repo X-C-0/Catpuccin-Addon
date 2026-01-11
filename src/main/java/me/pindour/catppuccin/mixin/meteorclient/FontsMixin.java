@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class FontsMixin {
 
     @Inject(method = "load", at = @At("HEAD"))
-    private static void onLoad(FontFace fontFace, CallbackInfo ci) {
+    private static void catppuccin$load(FontFace fontFace, CallbackInfo ci) {
         if (!(GuiThemes.get() instanceof CatppuccinGuiTheme theme)) return;
 
         if (theme.textRenderer() instanceof RichTextRenderer currentRenderer)

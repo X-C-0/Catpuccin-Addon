@@ -45,7 +45,10 @@ public class ColorUtils {
         int b = (int) (from.b + (to.b - from.b) * t);
         int a = (int) (from.a + (to.a - from.a) * t);
 
-        return new Color(r, g, b, a);
+        Color color = new Color(r, g, b, a);
+        color.validate();
+
+        return color;
     }
 
     public static Color withAlpha(Color color, double alphaMultiplier) {

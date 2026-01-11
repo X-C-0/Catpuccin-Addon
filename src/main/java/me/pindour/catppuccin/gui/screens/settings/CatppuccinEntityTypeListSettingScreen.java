@@ -94,7 +94,7 @@ public class CatppuccinEntityTypeListSettingScreen extends WindowScreen {
                     else setting.get().remove(entity);
                 });
 
-        multiSelectView.add(multiSelect).padVertical(6).expandX().widget();
+        multiSelectView.add(multiSelect).padVertical(6).expandX();
         widgets.add(multiSelect);
     }
 }

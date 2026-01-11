@@ -196,7 +196,6 @@ public class CatppuccinModuleScreen extends WindowScreen {
         //? if <=1.21.4 {
         /*if (!tag.contains("name") || !tag.getString("name").equals(module.name)) return false;
         module.settings.fromTag(tag.getCompound("settings"));
-        return true;
 
         *///?} else {
         if (!tag.getString("name", "").equals(module.name)) return false;
@@ -205,9 +204,9 @@ public class CatppuccinModuleScreen extends WindowScreen {
 
         if (settings.isPresent()) module.settings.fromTag(settings.get());
         else module.settings.reset();
+        //?}
 
         return true;
-        //?}
     }
 
     private boolean writeClipboardTag(NbtCompound tag) {

@@ -100,7 +100,11 @@ public class CatppuccinModulesScreen extends TabScreen {
         double size = theme.scale(16);
 
         if (theme.categoryIcons()) {
-            w.beforeHeaderInit = wContainer -> wContainer.add(theme.texture(getIconForCategory(category), size)).centerY().pad(4).padHorizontal(10);
+            w.beforeHeaderInit = wContainer -> wContainer.add(
+                    theme.texture(getIconForCategory(category), size))
+                    .centerY()
+                    .pad(4)
+                    .padHorizontal(10);
         }
 
         c.add(w);
