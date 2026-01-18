@@ -73,12 +73,15 @@ public class WCatppuccinTopBar extends WTopBar implements CatppuccinWidget {
             double pad = theme.scale(4);
             boolean isSelected = mc.currentScreen instanceof TabScreen && ((TabScreen) mc.currentScreen).tab == tab;
 
-            if (isSelected)
+            if (isSelected || mouseOver) {
+                Color color = isSelected ? theme.accentColor() : theme.surface0Color();
+
                 renderer().roundedRect(
                         x + pad, y + pad,
                         width - pad * 2, height - pad * 2,
-                        smallRadius(), theme.accentColor(), CornerStyle.ALL
+                        radius() - pad, color, CornerStyle.ALL
                 );
+            }
 
             RichText text = RichText.of(tab.name);
             double offsetX = width / 2 - theme.textWidth(text) / 2;
