@@ -3,14 +3,15 @@ plugins {
 }
 
 val minecraftVersion = stonecutter.current.version
-val yarnMappings = project.property("yarn_mappings") as String
-val loaderVersion = project.property("fabric_loader") as String
-val modVersion = project.property("mod_version") as String
-val mavenGroup = project.property("mod_group") as String
-val meteorVersion = project.property("meteor_version") as String
+val modVersion = project.property("mod.version") as String
+val mavenGroup = project.property("mod.group") as String
+
+val yarnMappings = project.property("deps.yarn_mappings") as String
+val loaderVersion = project.property("deps.fabric_loader") as String
+val meteorVersion = project.property("deps.meteor_version") as String
 
 base {
-    archivesName = project.property("mod_id") as String
+    archivesName = project.property("mod.id") as String
     version = "${modVersion}+mc${minecraftVersion}"
     group = mavenGroup
 }
