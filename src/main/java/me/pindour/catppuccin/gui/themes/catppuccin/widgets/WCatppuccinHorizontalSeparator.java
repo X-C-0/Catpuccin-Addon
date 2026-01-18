@@ -19,7 +19,7 @@ public class WCatppuccinHorizontalSeparator extends WHorizontalSeparator impleme
     @Override
     public void init() {
         super.init();
-        color = theme().mantleColor();
+        color = theme().surface0Color();
     }
 
     @Override

@@ -56,29 +56,37 @@ public class CatppuccinModuleScreen extends WindowScreen {
         view.maxHeight = window.view.maxHeight - 100; // Has to be smaller than window's max height to prevent double scrollbars
         view.spacing = 0;
 
+        WVerticalList moduleInfo = view.add(theme.verticalList()).padHorizontal(pad).padBottom(pad).expandX().widget();
+        moduleInfo.spacing = pad;
+
         // Description
-        WVerticalList description = view.add(theme.verticalList()).padHorizontal(pad).padBottom(pad).widget();
-        description.add(theme.label(module.description, getWindowWidth() / 4.0));
+        moduleInfo.add(theme.label(module.description, getWindowWidth() / 4.0));
 
         if (module.addon != null && module.addon != MeteorClient.ADDON) {
-            WHorizontalList addon = description.add(theme.horizontalList()).expandX().widget();
+            WHorizontalList addon = moduleInfo.add(theme.horizontalList()).expandX().widget();
             addon.add(theme.label("From: ").color(theme.textSecondaryColor()));
             addon.add(theme.label(module.addon.name).color(theme.accentColor()));
         }
 
         // Keybind
-        WHorizontalList bind = view.add(theme.horizontalList()).padHorizontal(pad).expandX().widget();
+        WHorizontalList bind = moduleInfo.add(theme.horizontalList()).expandX().widget();
 
         keybind = bind.add(theme.catppuccinKeybind(module.keybind)).expandX().widget();
         keybind.actionOnSet = () -> Modules.get().setModuleToBind(module);
 
         WDropdown<BindAction> bindAction = bind.add(theme.dropdown(module.toggleOnBindRelease ? BindAction.HOLD : BindAction.TOGGLE)).widget();
         bindAction.action = () -> module.toggleOnBindRelease = bindAction.get().isHold();
+        bindAction.tooltip = "Determines whether the module toggles or remains active only while holding the key.";
 
-        WButton reset = bind.add(theme.button(CatppuccinBuiltinIcons.RESET.texture())).right().widget();
-        reset.action = keybind::resetBind;
+        // Chat feedback
+        WHorizontalList cf = moduleInfo.add(theme.horizontalList()).expandX().widget();
 
-        view.add(theme.horizontalSeparator()).padVertical(pad).expandX();
+        WCheckbox cfC = cf.add(theme.checkbox(module.chatFeedback)).widget();
+        cfC.action = () -> module.chatFeedback = cfC.checked;
+
+        cf.add(theme.label("Chat Feedback"));
+
+        moduleInfo.add(theme.horizontalSeparator()).expandX();
 
         // Settings
         if (!module.settings.groups.isEmpty()) {
@@ -96,10 +104,10 @@ public class CatppuccinModuleScreen extends WindowScreen {
         }
 
         if (!module.settings.groups.isEmpty() || widget != null)
-            add(theme.horizontalSeparator()).padVertical(pad).expandX();
+            add(theme.horizontalSeparator()).padBottom(pad).expandX();
 
         // Bottom - isn't added to the view, making it "stick" at the bottom
-        WHorizontalList bottom = add(theme.horizontalList()).padHorizontal(pad).expandX().widget();
+        WHorizontalList bottom = add(theme.horizontalList()).expandX().widget();
 
         // Active
         active = bottom.add(theme.checkbox(module.isActive())).widget();
