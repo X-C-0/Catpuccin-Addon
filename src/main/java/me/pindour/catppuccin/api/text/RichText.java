@@ -1,4 +1,4 @@
-package me.pindour.catppuccin.gui.text;
+package me.pindour.catppuccin.api.text;
 
 import java.util.ArrayList;
 import java.util.List;

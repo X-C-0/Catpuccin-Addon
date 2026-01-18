@@ -1,4 +1,4 @@
-package me.pindour.catppuccin.renderer.modern;
+package me.pindour.catppuccin.renderer.rounded.modern;
 
 //? if >=1.21.5 {
 import com.mojang.blaze3d.pipeline.BlendFunction;

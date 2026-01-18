@@ -1,34 +1,40 @@
-package me.pindour.catppuccin.renderer.modern;
+package me.pindour.catppuccin.renderer.rounded.modern;
 
 //? if >=1.21.5 {
+import me.pindour.catppuccin.renderer.rounded.RoundedRenderer;
 import meteordevelopment.meteorclient.renderer.MeshBuilder;
 import meteordevelopment.meteorclient.renderer.MeshRenderer;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.util.math.MatrixStack;
 
-public class RoundedRenderer {
+public class RoundedRendererModern implements RoundedRenderer {
     private final MeshBuilder roundedMesh;
 
-    private double alpha = 1.0;
-
-    public RoundedRenderer() {
+    public RoundedRendererModern() {
         this.roundedMesh = new MeshBuilder(CatppuccinRenderPipelines.ROUNDED_UI);
     }
 
+    @Override
     public void begin() {
         roundedMesh.begin();
     }
 
+    @Override
     public void end() {
         if (roundedMesh.isBuilding()) roundedMesh.end();
     }
 
-    public void setAlpha(double a) {
-        this.alpha = a;
-    }
+    @Override
+    public void render(MatrixStack matrices) { }
 
-    public void render(double x, double y, double width, double height, double radius, Color color,
-                       boolean topLeft, boolean topRight, boolean bottomLeft, boolean bottomRight) {
+    @Override
+    public void render(double x, double y,
+                       double width, double height,
+                       float topLeft, float topRight,
+                       float bottomLeft, float bottomRight,
+                       Color fillColor, Color outlineColor, float outlineWidth) {
+
         double halfWidth = width * 0.5;
         double halfHeight = height * 0.5;
 
@@ -42,7 +48,7 @@ public class RoundedRenderer {
 
         if (roundedMesh.isBuilding()) roundedMesh.end();
 
-        RoundedUniforms.updateModern(width, height, radius, color, alpha, topLeft, topRight, bottomLeft, bottomRight);
+        RoundedUniforms.update(width, height, topLeft, topRight, bottomLeft, bottomRight, fillColor, outlineColor, outlineWidth);
         MeshRenderer.begin()
                 .attachments(MinecraftClient.getInstance().getFramebuffer())
                 .pipeline(CatppuccinRenderPipelines.ROUNDED_UI)
@@ -51,6 +57,10 @@ public class RoundedRenderer {
                 .end();
 
         roundedMesh.begin();
+    }
+
+    public void flipFrame() {
+        RoundedUniforms.flipFrame();
     }
 }
 //?}

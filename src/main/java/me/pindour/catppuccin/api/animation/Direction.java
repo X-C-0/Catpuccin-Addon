@@ -1,4 +1,4 @@
-package me.pindour.catppuccin.gui.animation;
+package me.pindour.catppuccin.api.animation;
 
 public enum Direction {
     FORWARDS, BACKWARDS;

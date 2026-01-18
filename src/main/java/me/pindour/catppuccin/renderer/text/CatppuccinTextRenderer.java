@@ -1,9 +1,8 @@
 package me.pindour.catppuccin.renderer.text;
 
-import me.pindour.catppuccin.gui.text.FontStyle;
-import me.pindour.catppuccin.gui.text.RichText;
-import me.pindour.catppuccin.gui.text.RichTextOperation;
-import me.pindour.catppuccin.gui.text.RichTextSegment;
+import me.pindour.catppuccin.api.text.FontStyle;
+import me.pindour.catppuccin.api.text.RichText;
+import me.pindour.catppuccin.api.text.RichTextSegment;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderOperation;
 import meteordevelopment.meteorclient.utils.misc.Pool;

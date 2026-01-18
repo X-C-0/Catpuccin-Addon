@@ -1,8 +1,8 @@
 package me.pindour.catppuccin.gui.themes.catppuccin.widgets.input;
 
-import me.pindour.catppuccin.renderer.CornerStyle;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinWidget;
+import me.pindour.catppuccin.api.render.Corners;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.widgets.input.WSlider;
 import meteordevelopment.meteorclient.utils.render.color.Color;
@@ -26,26 +26,18 @@ public class WCatppuccinSlider extends WSlider implements CatppuccinWidget {
         double backgroundY = y + height / 2 - backgroundHeight / 2;
 
         // Left
-        renderer().roundedRect(
-                x,
-                backgroundY,
-                valueWidth(),
-                backgroundHeight,
-                smallRadius(),
-                theme.surface2Color(),
-                CornerStyle.LEFT
-        );
+        roundedRect().pos(x, backgroundY)
+                     .size(valueWidth(), backgroundHeight)
+                     .radius(smallRadius(), Corners.LEFT)
+                     .color(theme.surface2Color())
+                     .render();
 
         // Right
-        renderer().roundedRect(
-                x + valueWidth(),
-                backgroundY,
-                width - valueWidth(),
-                backgroundHeight,
-                smallRadius(),
-                theme.surface0Color(),
-                CornerStyle.RIGHT
-        );
+        roundedRect().pos(x + valueWidth(), backgroundY)
+                     .size(width - valueWidth(), backgroundHeight)
+                     .radius(smallRadius(), Corners.RIGHT)
+                     .color(theme.surface0Color())
+                     .render();
     }
 
     private void renderHandle(GuiRenderer renderer, CatppuccinGuiTheme theme) {

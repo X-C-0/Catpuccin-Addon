@@ -1,6 +1,6 @@
 package me.pindour.catppuccin.gui.screens;
 
-import me.pindour.catppuccin.gui.text.RichText;
+import me.pindour.catppuccin.api.text.RichText;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import me.pindour.catppuccin.gui.themes.catppuccin.icons.CatppuccinBuiltinIcons;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.settings.WCatppuccinKeybind;

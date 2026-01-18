@@ -1,4 +1,4 @@
-package me.pindour.catppuccin.renderer.legacy;
+package me.pindour.catppuccin.renderer.rounded.legacy;
 
 //? if <=1.21.4 {
 /*import com.mojang.blaze3d.systems.RenderSystem;
@@ -12,7 +12,7 @@ import org.joml.Matrix4fStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RoundedRendererLegacy {
+public class RoundedRendererLegacy implements IRoundedRenderer {
     private static final CatppuccinShader ROUNDED_SHADER = new CatppuccinShader("rounded_ui_legacy.vert", "rounded_ui_legacy.frag");
     private final CatppuccinMesh roundedMesh = new CatppuccinMesh();
     private final Pool<RoundedUniformsLegacy.RoundedCall> roundedCallPool = new Pool<>(RoundedUniformsLegacy.RoundedCall::new);

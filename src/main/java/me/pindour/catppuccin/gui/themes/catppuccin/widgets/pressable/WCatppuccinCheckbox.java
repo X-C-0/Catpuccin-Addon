@@ -1,8 +1,7 @@
 package me.pindour.catppuccin.gui.themes.catppuccin.widgets.pressable;
 
-import me.pindour.catppuccin.gui.animation.Animation;
-import me.pindour.catppuccin.gui.animation.Direction;
-import me.pindour.catppuccin.renderer.CornerStyle;
+import me.pindour.catppuccin.api.animation.Animation;
+import me.pindour.catppuccin.api.animation.Direction;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinWidget;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
@@ -21,9 +20,20 @@ public class WCatppuccinCheckbox extends WCheckbox implements CatppuccinWidget {
 
         animation = new Animation(
                 theme().guiAnimationEasing(),
-                theme().guiAnimationDuration(),
+                500,
                 checked ? Direction.FORWARDS : Direction.BACKWARDS
         );
+    }
+
+    @Override
+    protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
+        // Background is only visible when unchecked or animating
+        if (!checked || animation.isRunning()) background(pressed, mouseOver).render();
+
+        // Skip checkmark if unchecked and animation finished
+        if (!checked && animation.isFinished()) return;
+
+        renderCheckmark();
     }
 
     @Override
@@ -39,17 +49,6 @@ public class WCatppuccinCheckbox extends WCheckbox implements CatppuccinWidget {
         animation.start(checked ? Direction.FORWARDS : Direction.BACKWARDS);
     }
 
-    @Override
-    protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
-        // Background is only visible when unchecked or animating
-        if (!checked || animation.isRunning()) renderBackground(this, pressed, mouseOver);
-
-        // Skip checkmark if unchecked and animation finished
-        if (!checked && animation.isFinished()) return;
-
-        renderCheckmark();
-    }
-
     private void renderCheckmark() {
         CatppuccinGuiTheme theme = theme();
         double progress = animation.getProgress();
@@ -58,33 +57,14 @@ public class WCatppuccinCheckbox extends WCheckbox implements CatppuccinWidget {
 
         if (size <= minSize) return;
 
-        double outlineSize = theme.scale(3);
         double centerOffset = (width - size) / 2;
 
-        // Outline
-        renderer().roundedRect(
-                x + centerOffset,
-                y + centerOffset,
-                size,
-                size,
-                smallRadius(),
-                theme.accentColor().copy().a(mouseOver ? 140 : 80),
-                CornerStyle.ALL
-        );
-
-        // Inner fill
-        double innerSize = size - outlineSize * 2;
-        double innerOffset = centerOffset + outlineSize;
-
-        renderer().roundedRect(
-                x + innerOffset,
-                y + innerOffset,
-                innerSize,
-                innerSize,
-                smallRadius() - outlineSize / 2,
-                theme.accentColor(),
-                CornerStyle.ALL
-        );
+        roundedRect().pos(x + centerOffset, y + centerOffset)
+                     .size(size, size)
+                     .radius(smallRadius())
+                     .color(theme.accentColor())
+                     .outline(theme.accentColor().copy().a(mouseOver ? 140 : 80), 3f)
+                     .render();
     }
 
     public void setChecked(boolean checked) {

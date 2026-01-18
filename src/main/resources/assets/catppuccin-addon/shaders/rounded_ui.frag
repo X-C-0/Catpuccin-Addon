@@ -8,10 +8,9 @@ in vec2 v_ScreenPos;
 layout(std140) uniform RoundedRectData {
     vec4 u_FillColor;
     vec4 u_BorderColor;
+    vec2 u_BorderData;  // x = border width, y = edge softness multiplier
     vec4 u_Radii;       // x = top-left, y = top-right, z = bottom-right, w = bottom-left
-    vec4 u_BorderData;  // x = border width, y = edge softness multiplier
     vec2 u_HalfSize;
-    vec2 u_Padding;
     vec4 u_ClipRect;    // x = minX, y = minY, z = maxX, w = maxY
 };
 
@@ -49,13 +48,9 @@ void main() {
 
     if (borderWidth > 0.0) {
         float innerDist = dist + borderWidth;
-        float borderAlpha = smoothstep(aa, -aa, innerDist);
-        float borderMask = borderAlpha - shapeAlpha;
+        float innerAlpha = smoothstep(aa, -aa, innerDist);
 
-        color = mix(u_FillColor, u_BorderColor, borderAlpha);
-
-        float outlineFactor = smoothstep(aa, -aa, innerDist) - smoothstep(aa, -aa, dist);
-        color = mix(u_FillColor, u_BorderColor, outlineFactor / max(shapeAlpha, 0.001));
+        color = mix(u_BorderColor, u_FillColor, innerAlpha);
     }
 
     color.a *= shapeAlpha;

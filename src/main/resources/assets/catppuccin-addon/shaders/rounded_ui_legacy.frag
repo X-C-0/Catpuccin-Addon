@@ -11,7 +11,6 @@ uniform vec2 u_Radii0;
 uniform vec2 u_Radii1;
 uniform vec2 u_BorderData;
 uniform vec2 u_HalfSize;
-uniform vec2 u_Padding;
 uniform vec2 u_ClipMin;
 uniform vec2 u_ClipMax;
 

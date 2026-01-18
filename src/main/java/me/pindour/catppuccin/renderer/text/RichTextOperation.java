@@ -1,5 +1,7 @@
-package me.pindour.catppuccin.gui.text;
+package me.pindour.catppuccin.renderer.text;
 
+import me.pindour.catppuccin.api.text.FontStyle;
+import me.pindour.catppuccin.api.text.RichTextSegment;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderOperation;
 
 public class RichTextOperation extends GuiRenderOperation<RichTextOperation> {

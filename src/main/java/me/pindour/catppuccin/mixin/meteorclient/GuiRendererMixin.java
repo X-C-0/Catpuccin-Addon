@@ -1,7 +1,7 @@
 package me.pindour.catppuccin.mixin.meteorclient;
 
 import me.pindour.catppuccin.renderer.CatppuccinRenderer;
-import me.pindour.catppuccin.gui.text.RichText;
+import me.pindour.catppuccin.api.text.RichText;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import me.pindour.catppuccin.gui.themes.catppuccin.icons.CatppuccinBuiltinIcons;
 import meteordevelopment.meteorclient.gui.GuiTheme;
@@ -125,11 +125,6 @@ public abstract class GuiRendererMixin {
         if (scissor != null) scissor.pop();
 
         ci.cancel();
-    }
-
-    @Inject(method = "setAlpha", at = @At("HEAD"))
-    private void catppuccin$setAlpha(double a, CallbackInfo ci) {
-        catppuccinRenderer.setAlpha(a);
     }
 
     @Inject(method = "text", at = @At("HEAD"), cancellable = true)

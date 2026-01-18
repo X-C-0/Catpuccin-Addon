@@ -1,6 +1,6 @@
 package me.pindour.catppuccin.gui.themes.catppuccin.widgets.pressable;
 
-import me.pindour.catppuccin.gui.text.RichText;
+import me.pindour.catppuccin.api.text.RichText;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinWidget;
 import me.pindour.catppuccin.gui.widgets.IConditionalWidget;
@@ -8,6 +8,7 @@ import me.pindour.catppuccin.utils.ColorUtils;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.renderer.packer.GuiTexture;
 import meteordevelopment.meteorclient.gui.widgets.pressable.WButton;
+import meteordevelopment.meteorclient.utils.render.color.Color;
 
 import java.util.function.BooleanSupplier;
 
@@ -47,13 +48,11 @@ public class WCatppuccinButton extends WButton implements IConditionalWidget, Ca
         if (!shouldRender(mouseOver)) return;
 
         CatppuccinGuiTheme theme = theme();
+        Color bg = theme.backgroundColor.get(pressed, mouseOver);
+        Color outline = ColorUtils.withAlpha(theme.accentColor(), mouseOver ? 0.8 : 0);
         double pad = pad();
 
-        renderBackground(
-                this,
-                ColorUtils.withAlpha(theme.accentColor(), mouseOver ? 0.8 : 0),
-                theme().backgroundColor.get(pressed, mouseOver)
-        );
+        background(bg, outline).render();
 
         if (richText != null) {
             renderer().text(

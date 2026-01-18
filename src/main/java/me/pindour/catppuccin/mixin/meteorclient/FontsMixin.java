@@ -1,7 +1,7 @@
 package me.pindour.catppuccin.mixin.meteorclient;
 
 import me.pindour.catppuccin.CatppuccinAddon;
-import me.pindour.catppuccin.gui.text.RichTextRenderer;
+import me.pindour.catppuccin.renderer.text.RichTextRenderer;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import meteordevelopment.meteorclient.gui.GuiThemes;
 import meteordevelopment.meteorclient.renderer.Fonts;

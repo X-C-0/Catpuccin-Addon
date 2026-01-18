@@ -13,7 +13,7 @@ public class WCatppuccinPlus extends WPlus implements CatppuccinWidget {
         double pad = pad();
         double s = theme.scale(3);
 
-        renderBackground(this, pressed, mouseOver);
+        background(pressed, mouseOver).render();
         renderer.quad(x + pad, y + height / 2 - s / 2, width - pad * 2, s, theme.greenColor());
         renderer.quad(x + width / 2 - s / 2, y + pad, s, height - pad * 2, theme.greenColor());
     }

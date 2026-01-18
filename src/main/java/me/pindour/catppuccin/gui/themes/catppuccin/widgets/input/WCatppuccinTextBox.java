@@ -1,7 +1,7 @@
 package me.pindour.catppuccin.gui.themes.catppuccin.widgets.input;
 
-import me.pindour.catppuccin.renderer.CornerStyle;
-import me.pindour.catppuccin.gui.text.RichText;
+import me.pindour.catppuccin.api.render.Corners;
+import me.pindour.catppuccin.api.text.RichText;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinWidget;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.WCatppuccinLabel;
@@ -127,19 +127,15 @@ public class WCatppuccinTextBox extends WTextBox implements CatppuccinWidget {
         if (renderBackground) {
             // Title
             if (hasTitle()) {
-                renderer().roundedRect(
-                        x - titleWidth,
-                        y,
-                        titleWidth,
-                        height,
-                        smallRadius(),
-                        theme.surface0Color(),
-                        CornerStyle.LEFT
-                );
+                roundedRect().pos(x - titleWidth, y)
+                             .size(titleWidth, height)
+                             .radius(smallRadius(), Corners.LEFT)
+                             .color(theme.surface0Color())
+                             .render();
             }
 
             // Outline
-            renderBackground(this, theme.surface0Color(), theme.baseColor(), true);
+            background(theme.baseColor(), theme.surface0Color()).render();
         }
 
         double overflowWidth = getOverflowWidthForRender();
@@ -180,8 +176,8 @@ public class WCatppuccinTextBox extends WTextBox implements CatppuccinWidget {
     }
 
     @Override
-    public CornerStyle cornerStyle() {
-        return hasTitle() ? CornerStyle.RIGHT : CornerStyle.ALL;
+    public Corners corners() {
+        return hasTitle() ? Corners.RIGHT : Corners.ALL;
     }
 
     private boolean hasTitle() {

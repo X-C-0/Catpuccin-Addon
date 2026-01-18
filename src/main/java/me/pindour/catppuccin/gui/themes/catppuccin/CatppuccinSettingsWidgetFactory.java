@@ -1,10 +1,9 @@
 package me.pindour.catppuccin.gui.themes.catppuccin;
 
 import me.pindour.catppuccin.gui.themes.catppuccin.icons.CatppuccinBuiltinIcons;
-import me.pindour.catppuccin.renderer.CornerStyle;
 import me.pindour.catppuccin.gui.screens.settings.CatppuccinEntityTypeListSettingScreen;
-import me.pindour.catppuccin.gui.text.RichText;
-import me.pindour.catppuccin.gui.text.TextSize;
+import me.pindour.catppuccin.api.text.RichText;
+import me.pindour.catppuccin.api.text.TextScale;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.WCatppuccinLabel;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.pressable.WCatppuccinCheckbox;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.settings.WCatppuccinDoubleEdit;
@@ -499,7 +498,7 @@ public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
                 mc.setScreen(new ColorSettingScreen(theme, set));
             };
 
-            list.add(theme.label(RichText.of("Example Text").scale(TextSize.SMALL.get())).color(color)).expandX();
+            list.add(theme.label(RichText.of("Example Text").scale(TextScale.SMALL.get())).color(color)).expandX();
 
             WMinus remove = list.add(theme.minus()).right().widget();
             remove.action = () -> {
@@ -611,12 +610,10 @@ public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
                 lastSize = size;
             }
 
-            renderer().roundedRect(
-                    this,
-                    radius(),
-                    theme().surface0Color(),
-                    CornerStyle.ALL
-            );
+            roundedRect().bounds(this)
+                         .radius(smallRadius())
+                         .color(theme.surface0Color())
+                         .render();
 
             renderer().text(
                     richText,

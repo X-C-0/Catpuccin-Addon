@@ -1,7 +1,6 @@
 package me.pindour.catppuccin.gui.themes.catppuccin.widgets;
 
-import me.pindour.catppuccin.renderer.CornerStyle;
-import me.pindour.catppuccin.gui.text.RichText;
+import me.pindour.catppuccin.api.text.RichText;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinWidget;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
@@ -26,7 +25,10 @@ public class WCatppuccinTopBar extends WTopBar implements CatppuccinWidget {
 
     @Override
     protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
-        renderer().roundedRect(this, radius(), theme().baseColor(), CornerStyle.ALL);
+        roundedRect().bounds(this)
+                     .radius(radius())
+                     .color(theme().baseColor())
+                     .render();
     }
 
     @Override
@@ -76,11 +78,11 @@ public class WCatppuccinTopBar extends WTopBar implements CatppuccinWidget {
             if (isSelected || mouseOver) {
                 Color color = isSelected ? theme.accentColor() : theme.surface0Color();
 
-                renderer().roundedRect(
-                        x + pad, y + pad,
-                        width - pad * 2, height - pad * 2,
-                        radius() - pad, color, CornerStyle.ALL
-                );
+                roundedRect().pos(x + pad, y + pad)
+                             .size(width - pad * 2, height - pad * 2)
+                             .radius(radius() - pad)
+                             .color(color)
+                             .render();
             }
 
             RichText text = RichText.of(tab.name);

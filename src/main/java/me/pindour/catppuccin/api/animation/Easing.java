@@ -1,4 +1,4 @@
-package me.pindour.catppuccin.gui.animation;
+package me.pindour.catppuccin.api.animation;
 
 import java.util.function.Function;
 

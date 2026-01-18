@@ -18,7 +18,7 @@ public class WCatppuccinConfirmedMinus extends WConfirmedMinus implements Catppu
         Color fg = pressedOnce ? theme.backgroundColor.get(pressed, mouseOver) : theme.redColor();
         Color bg = pressedOnce ? theme.redColor() : theme.backgroundColor.get(pressed, mouseOver);
 
-        renderBackground(this, outline, bg);
+        background(bg, outline).render();
         renderer.quad(x + pad, y + height / 2 - s / 2, width - pad * 2, s, fg);
     }
 }

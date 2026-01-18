@@ -1,4 +1,4 @@
-package me.pindour.catppuccin.renderer.legacy;
+package me.pindour.catppuccin.renderer.rounded.legacy;
 
 //? if <=1.21.4 {
 /*import com.mojang.blaze3d.systems.RenderSystem;

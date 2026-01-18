@@ -1,4 +1,4 @@
-package me.pindour.catppuccin.gui.text;
+package me.pindour.catppuccin.api.text;
 
 public class RichTextSegment {
     private final String text;
@@ -10,7 +10,7 @@ public class RichTextSegment {
         this.text = text == null ? "" : text;
         this.style = FontStyle.REGULAR;
         this.shadow = false;
-        this.scale = TextSize.NORMAL.get();
+        this.scale = TextScale.NORMAL.get();
     }
 
     public String getText() {

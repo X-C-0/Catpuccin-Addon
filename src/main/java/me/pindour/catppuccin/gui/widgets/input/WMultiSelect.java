@@ -1,9 +1,9 @@
 package me.pindour.catppuccin.gui.widgets.input;
 
-import me.pindour.catppuccin.gui.animation.Animation;
-import me.pindour.catppuccin.gui.animation.Direction;
-import me.pindour.catppuccin.gui.text.RichText;
-import me.pindour.catppuccin.gui.text.TextSize;
+import me.pindour.catppuccin.api.animation.Animation;
+import me.pindour.catppuccin.api.animation.Direction;
+import me.pindour.catppuccin.api.text.RichText;
+import me.pindour.catppuccin.api.text.TextScale;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.WCatppuccinLabel;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.pressable.WCatppuccinCheckbox;
@@ -286,7 +286,7 @@ public abstract class WMultiSelect<T> extends WVerticalList {
 
         protected RichText getSizeLabel() {
             return RichText.of("(" + selectedCount + "/" + filteredItems.size() + ")")
-                    .scale(TextSize.SMALL.get());
+                    .scale(TextScale.SMALL.get());
         }
     }
 

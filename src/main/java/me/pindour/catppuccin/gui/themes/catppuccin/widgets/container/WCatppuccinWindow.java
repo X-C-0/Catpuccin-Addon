@@ -1,8 +1,8 @@
 package me.pindour.catppuccin.gui.themes.catppuccin.widgets.container;
 
-import me.pindour.catppuccin.gui.animation.Animation;
-import me.pindour.catppuccin.gui.animation.Direction;
-import me.pindour.catppuccin.renderer.CornerStyle;
+import me.pindour.catppuccin.api.animation.Animation;
+import me.pindour.catppuccin.api.animation.Direction;
+import me.pindour.catppuccin.api.render.Corners;
 import me.pindour.catppuccin.gui.screens.CatppuccinModulesScreen;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinWidget;
@@ -57,31 +57,23 @@ public class WCatppuccinWindow extends WWindow implements CatppuccinWidget {
     @Override
     protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
         CatppuccinGuiTheme theme = theme();
-        Color shadowColor = ColorUtils.withAlpha(theme.baseColor(), 0.3);
+        Color shadowColor = ColorUtils.withAlpha(theme.crustColor(), 0.4);
         Color backgroundColor = ColorUtils.withAlpha(theme.mantleColor(), theme.windowOpacity());
 
         // Shadow rectangle
-        renderer().roundedRect(
-                x - shadowOffset,
-                y - shadowOffset,
-                width + shadowOffset * 2,
-                (expanded || animation.isRunning() ? height : header.height) + shadowOffset * 2,
-                radius() + shadowOffset,
-                shadowColor,
-                CornerStyle.ALL
-        );
+        roundedRect().pos(x - shadowOffset, y - shadowOffset)
+                     .size(width + shadowOffset * 2, (expanded || animation.isRunning() ? height : header.height) + shadowOffset * 2)
+                     .radius(radius() + shadowOffset)
+                     .color(shadowColor)
+                     .render();
 
         // Inner rectangle
         if (expanded || animation.isRunning())
-            renderer().roundedRect(
-                    x,
-                    y + header.height,
-                    width,
-                    height - header.height,
-                    radius() - shadowOffset,
-                    backgroundColor,
-                    CornerStyle.BOTTOM
-            );
+            roundedRect().pos(x, y + header.height)
+                         .size(width, height - header.height)
+                         .radius(radius() - shadowOffset, Corners.BOTTOM)
+                         .color(backgroundColor)
+                         .render();
     }
 
     @Override
@@ -181,12 +173,10 @@ public class WCatppuccinWindow extends WWindow implements CatppuccinWidget {
         protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
             CatppuccinGuiTheme theme = theme();
 
-            renderer().roundedRect(
-                    this,
-                    radius(),
-                    theme.crustColor(),
-                    !expanded && animation.isFinished() ? CornerStyle.ALL : CornerStyle.TOP
-            );
+            roundedRect().bounds(this)
+                         .radius(radius(), !expanded && animation.isFinished() ? Corners.ALL : Corners.TOP)
+                         .color(theme.crustColor())
+                         .render();
 
             // Shadow under the header
             if (expanded || animation.isRunning()) {

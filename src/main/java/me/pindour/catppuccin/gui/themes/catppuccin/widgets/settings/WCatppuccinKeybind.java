@@ -1,6 +1,6 @@
 package me.pindour.catppuccin.gui.themes.catppuccin.widgets.settings;
 
-import me.pindour.catppuccin.gui.text.RichText;
+import me.pindour.catppuccin.api.text.RichText;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinWidget;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.pressable.WCatppuccinButton;
 import meteordevelopment.meteorclient.gui.widgets.WKeybind;

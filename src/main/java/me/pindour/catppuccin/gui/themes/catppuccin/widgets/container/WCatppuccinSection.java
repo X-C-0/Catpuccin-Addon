@@ -1,9 +1,9 @@
 package me.pindour.catppuccin.gui.themes.catppuccin.widgets.container;
 
-import me.pindour.catppuccin.gui.animation.Animation;
-import me.pindour.catppuccin.gui.animation.Direction;
+import me.pindour.catppuccin.api.animation.Animation;
+import me.pindour.catppuccin.api.animation.Direction;
 import me.pindour.catppuccin.gui.themes.catppuccin.icons.CatppuccinBuiltinIcons;
-import me.pindour.catppuccin.renderer.CornerStyle;
+import me.pindour.catppuccin.api.render.Corners;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinWidget;
 import me.pindour.catppuccin.utils.ColorUtils;
@@ -54,7 +54,24 @@ public class WCatppuccinSection extends WSection implements CatppuccinWidget {
 
     @Override
     protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
-        if (expanded || animation.isRunning()) renderBackground(this, false, false);
+        if (!expanded && !animation.isRunning()) return;
+
+        Color backgroundColor = ColorUtils.withAlpha(
+                theme().baseColor(),
+                theme().backgroundOpacity()
+        );
+
+        Color outlineColor = ColorUtils.withAlpha(
+                theme().surface0Color(),
+                theme().backgroundOpacity()
+        );
+
+        roundedRect().pos(x, y + header.height)
+                     .size(width, height - header.height)
+                     .radius(radius(), Corners.BOTTOM)
+                     .color(backgroundColor)
+                     .outline(outlineColor, outlineWidth())
+                     .render();
     }
 
     @Override
@@ -95,47 +112,6 @@ public class WCatppuccinSection extends WSection implements CatppuccinWidget {
         return header;
     }
 
-    @Override
-    public CornerStyle cornerStyle() {
-        return CornerStyle.BOTTOM;
-    }
-
-    @Override
-    public void drawOutline(WWidget widget, Color color, int radius, CornerStyle style) {
-        Color outlineColor = ColorUtils.withAlpha(
-                theme().surface0Color(),
-                theme().backgroundOpacity()
-        );
-
-        renderer().roundedRect(
-                x,
-                y + header.height,
-                width,
-                height - header.height,
-                radius(),
-                outlineColor,
-                style
-        );
-    }
-
-    @Override
-    public void drawBackground(WWidget widget, int inset, Color color) {
-        Color backgroundColor = ColorUtils.withAlpha(
-                theme().baseColor(),
-                theme().backgroundOpacity()
-        );
-
-        renderer().roundedRect(
-                x + inset,
-                y + header.height,
-                width - inset * 2,
-                height - header.height - inset,
-                radius() - inset,
-                backgroundColor,
-                cornerStyle()
-        );
-    }
-
     protected class WCatppuccinHeader extends WHeader {
 
         public WCatppuccinHeader(String title) {
@@ -167,12 +143,10 @@ public class WCatppuccinSection extends WSection implements CatppuccinWidget {
             );
 
             // Background
-            renderer().roundedRect(
-                    this,
-                    radius(),
-                    bgColor,
-                    expanded || animation.isRunning() ? CornerStyle.TOP : CornerStyle.ALL
-            );
+            roundedRect().bounds(this)
+                         .radius(radius(), expanded || animation.isRunning() ? Corners.TOP : Corners.ALL)
+                         .color(bgColor)
+                         .render();
 
             if (headerWidget != null) return;
 

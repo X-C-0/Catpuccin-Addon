@@ -1,6 +1,6 @@
 package me.pindour.catppuccin.gui.themes.catppuccin.widgets.input;
 
-import me.pindour.catppuccin.renderer.CornerStyle;
+import me.pindour.catppuccin.api.render.Corners;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinWidget;
 import me.pindour.catppuccin.gui.widgets.input.WMultiSelect;
@@ -18,13 +18,11 @@ public class WCatppuccinMultiSelect<T> extends WMultiSelect<T> implements Catppu
     @Override
     protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
         if (expanded || animation.isRunning())
-            renderer().roundedRect(
-                    x, y + header.height,
-                    width, height - header.height,
-                    radius(),
-                    ColorUtils.withAlpha(theme().baseColor(), theme().backgroundOpacity()),
-                    CornerStyle.BOTTOM
-            );
+            roundedRect().pos(x, y + header.height)
+                         .size(width, height - header.height)
+                         .radius(radius(), Corners.BOTTOM)
+                         .color(ColorUtils.withAlpha(theme().baseColor(), theme().backgroundOpacity()))
+                         .render();
     }
 
     @Override
@@ -52,12 +50,10 @@ public class WCatppuccinMultiSelect<T> extends WMultiSelect<T> implements Catppu
             );
 
             // Background
-            renderer().roundedRect(
-                    this,
-                    radius(),
-                    bgColor,
-                    expanded || animation.isRunning() ? CornerStyle.TOP : CornerStyle.ALL
-            );
+            roundedRect().bounds(this)
+                         .radius(radius(), expanded || animation.isRunning() ? Corners.TOP : Corners.ALL)
+                         .color(bgColor)
+                         .render();
         }
     }
 
@@ -71,12 +67,10 @@ public class WCatppuccinMultiSelect<T> extends WMultiSelect<T> implements Catppu
         protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
             if (!mouseOver || checkbox.mouseOver) return;
 
-            renderer().roundedRect(
-                    this,
-                    smallRadius(),
-                    theme().surface0Color(),
-                    CornerStyle.ALL
-            );
+            roundedRect().bounds(this)
+                         .radius(smallRadius())
+                         .color(theme().surface0Color())
+                         .render();
         }
     }
 }

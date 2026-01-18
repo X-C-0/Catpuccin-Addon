@@ -1,6 +1,6 @@
-package me.pindour.catppuccin.renderer;
+package me.pindour.catppuccin.api.render;
 
-public enum CornerStyle {
+public enum Corners {
     NONE(false, false, false, false),
     ALL(true, true, true, true),
     TOP(true, true, false, false),
@@ -17,7 +17,7 @@ public enum CornerStyle {
     public final boolean bottomLeft;
     public final boolean bottomRight;
 
-    CornerStyle(boolean topLeft, boolean topRight, boolean bottomLeft, boolean bottomRight) {
+    Corners(boolean topLeft, boolean topRight, boolean bottomLeft, boolean bottomRight) {
         this.topLeft = topLeft;
         this.topRight = topRight;
         this.bottomLeft = bottomLeft;

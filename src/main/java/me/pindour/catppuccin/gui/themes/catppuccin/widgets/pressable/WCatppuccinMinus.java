@@ -11,7 +11,7 @@ public class WCatppuccinMinus extends WMinus implements CatppuccinWidget {
         double pad = pad();
         double s = theme.scale(3);
 
-        renderBackground(this, pressed, mouseOver);
+        background(pressed, mouseOver).render();
         renderer.quad(x + pad, y + height / 2 - s / 2, width - pad * 2, s, theme().redColor());
     }
 }

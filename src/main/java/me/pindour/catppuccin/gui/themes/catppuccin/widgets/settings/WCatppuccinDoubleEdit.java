@@ -1,7 +1,7 @@
 package me.pindour.catppuccin.gui.themes.catppuccin.widgets.settings;
 
-import me.pindour.catppuccin.gui.text.RichText;
-import me.pindour.catppuccin.gui.text.TextSize;
+import me.pindour.catppuccin.api.text.RichText;
+import me.pindour.catppuccin.api.text.TextScale;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinWidget;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.input.WCatppuccinTextBox;
 import me.pindour.catppuccin.utils.ColorUtils;
@@ -87,7 +87,7 @@ public class WCatppuccinDoubleEdit extends WVerticalList implements CatppuccinWi
             // Min label
             RichText minText = RichText
                     .of(String.valueOf(sliderMin))
-                    .scale(TextSize.SMALL.get());
+                    .scale(TextScale.SMALL.get());
 
             sliderList.add(theme().label(minText)
                     .color(ColorUtils.withAlpha(theme().textSecondaryColor(), 0.5)))
@@ -103,7 +103,7 @@ public class WCatppuccinDoubleEdit extends WVerticalList implements CatppuccinWi
             // Max label
             RichText maxText = RichText
                     .of(String.valueOf(sliderMax))
-                    .scale(TextSize.SMALL.get());
+                    .scale(TextScale.SMALL.get());
 
             sliderList.add(theme().label(maxText)
                     .color(ColorUtils.withAlpha(theme().textSecondaryColor(), 0.5)))

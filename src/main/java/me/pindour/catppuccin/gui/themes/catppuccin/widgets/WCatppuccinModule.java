@@ -1,8 +1,8 @@
 package me.pindour.catppuccin.gui.themes.catppuccin.widgets;
 
-import me.pindour.catppuccin.gui.animation.Animation;
-import me.pindour.catppuccin.gui.animation.Direction;
-import me.pindour.catppuccin.gui.text.RichText;
+import me.pindour.catppuccin.api.animation.Animation;
+import me.pindour.catppuccin.api.animation.Direction;
+import me.pindour.catppuccin.api.text.RichText;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinWidget;
 import me.pindour.catppuccin.utils.ColorUtils;

@@ -1,9 +1,8 @@
 package me.pindour.catppuccin.gui.themes.catppuccin.widgets.input;
 
-import me.pindour.catppuccin.gui.animation.Animation;
-import me.pindour.catppuccin.gui.animation.Direction;
-import me.pindour.catppuccin.renderer.CornerStyle;
-import me.pindour.catppuccin.gui.text.RichText;
+import me.pindour.catppuccin.api.animation.Animation;
+import me.pindour.catppuccin.api.animation.Direction;
+import me.pindour.catppuccin.api.text.RichText;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinWidget;
 import me.pindour.catppuccin.gui.themes.catppuccin.icons.CatppuccinBuiltinIcons;
@@ -86,7 +85,7 @@ public class WCatppuccinDropdown<T> extends WDropdown<T> implements CatppuccinWi
         double pad = pad();
         double s = theme.textHeight() * 0.75;
 
-        renderBackground(this, pressed, mouseOver);
+        background(pressed, mouseOver).render();
 
         // Title text
         renderer().text(
@@ -177,9 +176,9 @@ public class WCatppuccinDropdown<T> extends WDropdown<T> implements CatppuccinWi
         @Override
         protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
             CatppuccinGuiTheme theme = theme();
-            Color outlineColor = ColorUtils.withAlpha(theme.accentColor(), theme.backgroundOpacity() * 0.4);
+            Color outlineColor = ColorUtils.withAlpha(theme.accentColor(), theme.backgroundOpacity());
 
-            renderBackground(this, outlineColor, getBackgroundColor(false, false), true);
+            background(getBackgroundColor(false, false), outlineColor).render();
         }
     }
 
@@ -204,13 +203,10 @@ public class WCatppuccinDropdown<T> extends WDropdown<T> implements CatppuccinWi
             CatppuccinGuiTheme theme = theme();
 
             if (mouseOver)
-                renderer().roundedRect(
-                        x, y,
-                        width, height,
-                        smallRadius(),
-                        ColorUtils.withAlpha(theme.accentColor(), 0.4),
-                        CornerStyle.ALL
-                );
+                roundedRect().bounds(this)
+                             .radius(radius() - pad())
+                             .color(ColorUtils.withAlpha(theme.accentColor(), 0.4))
+                             .render();
 
             boolean isSelected = get() == this.value;
             RichText text = valueName.boldIf(isSelected);

@@ -1,12 +1,12 @@
 package me.pindour.catppuccin.gui.themes.catppuccin;
 
-import me.pindour.catppuccin.gui.animation.Easing;
+import me.pindour.catppuccin.api.animation.Easing;
 import me.pindour.catppuccin.renderer.CatppuccinRenderer;
 import me.pindour.catppuccin.gui.screens.CatppuccinModuleScreen;
 import me.pindour.catppuccin.gui.screens.CatppuccinModulesScreen;
-import me.pindour.catppuccin.gui.text.RichText;
-import me.pindour.catppuccin.gui.text.RichTextRenderer;
-import me.pindour.catppuccin.gui.text.RichTextSegment;
+import me.pindour.catppuccin.api.text.RichText;
+import me.pindour.catppuccin.renderer.text.RichTextRenderer;
+import me.pindour.catppuccin.api.text.RichTextSegment;
 import me.pindour.catppuccin.gui.themes.catppuccin.colors.CatppuccinAccentColor;
 import me.pindour.catppuccin.gui.themes.catppuccin.colors.CatppuccinColor;
 import me.pindour.catppuccin.gui.themes.catppuccin.flavors.CatppuccinFlavors;
@@ -114,28 +114,13 @@ public class CatppuccinGuiTheme extends GuiTheme {
             .build()
     );
 
-    public final Setting<Boolean> widgetOutline = sgGeneral.add(new BoolSetting.Builder()
-            .name("widget-outline")
-            .description("Renders a subtle outline around UI elements.")
-            .defaultValue(true)
-            .build()
-    );
-
     // Corners
-
-    public final Setting<Boolean> roundedCorners = sgCorners.add(new BoolSetting.Builder()
-            .name("rounded-corners")
-            .description("Toggles rounded corners on UI elements.")
-            .defaultValue(true)
-            .build()
-    );
 
     public final Setting<Integer> cornerRadius = sgCorners.add(new IntSetting.Builder()
             .name("corner-radius")
             .description("The radius of corners for large UI elements.")
             .defaultValue(10)
             .sliderRange(1, 25)
-            .visible(roundedCorners::get)
             .build()
     );
 
@@ -144,7 +129,6 @@ public class CatppuccinGuiTheme extends GuiTheme {
             .description("The radius of corners for small UI elements.")
             .defaultValue(6)
             .sliderRange(1, 25)
-            .visible(roundedCorners::get)
             .build()
     );
 

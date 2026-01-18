@@ -11,6 +11,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class RenderSystemMixin {
     @Inject(method = "flipFrame", at = @At("TAIL"))
     private static void catppuccin$flipFrame(CallbackInfo info) {
-        CatppuccinRenderer.flipFrame();
+        CatppuccinRenderer.get().flipFrame();
     }
 }

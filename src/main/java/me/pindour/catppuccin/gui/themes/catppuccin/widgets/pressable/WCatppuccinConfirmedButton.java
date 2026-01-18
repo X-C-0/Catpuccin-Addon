@@ -22,7 +22,7 @@ public class WCatppuccinConfirmedButton extends WConfirmedButton implements Catp
         Color fg = pressedOnce ? theme.backgroundColor.get(pressed, mouseOver) : theme.textColor();
         Color bg = pressedOnce ? theme.textColor() : theme.backgroundColor.get(pressed, mouseOver);
 
-        renderBackground(this, outline, bg);
+        background(bg, outline).render();
 
         String text = getText();
 
