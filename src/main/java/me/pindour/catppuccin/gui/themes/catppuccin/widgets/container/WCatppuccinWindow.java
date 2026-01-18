@@ -181,7 +181,7 @@ public class WCatppuccinWindow extends WWindow implements CatppuccinWidget {
             // Shadow under the header
             if (expanded || animation.isRunning()) {
                 Color transparentColor = ColorUtils.withAlpha(theme.baseColor(), 0);
-                Color semiTransparentColor = ColorUtils.withAlpha(theme.baseColor(), 0.5);
+                Color semiTransparentColor = ColorUtils.withAlpha(theme.baseColor(), 0.5 * theme.windowOpacity());
 
                 renderer.quad(
                         x,
