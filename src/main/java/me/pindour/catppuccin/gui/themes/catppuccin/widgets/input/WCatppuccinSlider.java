@@ -43,13 +43,11 @@ public class WCatppuccinSlider extends WSlider implements CatppuccinWidget {
     private void renderHandle(GuiRenderer renderer, CatppuccinGuiTheme theme) {
         Color color = (handleMouseOver ? theme.accentColor() : theme.surface2Color());
         double size = handleSize();
-
-        // TODO: FIX vlevo a vpravo neni gunguje drag
+        
         double valueWidth = valueWidth();
         double handleX = x + valueWidth;
         double handleY = y + height / 2 - size / 2;
 
-        if (theme.roundedCorners.get()) renderer.quad(handleX, handleY, size, size, GuiRenderer.CIRCLE, color);
-        else renderer.quad(handleX, handleY, size, size, color);
+        renderer.quad(handleX, handleY, size, size, GuiRenderer.CIRCLE, color);
     }
 }
