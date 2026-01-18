@@ -12,6 +12,7 @@
     "meteorclient.FontsMixin",
     "meteorclient.GuiRendererAccessor",
     "meteorclient.GuiRendererMixin",
+    "meteorclient.MeteorWidgetMixin",
     "meteorclient.WHeaderMixin"
   ]
 }
