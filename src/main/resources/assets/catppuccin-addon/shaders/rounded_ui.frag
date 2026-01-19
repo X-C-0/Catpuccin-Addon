@@ -30,7 +30,7 @@ float roundedRectSDF(vec2 p, vec2 halfSize, vec4 radii) {
 void main() {
     if (u_ClipRect.z > u_ClipRect.x) {
         if (v_ScreenPos.x < u_ClipRect.x || v_ScreenPos.y < u_ClipRect.y ||
-        v_ScreenPos.x > u_ClipRect.z || v_ScreenPos.y > u_ClipRect.w) {
+            v_ScreenPos.x > u_ClipRect.z || v_ScreenPos.y > u_ClipRect.w) {
             discard;
         }
     }

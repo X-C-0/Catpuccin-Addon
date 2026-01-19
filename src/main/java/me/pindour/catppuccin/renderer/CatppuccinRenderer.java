@@ -11,7 +11,7 @@ import meteordevelopment.meteorclient.utils.render.color.Color;
 //? if >=1.21.5 {
 import me.pindour.catppuccin.renderer.rounded.modern.RoundedRendererModern;
 //?} else {
-/*import me.pindour.catppuccin.renderer.legacy.RoundedRendererLegacy;
+/*import me.pindour.catppuccin.renderer.rounded.legacy.RoundedRendererLegacy;
 import net.minecraft.client.util.math.MatrixStack;
 *///?}
 
@@ -23,7 +23,7 @@ public class CatppuccinRenderer {
     //? if >=1.21.5
     private final RoundedRenderer roundedRenderer = new RoundedRendererModern();
     //? if <=1.21.4
-    //private final RoundedRendererLegacy roundedRenderer = new RoundedRendererLegacy();
+    //private final RoundedRenderer roundedRenderer = new RoundedRendererLegacy();
 
     private final CatppuccinTextRenderer textRenderer = new CatppuccinTextRenderer();
     private final Renderer2D r = new Renderer2D(false);

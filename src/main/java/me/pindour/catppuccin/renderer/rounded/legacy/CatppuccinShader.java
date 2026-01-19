@@ -1,7 +1,8 @@
 package me.pindour.catppuccin.renderer.rounded.legacy;
 
 //? if <=1.21.4 {
-/*import com.mojang.blaze3d.systems.RenderSystem;
+/*import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import me.pindour.catppuccin.CatppuccinAddon;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 import net.minecraft.client.MinecraftClient;
@@ -17,10 +18,8 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 public class CatppuccinShader {
-    private static CatppuccinShader bound;
-
     private final int id;
-    private final it.unimi.dsi.fastutil.objects.Object2IntMap<String> uniformLocations = new it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap<>();
+    private final Object2IntMap<String> uniformLocations = new Object2IntOpenHashMap<>();
 
     public CatppuccinShader(String vertPath, String fragPath) {
         int vert = GL.createShader(GL32C.GL_VERTEX_SHADER);
@@ -66,7 +65,6 @@ public class CatppuccinShader {
 
     public void bind() {
         GL.useProgram(id);
-        bound = this;
     }
 
     private int getLocation(String name) {
@@ -103,15 +101,6 @@ public class CatppuccinShader {
 
     public void set(String name, Matrix4f mat) {
         GL.uniformMatrix(getLocation(name), mat);
-    }
-
-    public void setDefaults() {
-        set("u_Proj", RenderSystem.getProjectionMatrix());
-        set("u_ModelView", RenderSystem.getModelViewStack());
-    }
-
-    public static CatppuccinShader bound() {
-        return bound;
     }
 }
 *///?}

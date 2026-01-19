@@ -6,15 +6,18 @@ import meteordevelopment.meteorclient.gui.GuiThemes;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.themes.meteor.MeteorWidget;
 import meteordevelopment.meteorclient.gui.widgets.WWidget;
-import meteordevelopment.meteorclient.utils.render.color.Color;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+//? if >=1.21.11
+import meteordevelopment.meteorclient.utils.render.color.Color;
+
 @Mixin(value = MeteorWidget.class, remap = false)
 public interface MeteorWidgetMixin {
 
+    //? if >=1.21.11 {
     @Inject(method = "renderBackground(" +
             "Lmeteordevelopment/meteorclient/gui/renderer/GuiRenderer;" +
             "Lmeteordevelopment/meteorclient/gui/widgets/WWidget;" +
@@ -35,6 +38,7 @@ public interface MeteorWidgetMixin {
 
         ci.cancel();
     }
+    //? }
 
     @Inject(method = "renderBackground(" +
             "Lmeteordevelopment/meteorclient/gui/renderer/GuiRenderer;" +

@@ -37,18 +37,21 @@ void main() {
 
     vec4 radii = vec4(u_Radii0, u_Radii1);
     float dist = roundedRectSDF(v_LocalPos, u_HalfSize, radii);
-    float aa = max(fwidth(dist) * max(u_BorderData.y, 1.0), 0.0001);
+
+    float softness = max(u_BorderData.y, 1.0);
+    float aa = fwidth(dist) * 0.5 * softness;
 
     float shapeAlpha = smoothstep(aa, -aa, dist);
     if (shapeAlpha <= 0.0) discard;
 
     vec4 color = u_FillColor;
     float borderWidth = u_BorderData.x;
+
     if (borderWidth > 0.0) {
         float innerDist = dist + borderWidth;
-        float borderAlpha = smoothstep(aa, -aa, innerDist) - smoothstep(aa, -aa, dist);
-        color = mix(color, u_BorderColor, borderAlpha);
-        shapeAlpha = max(shapeAlpha, borderAlpha);
+        float innerAlpha = smoothstep(aa, -aa, innerDist);
+
+        color = mix(u_BorderColor, u_FillColor, innerAlpha);
     }
 
     color.a *= shapeAlpha;
