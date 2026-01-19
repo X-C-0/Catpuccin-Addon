@@ -1,5 +1,6 @@
 plugins {
     id("fabric-loom")
+    id("maven-publish")
 }
 
 val minecraftVersion = stonecutter.current.version
@@ -28,9 +29,10 @@ repositories {
 }
 
 dependencies {
-    // Fabric
     minecraft("com.mojang:minecraft:$minecraftVersion")
     mappings("net.fabricmc:yarn:$yarnMappings:v2")
+
+    // Fabric
     modImplementation("net.fabricmc:fabric-loader:$loaderVersion")
 
     // Meteor
@@ -74,11 +76,23 @@ tasks {
     }
 
     // Builds the version into a shared folder in `build/libs/${mod version}/`
-    register<Copy>("buildAndCollect") {
+    val buildAndCollect = register<Copy>("buildAndCollect") {
         group = "build"
         from(remapJar.map { it.archiveFile }, remapSourcesJar.map { it.archiveFile })
         into(rootProject.layout.buildDirectory.file("libs/$modVersion"))
         dependsOn("build")
+    }
+
+    if (stonecutter.current.isActive) {
+        register("buildActive") {
+            group = "project"
+            dependsOn(buildAndCollect)
+        }
+
+        register("runActive") {
+            group = "project"
+            dependsOn(named("runClient"))
+        }
     }
 
     jar {
@@ -90,8 +104,9 @@ tasks {
     }
 
     java {
-        sourceCompatibility = JavaVersion.VERSION_21
+        withSourcesJar()
         targetCompatibility = JavaVersion.VERSION_21
+        sourceCompatibility = JavaVersion.VERSION_21
     }
 
     withType<JavaCompile> {
@@ -99,5 +114,13 @@ tasks {
         options.release = 21
         options.compilerArgs.add("-Xlint:deprecation")
         options.compilerArgs.add("-Xlint:unchecked")
+    }
+
+    configure<PublishingExtension> {
+        publications {
+            create<MavenPublication>("mavenJava") {
+                from(components["java"])
+            }
+        }
     }
 }
