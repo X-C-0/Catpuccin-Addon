@@ -1,11 +1,13 @@
 package me.pindour.catppuccin.api.render;
 
-import me.pindour.catppuccin.renderer.CatppuccinRenderer;
 import meteordevelopment.meteorclient.gui.widgets.WWidget;
 import meteordevelopment.meteorclient.utils.render.color.Color;
+import org.jetbrains.annotations.ApiStatus;
 
 public class RoundedRect {
     private static final RoundedRect INSTANCE = new RoundedRect();
+
+    private RoundedRectRenderer renderer;
 
     private double x, y, width, height;
     private float rTopLeft, rTopRight, rBottomLeft, rBottomRight;
@@ -18,6 +20,14 @@ public class RoundedRect {
     public static RoundedRect get() {
         INSTANCE.reset();
         return INSTANCE;
+    }
+
+    /**
+     * Internal use only. Do not call this manually.
+     */
+    @ApiStatus.Internal
+    public void registerRenderer(RoundedRectRenderer renderer) {
+        this.renderer = renderer;
     }
 
     private void reset() {
@@ -77,14 +87,17 @@ public class RoundedRect {
     }
 
     public void render() {
-        float finalWidth = (outlineColor == null || outlineColor.a == 0) ? 0 : outlineWidth;
+        if (width <= 0 || height <= 0) return;
+        if (fillColor.a == 0 && (outlineColor.a == 0 || outlineWidth <= 0)) return;
 
-        CatppuccinRenderer.get().renderRoundedRect(
-                x, y,
-                width, height,
-                rTopLeft, rTopRight,
-                rBottomLeft, rBottomRight,
-                fillColor, outlineColor, finalWidth
-        );
+        if (renderer != null) {
+            renderer.renderRoundedRect(
+                    x, y,
+                    width, height,
+                    rTopLeft, rTopRight,
+                    rBottomLeft, rBottomRight,
+                    fillColor, outlineColor, outlineWidth
+            );
+        }
     }
 }

@@ -1,9 +1,10 @@
 package me.pindour.catppuccin.renderer;
 
 import me.pindour.catppuccin.api.render.RoundedRect;
+import me.pindour.catppuccin.api.render.RoundedRectRenderer;
 import me.pindour.catppuccin.api.text.RichText;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
-import me.pindour.catppuccin.renderer.rounded.RoundedRenderer;
+import me.pindour.catppuccin.renderer.rounded.RoundedRendererInternal;
 import me.pindour.catppuccin.renderer.text.CatppuccinTextRenderer;
 import meteordevelopment.meteorclient.renderer.Renderer2D;
 import meteordevelopment.meteorclient.utils.render.color.Color;
@@ -15,15 +16,15 @@ import me.pindour.catppuccin.renderer.rounded.modern.RoundedRendererModern;
 import net.minecraft.client.util.math.MatrixStack;
 *///?}
 
-public class CatppuccinRenderer {
+public class CatppuccinRenderer implements RoundedRectRenderer {
     private static final CatppuccinRenderer INSTANCE = new CatppuccinRenderer();
 
     private CatppuccinGuiTheme theme;
 
     //? if >=1.21.5
-    private final RoundedRenderer roundedRenderer = new RoundedRendererModern();
+    private final RoundedRendererInternal roundedRenderer = new RoundedRendererModern();
     //? if <=1.21.4
-    //private final RoundedRenderer roundedRenderer = new RoundedRendererLegacy();
+    //private final RoundedRendererInternal roundedRenderer = new RoundedRendererLegacy();
 
     private final CatppuccinTextRenderer textRenderer = new CatppuccinTextRenderer();
     private final Renderer2D r = new Renderer2D(false);
@@ -113,15 +114,13 @@ public class CatppuccinRenderer {
      * @param outlineColor The color of the border outline.
      * @param outlineWidth The width of the border in pixels.
      */
+    @Override
     public void renderRoundedRect(double x, double y,
                                   double width, double height,
                                   float rTopLeft, float rTopRight,
                                   float rBottomLeft, float rBottomRight,
-                                  Color fillColor, Color outlineColor, float outlineWidth) {
-
-        if (width <= 0 || height <= 0) return;
-        if (fillColor.a == 0 && (outlineColor.a == 0 || outlineWidth <= 0)) return;
-
+                                  Color fillColor, Color outlineColor, float outlineWidth
+    ) {
         roundedRenderer.render(
                 x, y,
                 width, height,

@@ -1,14 +1,14 @@
 package me.pindour.catppuccin.renderer.rounded.modern;
 
 //? if >=1.21.5 {
-import me.pindour.catppuccin.renderer.rounded.RoundedRenderer;
+import me.pindour.catppuccin.renderer.rounded.RoundedRendererInternal;
 import meteordevelopment.meteorclient.renderer.MeshBuilder;
 import meteordevelopment.meteorclient.renderer.MeshRenderer;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
 
-public class RoundedRendererModern implements RoundedRenderer {
+public class RoundedRendererModern implements RoundedRendererInternal {
     private final MeshBuilder roundedMesh;
 
     public RoundedRendererModern() {

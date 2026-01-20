@@ -3,7 +3,7 @@ package me.pindour.catppuccin.renderer.rounded.legacy;
 //? if <=1.21.4 {
 /*import com.mojang.blaze3d.systems.RenderSystem;
 import me.pindour.catppuccin.renderer.CatppuccinRenderer;
-import me.pindour.catppuccin.renderer.rounded.RoundedRenderer;
+import me.pindour.catppuccin.renderer.rounded.RoundedRendererInternal;
 import meteordevelopment.meteorclient.renderer.GL;
 import meteordevelopment.meteorclient.utils.misc.Pool;
 import meteordevelopment.meteorclient.utils.render.color.Color;
@@ -13,7 +13,7 @@ import org.joml.Matrix4fStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RoundedRendererLegacy implements RoundedRenderer {
+public class RoundedRendererLegacy implements RoundedRendererInternal {
     private static final CatppuccinShader ROUNDED_SHADER = new CatppuccinShader("rounded_ui_legacy.vert", "rounded_ui_legacy.frag");
     private final CatppuccinMesh roundedMesh = new CatppuccinMesh();
     private final Pool<RoundedUniformsLegacy.RoundedCall> roundedCallPool = new Pool<>(RoundedUniformsLegacy.RoundedCall::new);

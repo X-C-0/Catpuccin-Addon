@@ -3,7 +3,7 @@ package me.pindour.catppuccin.renderer.rounded;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 import net.minecraft.client.util.math.MatrixStack;
 
-public interface RoundedRenderer {
+public interface RoundedRendererInternal {
     void begin();
 
     void end();
