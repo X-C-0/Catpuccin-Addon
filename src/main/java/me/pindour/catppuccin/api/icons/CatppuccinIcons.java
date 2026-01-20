@@ -1,8 +1,6 @@
 package me.pindour.catppuccin.api.icons;
 
-import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.renderer.packer.GuiTexture;
-import net.minecraft.util.Identifier;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,27 +23,6 @@ public class CatppuccinIcons {
      * @param texture GuiTexture for the category
      */
     public static void registerCategoryIcon(String categoryName, GuiTexture texture) {
-        CATEGORY_ICONS.put(categoryName, texture);
-    }
-
-    /**
-     * Register a custom icon for a category using an identifier.
-     *
-     * <p>Example:
-     * <pre>{@code
-     * Category CATEGORY = new Category("MyAddon", Items.DIRT.getDefaultInstance());
-     *
-     * CatppuccinBuiltinIcons.registerCategoryIcon(
-     *     CATEGORY.name,
-     *     new Identifier("myaddon", "textures/icons/custom.png")
-     * );
-     * }</pre>
-     *
-     * @param categoryName The exact category name (case-sensitive)
-     * @param identifier Texture identifier (e.g. "modid:textures/icon.png")
-     */
-    public static void registerCategoryIcon(String categoryName, Identifier identifier) {
-        GuiTexture texture = GuiRenderer.addTexture(identifier);
         CATEGORY_ICONS.put(categoryName, texture);
     }
 
