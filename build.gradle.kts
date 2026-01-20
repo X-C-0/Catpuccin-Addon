@@ -75,7 +75,7 @@ tasks {
         }
     }
 
-    // Builds just the api into a standalone jar
+    // Builds just the API into a standalone jar
     val apiJar = register<Jar>("buildApi") {
         group = "build"
         archiveClassifier.set("api")
@@ -84,14 +84,18 @@ tasks {
         include("me/pindour/catppuccin/api/**")
     }
 
+    // Builds the sources for the API
+    val apiSourcesJar = register<Jar>("buildApiSources") {
+        group = "build"
+        archiveClassifier.set("api-sources")
+        from(sourceSets["main"].allSource)
+        include("me/pindour/catppuccin/api/**")
+    }
+
     // Builds the version into a shared folder in `build/libs/${mod version}/`
     val buildAndCollect = register<Copy>("buildAndCollect") {
         group = "build"
-        from(
-            remapJar.map { it.archiveFile },
-            remapSourcesJar.map { it.archiveFile },
-            apiJar.map { it.archiveFile }
-        )
+        from(remapJar.map { it.archiveFile })
         into(rootProject.layout.buildDirectory.file("libs/$modVersion"))
         dependsOn("build")
     }
@@ -134,6 +138,7 @@ tasks {
             create<MavenPublication>("mavenJava") {
                 from(components["java"])
                 artifact(apiJar)
+                artifact(apiSourcesJar)
             }
         }
     }
