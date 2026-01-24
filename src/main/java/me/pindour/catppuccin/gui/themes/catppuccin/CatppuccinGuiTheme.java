@@ -553,7 +553,7 @@ public class CatppuccinGuiTheme extends GuiTheme {
     }
 
     public Color textSecondaryColor() {
-        return colorCache.get(CatppuccinColor.Subtext1);
+        return colorCache.get(CatppuccinColor.Subtext0);
     }
 
     public Color textHighlightColor() {

@@ -2,6 +2,8 @@ package me.pindour.catppuccin.gui.themes.catppuccin.widgets;
 
 import me.pindour.catppuccin.api.animation.Animation;
 import me.pindour.catppuccin.api.animation.Direction;
+import me.pindour.catppuccin.api.animation.Easing;
+import me.pindour.catppuccin.api.render.Corners;
 import me.pindour.catppuccin.api.text.RichText;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinWidget;
@@ -20,24 +22,21 @@ import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_RIGHT;
 
 public class WCatppuccinModule extends WPressable implements CatppuccinWidget {
     private final Module module;
-    private final String title;
+    private final RichText title;
 
     private double titleWidth;
     private boolean wasHovered = false;
     private boolean wasActive = false;
-    private boolean isFirstInCategory = false;
-    private boolean isLastInCategory = false;
 
-    private Animation glowAnimation;
+    private Module prevModule;
+    private Module nextModule;
+
+    private Animation highlightAnimation;
     private Animation hoverAnimation;
-
-    private Color highlightedColor;
-    private Color semiTransparentColor;
-    private Color transparentColor;
 
     public WCatppuccinModule(Module module, String title) {
         this.module = module;
-        this.title = title;
+        this.title = RichText.of(title);
         this.tooltip = module.description;
     }
 
@@ -46,35 +45,27 @@ public class WCatppuccinModule extends WPressable implements CatppuccinWidget {
         boolean isActive = module.isActive();
         wasActive = isActive;
 
-        glowAnimation = new Animation(
-                theme().guiAnimationEasing(),
-                theme().guiAnimationDuration(),
+        List<Module> categoryModules = Modules.get().getGroup(module.category);
+        int index = categoryModules.indexOf(module);
+
+        if (index > 0) prevModule = categoryModules.get(index - 1);
+        if (index < categoryModules.size() - 1) nextModule = categoryModules.get(index + 1);
+
+        highlightAnimation = new Animation(
+                Easing.QUART_OUT,
+                300,
                 isActive ? Direction.FORWARDS : Direction.BACKWARDS
         );
 
-        hoverAnimation = new Animation(theme().guiAnimationEasing(), theme().guiAnimationDuration());
-
-        highlightedColor = theme().accentColor().copy();
-        transparentColor = highlightedColor.copy().a(10);
-        semiTransparentColor = highlightedColor.copy().a(80);
-
-        List<Module> modules = Modules.get().getGroup(module.category);
-        isFirstInCategory = modules.getFirst().equals(module);
-        isLastInCategory = modules.getLast().equals(module);
-    }
-
-    @Override
-    public double pad() {
-        return theme.scale(4);
+        hoverAnimation = new Animation(Easing.LINEAR, 200);
     }
 
     @Override
     protected void onCalculateSize() {
         double pad = pad();
+        if (titleWidth == 0) titleWidth = theme().textWidth(title);
 
-        if (titleWidth == 0) titleWidth = theme.textWidth(title);
-
-        width = pad + titleWidth + pad;
+        width = pad + pad + titleWidth + pad;
         height = pad + theme.textHeight() + pad;
     }
 
@@ -93,11 +84,11 @@ public class WCatppuccinModule extends WPressable implements CatppuccinWidget {
         boolean moduleActive = module.isActive();
         double pad = pad();
 
-        // Glow animation handling
+        // Highlight animation handling
         if (moduleActive != wasActive) {
             wasActive = moduleActive;
 
-            glowAnimation.start(moduleActive ? Direction.FORWARDS : Direction.BACKWARDS);
+            highlightAnimation.start(moduleActive ? Direction.FORWARDS : Direction.BACKWARDS);
         }
 
         // Hover animation handling
@@ -111,61 +102,84 @@ public class WCatppuccinModule extends WPressable implements CatppuccinWidget {
         }
 
         double hoverProgress = hoverAnimation.getProgress();
-        double glowProgress = glowAnimation.getProgress();
-        double highlightProgress = Math.min(glowProgress + hoverProgress, 1.0);
+        double highlightProgress = highlightAnimation.getProgress();
 
-        if (highlightProgress > 0) {
-            int alpha = (int) (255 * highlightProgress);
+        // Background rectangle when active or hovered
+        if (hoverProgress > 0 || highlightProgress > 0) {
+            // Mix the alpha to prevent blinking
+            int baseAlpha = 60;
+            double hoverMultiplier = (mouseOver && moduleActive) ? 1.3f : 1.0f;
+            double mix = Math.min(1.0, highlightProgress + hoverProgress);
+            double alpha = baseAlpha * mix * hoverMultiplier;
 
-            // Highlight rectangle when active or hovered
-            // Note: Should be rounded at the bottom when module is last in the category,
-            // but the corners from window background are clipping into this rectangle,
-            // so for now we will have to live with sharp corners until I find a way to fix the clipping.
-            renderer.quad(x, y, width, height, highlightedColor.copy().a(alpha));
+            Color color = ColorUtils.withAlpha(theme.accentColor(), (int) alpha);
+            Corners bgCorners = (mouseOver && !moduleActive) ? Corners.ALL : corners();
 
-            // Fake glow effect when active
-            if (glowProgress > 0) {
-                double glowLength = 6 * glowProgress;
+            double maxOffset = 1.5;
+            double offset = maxOffset * (1.0 - highlightProgress);
 
-                // Upper glow
-                if (!isFirstInCategory)
-                    renderer.quad(
-                            x,
-                            y - glowLength,
-                            width,
-                            glowLength,
-                            transparentColor,
-                            transparentColor,
-                            semiTransparentColor,
-                            semiTransparentColor
-                    );
-
-                // Lower glow
-                if (!isLastInCategory)
-                    renderer.quad(
-                            x,
-                            y + height,
-                            width,
-                            glowLength,
-                            semiTransparentColor,
-                            semiTransparentColor,
-                            transparentColor,
-                            transparentColor
-                    );
-            }
+            roundedRect().pos(x + offset, y + offset)
+                         .size(width - (offset * 2), height - (offset * 2)).
+                         color(color)
+                         .radius(smallRadius(), bgCorners)
+                         .render();
         }
 
-        // Text alignment
+        // Cool ass line when active
+        if (highlightProgress > 0) {
+            Corners corners = corners();
+
+            double offset = theme.scale(3);
+            double offsetTop = isPrevActive() ? 0 : offset;
+            double offsetBottom = isNextActive() ? 0 : offset;
+
+            double lineWidth = theme.scale(4);
+            double lineHeight = height - offsetTop - offsetBottom;
+
+            double finalTop = y + offsetTop;
+            double centerY = finalTop + lineHeight / 2;
+
+            double lineX = x + pad;
+            double lineY = centerY - (lineHeight * highlightProgress)/ 2;
+
+            roundedRect().pos(lineX, lineY)
+                         .size(lineWidth, lineHeight * highlightProgress)
+                         .color(ColorUtils.withAlpha(theme.accentColor(), highlightProgress))
+                         .radius(smallRadius(), corners)
+                         .render();
+        }
+
         double x = this.x + pad * 2;
         double w = width - pad * 2;
 
         switch (theme.moduleAlignment.get()) {
             case Center -> x += w / 2 - titleWidth / 2;
             case Right -> x += w - titleWidth - pad * 2;
+            default -> x += pad;
         }
 
-        // Text
-        Color textColor = ColorUtils.interpolateColor(theme.textColor(), theme.baseColor(), highlightProgress);
-        renderer().text(RichText.of(title), x, y + pad, textColor);
+        Color color = ColorUtils.interpolateColor(
+                theme.textColor(),
+                theme.accentColor(),
+                highlightProgress
+        );
+
+        renderer().text(title, x, y + pad, color);
+    }
+
+    @Override
+    public Corners corners() {
+        boolean prev = isPrevActive(), next = isNextActive();
+        return prev && next ? Corners.NONE :
+                prev ? Corners.BOTTOM :
+                next ? Corners.TOP : Corners.ALL;
+    }
+
+    private boolean isPrevActive() {
+        return prevModule != null && prevModule.isActive();
+    }
+
+    private boolean isNextActive() {
+        return nextModule != null && nextModule.isActive();
     }
 }

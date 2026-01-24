@@ -51,6 +51,12 @@ public class ColorUtils {
         return color;
     }
 
+    public static Color withAlpha(Color color, int alpha) {
+        Color c = color.copy().a(alpha);
+        c.validate();
+        return c;
+    }
+
     public static Color withAlpha(Color color, double alphaMultiplier) {
         Color c = color.copy().a((int) (255 * alphaMultiplier));
         c.validate();
