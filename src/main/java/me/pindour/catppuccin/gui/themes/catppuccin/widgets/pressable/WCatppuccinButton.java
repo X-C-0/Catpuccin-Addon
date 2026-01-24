@@ -1,5 +1,8 @@
 package me.pindour.catppuccin.gui.themes.catppuccin.widgets.pressable;
 
+import me.pindour.catppuccin.api.animation.Animation;
+import me.pindour.catppuccin.api.animation.Direction;
+import me.pindour.catppuccin.api.animation.Easing;
 import me.pindour.catppuccin.api.text.RichText;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinWidget;
@@ -16,6 +19,8 @@ public class WCatppuccinButton extends WButton implements IConditionalWidget, Ca
     private BooleanSupplier visibilityCondition;
     private RichText richText;
 
+    private Animation hoverAnimation;
+
     public WCatppuccinButton(RichText text, GuiTexture texture) {
         super(text.getPlainText(), texture);
         this.richText = text;
@@ -23,6 +28,11 @@ public class WCatppuccinButton extends WButton implements IConditionalWidget, Ca
 
     public WCatppuccinButton(GuiTexture texture) {
         super(null, texture);
+    }
+
+    @Override
+    public void init() {
+        hoverAnimation = new Animation(Easing.QUAD_OUT, 250);
     }
 
     @Override
@@ -47,9 +57,20 @@ public class WCatppuccinButton extends WButton implements IConditionalWidget, Ca
     protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
         if (!shouldRender(mouseOver)) return;
 
+        double hoverProgress = hoverAnimation.getProgress();
+
+        if (mouseOver && hoverProgress == 0)
+            hoverAnimation.start();
+
+        if (!mouseOver && hoverProgress > 0)
+            hoverAnimation.finishedAt(Direction.BACKWARDS);
+
         CatppuccinGuiTheme theme = theme();
+
         Color bg = theme.backgroundColor.get(pressed, mouseOver);
-        Color outline = ColorUtils.withAlpha(theme.accentColor(), mouseOver ? 0.8 : 0);
+        Color accent = ColorUtils.withAlpha(theme.accentColor(), 0.8);
+        Color outline = ColorUtils.interpolateColor(bg, accent, hoverProgress);
+
         double pad = pad();
 
         background(bg, outline).render();

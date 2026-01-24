@@ -35,7 +35,7 @@ public class ColorUtils {
     }
 
     public static Color interpolateColor(Color from, Color to, double t) {
-        t = Math.max(0, Math.min(1, t));
+        t = Math.clamp(t, 0.0, 1.0);
 
         if (t == 1) return to;
         if (t == 0) return from;
