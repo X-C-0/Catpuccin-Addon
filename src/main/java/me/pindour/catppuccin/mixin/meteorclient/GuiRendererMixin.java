@@ -112,7 +112,6 @@ public abstract class GuiRendererMixin {
 
         *///?} else {
         catppuccinRenderer.end();
-        catppuccinRenderer.render();
 
         r.render();
         rTex.render("u_Texture", TEXTURE.getGlTextureView(), TEXTURE.getSampler());

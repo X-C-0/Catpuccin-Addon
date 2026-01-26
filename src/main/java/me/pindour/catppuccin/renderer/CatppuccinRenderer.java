@@ -6,7 +6,6 @@ import me.pindour.catppuccin.api.text.RichText;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import me.pindour.catppuccin.renderer.rounded.RoundedRendererInternal;
 import me.pindour.catppuccin.renderer.text.CatppuccinTextRenderer;
-import meteordevelopment.meteorclient.renderer.Renderer2D;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 
 //? if >=1.21.5 {
@@ -27,7 +26,6 @@ public class CatppuccinRenderer implements RoundedRectRenderer {
     //private final RoundedRendererInternal roundedRenderer = new RoundedRendererLegacy();
 
     private final CatppuccinTextRenderer textRenderer = new CatppuccinTextRenderer();
-    private final Renderer2D r = new Renderer2D(false);
 
     private boolean clipEnabled = false;
     private float clipMinX;
@@ -45,24 +43,17 @@ public class CatppuccinRenderer implements RoundedRectRenderer {
 
     public void begin() {
         roundedRenderer.begin();
-        r.begin();
     }
 
     public void end() {
         roundedRenderer.end();
-        r.end();
     }
 
     //? if <=1.21.4 {
     /*public void render(MatrixStack matrices) {
         roundedRenderer.render(matrices);
-        r.render(matrices);
     }
-    *///?} else {
-    public void render() {
-        r.render();
-    }
-    //?}
+    *///?}
 
     public void renderText() {
         if (theme == null) return;
