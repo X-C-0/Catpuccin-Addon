@@ -37,34 +37,17 @@ import meteordevelopment.meteorclient.renderer.Texture;
 
 @Mixin(value = GuiRenderer.class, remap = false)
 public abstract class GuiRendererMixin {
-    @Unique
-    private static CatppuccinRenderer catppuccinRenderer = CatppuccinRenderer.get();
-
     //? if <=1.21.4 {
-    /*@Shadow
-    private DrawContext drawContext;
-
-    @Shadow
-    private static ByteTexture TEXTURE;
-
+    /*@Shadow private DrawContext drawContext;
+    @Shadow private static ByteTexture TEXTURE;
     *///?} else {
-    @Shadow
-    private static Texture TEXTURE;
+    @Shadow private static Texture TEXTURE;
     //?}
 
-    @Shadow
-    @Final
-    private Renderer2D r;
-    @Shadow
-    @Final
-    private Renderer2D rTex;
-
-    @Shadow
-    @Final
-    private List<TextOperation> texts;
-
-    @Shadow
-    public GuiTheme theme;
+    @Shadow @Final private Renderer2D r;
+    @Shadow @Final private Renderer2D rTex;
+    @Shadow @Final private List<TextOperation> texts;
+    @Shadow public GuiTheme theme;
 
     @Inject(method = "init", at = @At("HEAD"))
     private static void catppuccin$init(CallbackInfo ci) {
@@ -73,25 +56,24 @@ public abstract class GuiRendererMixin {
 
     @Inject(method = "beginRender", at = @At("HEAD"))
     private void catppuccin$beginRender(CallbackInfo ci) {
-        if (!(theme instanceof CatppuccinGuiTheme)) return;
-        catppuccinRenderer.begin();
+        if (!isCatppuccinActive()) return;
+        renderer().begin();
     }
 
     @Inject(
-        //? if <=1.21.4
-        //method = "endRender()V",
-        //? if >=1.21.5
-        method = "endRender(Lmeteordevelopment/meteorclient/gui/renderer/Scissor;)V",
-
-        at = @At("HEAD"),
-        cancellable = true
+            //? if <=1.21.4
+            //method = "endRender()V",
+            //? if >=1.21.5
+            method = "endRender(Lmeteordevelopment/meteorclient/gui/renderer/Scissor;)V",
+            at = @At("HEAD"),
+            cancellable = true
     )
-    private void onEndRender(
+    private void catppuccin$endRender(
             //? if >=1.21.5
             Scissor scissor,
             CallbackInfo ci
     ) {
-        if (!(theme instanceof CatppuccinGuiTheme)) return;
+        if (!isCatppuccinActive()) return;
 
         //? if >=1.21.5
         if (scissor != null) scissor.push();
@@ -99,26 +81,10 @@ public abstract class GuiRendererMixin {
         r.end();
         rTex.end();
 
-        //? if <=1.21.4 {
-        /*MatrixStack matrices = drawContext.getMatrices();
-
-        catppuccinRenderer.end();
-        catppuccinRenderer.render(matrices);
-
-        r.render(matrices);
-
-        GL.bindTexture(TEXTURE.getGlId());
-        rTex.render(matrices);
-
-        *///?} else {
-        catppuccinRenderer.end();
-
-        r.render();
-        rTex.render("u_Texture", TEXTURE.getGlTextureView(), TEXTURE.getSampler());
-        //?}
+        render();
 
         texts.clear();
-        catppuccinRenderer.renderText();
+        renderer().renderText();
 
         //? if >=1.21.5
         if (scissor != null) scissor.pop();
@@ -128,23 +94,67 @@ public abstract class GuiRendererMixin {
 
     @Inject(method = "text", at = @At("HEAD"), cancellable = true)
     private void catppuccin$text(String text, double x, double y, Color color, boolean title, CallbackInfo ci) {
-        if (!(theme instanceof CatppuccinGuiTheme)) return;
+        if (!isCatppuccinActive()) return;
 
-        catppuccinRenderer.text(RichText.of(text).boldIf(title), x, y, color);
-
+        renderer().text(RichText.of(text).boldIf(title), x, y, color);
         ci.cancel();
     }
 
     @Inject(method = "scissorStart", at = @At("TAIL"))
     private void catppuccin$scissorStart(double x, double y, double width, double height, CallbackInfo ci) {
-        if (!(theme instanceof CatppuccinGuiTheme)) return;
+        if (!isCatppuccinActive()) return;
         updateClipFromStack();
     }
 
     @Inject(method = "scissorEnd", at = @At("TAIL"))
     private void catppuccin$scissorEnd(CallbackInfo ci) {
-        if (!(theme instanceof CatppuccinGuiTheme)) return;
+        if (!isCatppuccinActive()) return;
         updateClipFromStack();
+    }
+
+    // ----------------- Helper methods
+
+    @Unique
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    private boolean isCatppuccinActive() {
+        return theme instanceof CatppuccinGuiTheme;
+    }
+
+    @Unique
+    private CatppuccinRenderer renderer() {
+        return CatppuccinRenderer.get();
+    }
+
+    @Unique
+    private void render() {
+        CatppuccinRenderer renderer = renderer();
+
+        //? if <=1.21.4 {
+        /*MatrixStack matrices = drawContext.getMatrices();
+
+        renderer.end();
+        renderer.render(matrices);
+        r.render(matrices);
+        GL.bindTexture(TEXTURE.getGlId());
+        rTex.render(matrices);
+        *///?} else {
+
+        renderer.end();
+        r.render();
+        rTex.render("u_Texture", TEXTURE.getGlTextureView(), TEXTURE.getSampler());
+        //?}
+    }
+
+    @Unique
+    private void updateClipFromStack() {
+        Stack<Scissor> stack = ((GuiRendererAccessor) this).catppuccin$getScissorStack();
+        if (stack == null || stack.isEmpty()) {
+            renderer().clearClipRect();
+            return;
+        }
+
+        Scissor top = peekScissor(stack);
+        renderer().setClipRect(top.x, top.y, top.x + top.width, top.y + top.height);
     }
 
     @Unique
@@ -153,17 +163,5 @@ public abstract class GuiRendererMixin {
         //return stack.peek();
         //? if >=1.21.10
         return stack.top();
-    }
-
-    @Unique
-    private void updateClipFromStack() {
-        Stack<Scissor> stack = ((GuiRendererAccessor) this).getScissorStack();
-        if (stack == null || stack.isEmpty()) {
-            catppuccinRenderer.clearClipRect();
-            return;
-        }
-
-        Scissor top = peekScissor(stack);
-        catppuccinRenderer.setClipRect(top.x, top.y, top.x + top.width, top.y + top.height);
     }
 }

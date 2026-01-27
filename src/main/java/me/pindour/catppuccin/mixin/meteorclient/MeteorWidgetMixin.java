@@ -18,13 +18,14 @@ import meteordevelopment.meteorclient.utils.render.color.Color;
 public interface MeteorWidgetMixin {
 
     //? if >=1.21.11 {
-    @Inject(method = "renderBackground(" +
-            "Lmeteordevelopment/meteorclient/gui/renderer/GuiRenderer;" +
-            "Lmeteordevelopment/meteorclient/gui/widgets/WWidget;" +
-            "Lmeteordevelopment/meteorclient/utils/render/color/Color;" +
-            "Lmeteordevelopment/meteorclient/utils/render/color/Color;)V",
-            at = @At("HEAD"),
-            cancellable = true
+    @Inject(
+        method = "renderBackground(" +
+                 "Lmeteordevelopment/meteorclient/gui/renderer/GuiRenderer;" +
+                 "Lmeteordevelopment/meteorclient/gui/widgets/WWidget;" +
+                 "Lmeteordevelopment/meteorclient/utils/render/color/Color;" +
+                 "Lmeteordevelopment/meteorclient/utils/render/color/Color;)V",
+        at = @At("HEAD"),
+        cancellable = true
     )
     private void catppuccin$renderBackground(GuiRenderer renderer, WWidget widget, Color outlineColor, Color backgroundColor, CallbackInfo ci) {
         if (!(GuiThemes.get() instanceof CatppuccinGuiTheme theme)) return;
@@ -40,11 +41,12 @@ public interface MeteorWidgetMixin {
     }
     //? }
 
-    @Inject(method = "renderBackground(" +
-            "Lmeteordevelopment/meteorclient/gui/renderer/GuiRenderer;" +
-            "Lmeteordevelopment/meteorclient/gui/widgets/WWidget;ZZ)V",
-            at = @At("HEAD"),
-            cancellable = true
+    @Inject(
+        method = "renderBackground(" +
+                 "Lmeteordevelopment/meteorclient/gui/renderer/GuiRenderer;" +
+                 "Lmeteordevelopment/meteorclient/gui/widgets/WWidget;ZZ)V",
+        at = @At("HEAD"),
+        cancellable = true
     )
     private void catppuccin$renderBackground(GuiRenderer renderer, WWidget widget, boolean pressed, boolean mouseOver, CallbackInfo ci) {
         if (!(GuiThemes.get() instanceof CatppuccinGuiTheme theme)) return;

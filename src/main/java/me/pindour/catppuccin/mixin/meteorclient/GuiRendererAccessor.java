@@ -14,5 +14,5 @@ import it.unimi.dsi.fastutil.Stack;
 @Mixin(value = GuiRenderer.class, remap = false)
 public interface GuiRendererAccessor {
     @Accessor("scissorStack")
-    Stack<Scissor> getScissorStack();
+    Stack<Scissor> catppuccin$getScissorStack();
 }
