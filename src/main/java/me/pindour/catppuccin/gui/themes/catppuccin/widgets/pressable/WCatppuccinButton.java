@@ -63,7 +63,7 @@ public class WCatppuccinButton extends WButton implements IConditionalWidget, Ca
             hoverAnimation.start();
 
         if (!mouseOver && hoverProgress > 0)
-            hoverAnimation.finishedAt(Direction.BACKWARDS);
+            hoverAnimation.reset();
 
         CatppuccinGuiTheme theme = theme();
 

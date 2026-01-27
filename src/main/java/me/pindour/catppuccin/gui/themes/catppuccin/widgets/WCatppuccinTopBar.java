@@ -1,8 +1,11 @@
 package me.pindour.catppuccin.gui.themes.catppuccin.widgets;
 
+import me.pindour.catppuccin.api.animation.Animation;
+import me.pindour.catppuccin.api.animation.Easing;
 import me.pindour.catppuccin.api.text.RichText;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinWidget;
+import me.pindour.catppuccin.utils.ColorUtils;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.tabs.Tab;
 import meteordevelopment.meteorclient.gui.tabs.TabScreen;
@@ -20,7 +23,7 @@ public class WCatppuccinTopBar extends WTopBar implements CatppuccinWidget {
     @Override
     public void init() {
         for (Tab tab : Tabs.get())
-            add(new WTopBarButton(tab));
+            add(new WTopBarButton(tab)).pad(theme.scale(5));
     }
 
     @Override
@@ -43,14 +46,23 @@ public class WCatppuccinTopBar extends WTopBar implements CatppuccinWidget {
 
     protected class WTopBarButton extends WPressable {
         private final Tab tab;
+        private final RichText text;
+
+        private Animation selectedAnimation;
 
         public WTopBarButton(Tab tab) {
             this.tab = tab;
+            text = RichText.of(tab.name);
+        }
+
+        @Override
+        public void init() {
+            selectedAnimation = new Animation(Easing.LINEAR, 300);
         }
 
         @Override
         protected void onCalculateSize() {
-            double pad = theme.scale(12);
+            double pad = theme.scale(8);
 
             width = pad + theme().textWidth(RichText.bold(tab.name)) + pad;
             height = pad + theme.textHeight() + pad;
@@ -72,20 +84,41 @@ public class WCatppuccinTopBar extends WTopBar implements CatppuccinWidget {
         @Override
         protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
             CatppuccinGuiTheme theme = theme();
-            double pad = theme.scale(4);
+
             boolean isSelected = mc.currentScreen instanceof TabScreen && ((TabScreen) mc.currentScreen).tab == tab;
 
-            if (isSelected || mouseOver) {
-                Color color = isSelected ? theme.accentColor() : theme.surface0Color();
+            // Start the animation if it wasn't started yet, selecting a new tab
+            // will automatically reset the animation, since it gets reinitialized
+            if (isSelected && !selectedAnimation.isRunning() && !selectedAnimation.isFinished())
+                selectedAnimation.start();
 
-                roundedRect().pos(x + pad, y + pad)
-                             .size(width - pad * 2, height - pad * 2)
-                             .radius(radius() - pad)
-                             .color(color)
+            double selectedProgress = selectedAnimation.getProgress();
+
+            // Hover
+            if (mouseOver && selectedProgress == 0) {
+                roundedRect().bounds(this)
+                             .radius(smallRadius())
+                             .color(theme.surface0Color())
                              .render();
             }
 
-            RichText text = RichText.of(tab.name);
+            // Selected highlight
+            if (selectedProgress > 0) {
+                // Outer glow
+                double glowSize = theme.scale(2);
+                roundedRect().pos(x - glowSize, y - glowSize)
+                             .size(width + glowSize * 2, height + glowSize * 2)
+                             .radius(smallRadius() + glowSize)
+                             .color(ColorUtils.withAlpha(theme.accentColor(), (int)(30 * selectedProgress)))
+                             .render();
+
+                // Main highlight
+                roundedRect().bounds(this)
+                             .radius(smallRadius())
+                             .color(ColorUtils.withAlpha(theme.accentColor(), 60))
+                             .render();
+            }
+
             double offsetX = width / 2 - theme.textWidth(text) / 2;
             double offsetY = height / 2 - theme.textHeight() / 2;
 
@@ -93,7 +126,7 @@ public class WCatppuccinTopBar extends WTopBar implements CatppuccinWidget {
                     text,
                     x + offsetX,
                     y + offsetY,
-                    isSelected ? theme.baseColor() : theme.textSecondaryColor()
+                    isSelected ? theme.accentColor() : theme.textColor()
             );
         }
     }
