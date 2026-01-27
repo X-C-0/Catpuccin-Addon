@@ -13,6 +13,7 @@
     "meteorclient.GuiRendererAccessor",
     "meteorclient.GuiRendererMixin",
     "meteorclient.MeteorWidgetMixin",
+    "meteorclient.TabMixin",
     "meteorclient.WHeaderMixin"
   ]
 }
