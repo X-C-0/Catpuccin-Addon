@@ -14,6 +14,14 @@
     "meteorclient.GuiRendererMixin",
     "meteorclient.MeteorWidgetMixin",
     "meteorclient.TabMixin",
-    "meteorclient.WHeaderMixin"
+    "meteorclient.WBrightnessQuadMixin",
+    "meteorclient.WHueQuadMixin",
+    "meteorclient.WContainerMixin",
+    "meteorclient.WDropdownMixin",
+    "meteorclient.WHeaderMixin",
+    "meteorclient.WSliderMixin",
+    "meteorclient.WTextBoxMixin",
+    "meteorclient.WViewMixin",
+    "meteorclient.WWidgetMixin"
   ]
 }
