@@ -5,11 +5,16 @@ import me.pindour.catppuccin.api.text.RichText;
 import me.pindour.catppuccin.api.text.RichTextSegment;
 import meteordevelopment.meteorclient.renderer.*;
 import meteordevelopment.meteorclient.renderer.text.*;
-import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.render.color.Color;
-import org.lwjgl.BufferUtils;
 
 import java.nio.ByteBuffer;
+
+//? if <=1.21.10 {
+/*import meteordevelopment.meteorclient.utils.Utils;
+import org.lwjgl.BufferUtils;
+*///? } else {
+import java.io.IOException;
+//? }
 
 //? if <=1.21.4 {
 /*import net.minecraft.client.util.math.MatrixStack;
@@ -41,7 +46,10 @@ public class RichTextRenderer implements TextRenderer {
     private double fontScale = 1;
     private double scale = 1;
 
-    public RichTextRenderer(FontFace fontFace) {
+    public RichTextRenderer(FontFace fontFace)
+            //? if >=1.21.11
+            throws IOException
+    {
         this.fontFace = fontFace;
         this.regularFonts = loadFonts(fontFace);
         this.boldFonts = resolveVariant(fontFace, FontInfo.Type.Bold);
@@ -217,9 +225,17 @@ public class RichTextRenderer implements TextRenderer {
 
     // Helpers
 
-    private Font[] loadFonts(FontFace fontFace) {
-        byte[] bytes = Utils.readBytes(fontFace.toStream());
+    private Font[] loadFonts(FontFace fontFace)
+            //? if >=1.21.11
+            throws IOException
+    {
+        //? if <=1.21.10 {
+        /*byte[] bytes = Utils.readBytes(fontFace.toStream());
         ByteBuffer buffer = BufferUtils.createByteBuffer(bytes.length).put(bytes).flip();
+
+        *///? } else {
+        ByteBuffer buffer = fontFace.readToDirectByteBuffer();
+        //? }
 
         Font[] fonts = new Font[5];
 
@@ -229,7 +245,10 @@ public class RichTextRenderer implements TextRenderer {
         return fonts;
     }
 
-    private Font[] resolveVariant(FontFace regularFace, FontInfo.Type type) {
+    private Font[] resolveVariant(FontFace regularFace, FontInfo.Type type)
+            //? if >=1.21.11
+            throws IOException
+    {
         FontFamily family = Fonts.getFamily(regularFace.info.family());
         FontFace fontVariant = family.get(type);
 

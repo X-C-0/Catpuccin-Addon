@@ -658,8 +658,13 @@ public class CatppuccinGuiTheme extends GuiTheme {
     }
 
     public RichTextRenderer richTextRenderer() {
-        if (textRenderer == null)
-            setTextRenderer(new RichTextRenderer(Config.get().font.get()));
+        if (textRenderer == null) {
+            try {
+                setTextRenderer(new RichTextRenderer(Config.get().font.get()));
+            } catch (Exception e) {
+                CatppuccinAddon.LOG.error("Failed to load TextRenderer: ", e);
+            }
+        }
 
         return textRenderer;
     }
