@@ -4,6 +4,8 @@ import me.pindour.catppuccin.api.icons.CatppuccinIcons;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import me.pindour.catppuccin.gui.themes.catppuccin.icons.CatppuccinBuiltinIcons;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.container.WCatppuccinWindow;
+import me.pindour.catppuccin.utils.search.results.ModuleSearchResult;
+import me.pindour.catppuccin.utils.search.SearchUtils;
 import meteordevelopment.meteorclient.gui.GuiTheme;
 import meteordevelopment.meteorclient.gui.renderer.packer.GuiTexture;
 import meteordevelopment.meteorclient.gui.tabs.TabScreen;
@@ -24,13 +26,16 @@ import net.minecraft.client.gui.DrawContext;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
+import static meteordevelopment.meteorclient.MeteorClient.mc;
 import static meteordevelopment.meteorclient.utils.Utils.getWindowHeight;
 import static meteordevelopment.meteorclient.utils.Utils.getWindowWidth;
+import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.glfw.GLFW.GLFW_MOD_CONTROL;
 
 //? if >=1.21.5
-import net.minecraft.util.Pair;
+import net.minecraft.client.input.KeyInput;
+import net.minecraft.client.util.MacWindowUtil;
 
 public class CatppuccinModulesScreen extends TabScreen {
     private final CatppuccinGuiTheme theme;
@@ -55,6 +60,10 @@ public class CatppuccinModulesScreen extends TabScreen {
 
         // Help
         WVerticalList help = add(theme.verticalList()).pad(4).bottom().widget();
+
+        if (theme.catppuccinSearchScreen.get())
+            help.add(theme.label("Ctrl + F - Open search"));
+
         help.add(theme.label("Left click - Toggle module"));
         help.add(theme.label("Right click - Open module settings"));
 
@@ -85,6 +94,22 @@ public class CatppuccinModulesScreen extends TabScreen {
         for (int y = 0; y <= windowHeight; y += gridSize) {
             context.drawHorizontalLine(0, windowWidth, y, color);
         }
+    }
+
+    @Override
+    public boolean keyPressed(KeyInput input) {
+        super.keyPressed(input);
+
+        if (!theme.catppuccinSearchScreen.get()) return false;
+
+        boolean control = MacWindowUtil.IS_MAC ? input.modifiers() == GLFW_MOD_SUPER : input.modifiers() == GLFW_MOD_CONTROL;
+
+        if (control && input.key() == GLFW_KEY_F) {
+            mc.setScreen(new CatppuccinSearchScreen(theme));
+            return true;
+        }
+
+        return false;
     }
 
     // Category
@@ -124,49 +149,30 @@ public class CatppuccinModulesScreen extends TabScreen {
 
     protected void createSearchW(WContainer w, String text) {
         if (!text.isEmpty()) {
-            // Titles
+            int limit = Config.get().moduleSearchCount.get();
 
-            //? if <=1.21.4 {
-            /*Set<Module> modules = Modules.get().searchTitles(text);
+            // Modules
+            List<ModuleSearchResult> modules = SearchUtils.searchModules(text, 50);
 
-            *///?} else {
-            List<Pair<Module, String>> modules = Modules.get().searchTitles(text);
-            //?}
-            
             if (!modules.isEmpty()) {
                 WSection section = w.add(theme.section("Modules")).expandX().widget();
                 section.spacing = 0;
 
-                int count = 0;
-
-                //? if <=1.21.4 {
-                /*for (Module module : modules) {
-                    if (count >= Config.get().moduleSearchCount.get() || count >= modules.size()) break;
-                    section.add(theme.module(module)).expandX();
-                    count++;
+                for (int i = 0; i < Math.min(modules.size(), limit); i++) {
+                    ModuleSearchResult result = modules.get(i);
+                    section.add(theme.module(result.module(), result.title())).expandX();
                 }
-
-                *///?} else {
-                for (Pair<Module, String> p : modules) {
-                    if (count >= Config.get().moduleSearchCount.get() || count >= modules.size()) break;
-                    section.add(theme.module(p.getLeft(), p.getRight())).expandX();
-                    count++;
-                }
-                //?}
             }
 
             // Settings
-            Set<Module> settings = Modules.get().searchSettingTitles(text);
+            List<Module> settingModules = Modules.get().searchSettingTitles(text).stream().toList();
 
-            if (!settings.isEmpty()) {
+            if (!settingModules.isEmpty()) {
                 WSection section = w.add(theme.section("Settings")).expandX().widget();
                 section.spacing = 0;
 
-                int count = 0;
-                for (Module module : settings) {
-                    if (count >= Config.get().moduleSearchCount.get() || count >= settings.size()) break;
-                    section.add(theme.module(module)).expandX();
-                    count++;
+                for (int i = 0; i < Math.min(settingModules.size(), limit); i++) {
+                    section.add(theme.module(settingModules.get(i))).expandX();
                 }
             }
         }
@@ -287,7 +293,10 @@ public class CatppuccinModulesScreen extends TabScreen {
 
             refresh();
 
-            windows.add(createSearch(this));
+            CatppuccinGuiTheme catppuccinTheme = (CatppuccinGuiTheme) theme;
+
+            if (!catppuccinTheme.catppuccinSearchScreen.get())
+                windows.add(createSearch(this));
         }
 
         protected void refresh() {

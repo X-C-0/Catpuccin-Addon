@@ -2,31 +2,29 @@ package me.pindour.catppuccin.gui.themes.catppuccin;
 
 import me.pindour.catppuccin.CatppuccinAddon;
 import me.pindour.catppuccin.api.animation.Easing;
-import me.pindour.catppuccin.renderer.CatppuccinRenderer;
+import me.pindour.catppuccin.api.text.RichText;
+import me.pindour.catppuccin.api.text.RichTextSegment;
 import me.pindour.catppuccin.gui.screens.CatppuccinModuleScreen;
 import me.pindour.catppuccin.gui.screens.CatppuccinModulesScreen;
-import me.pindour.catppuccin.api.text.RichText;
-import me.pindour.catppuccin.renderer.text.RichTextRenderer;
-import me.pindour.catppuccin.api.text.RichTextSegment;
 import me.pindour.catppuccin.gui.themes.catppuccin.colors.CatppuccinAccentColor;
 import me.pindour.catppuccin.gui.themes.catppuccin.colors.CatppuccinColor;
 import me.pindour.catppuccin.gui.themes.catppuccin.flavors.CatppuccinFlavors;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.*;
-import me.pindour.catppuccin.gui.themes.catppuccin.widgets.pressable.*;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.container.WCatppuccinSection;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.container.WCatppuccinView;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.container.WCatppuccinWindow;
-import me.pindour.catppuccin.gui.themes.catppuccin.widgets.input.WCatppuccinDropdown;
-import me.pindour.catppuccin.gui.themes.catppuccin.widgets.input.WCatppuccinMultiSelect;
-import me.pindour.catppuccin.gui.themes.catppuccin.widgets.input.WCatppuccinSlider;
-import me.pindour.catppuccin.gui.themes.catppuccin.widgets.input.WCatppuccinTextBox;
+import me.pindour.catppuccin.gui.themes.catppuccin.widgets.input.*;
+import me.pindour.catppuccin.gui.themes.catppuccin.widgets.pressable.*;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.settings.WCatppuccinDoubleEdit;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.settings.WCatppuccinIntEdit;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.settings.WCatppuccinKeybind;
 import me.pindour.catppuccin.gui.widgets.WGuiTexture;
 import me.pindour.catppuccin.gui.widgets.input.WMultiSelect;
+import me.pindour.catppuccin.gui.widgets.input.WSearch;
 import me.pindour.catppuccin.gui.widgets.pressable.WColorPicker;
 import me.pindour.catppuccin.gui.widgets.pressable.WOpenIndicator;
+import me.pindour.catppuccin.renderer.CatppuccinRenderer;
+import me.pindour.catppuccin.renderer.text.RichTextRenderer;
 import meteordevelopment.meteorclient.gui.GuiTheme;
 import meteordevelopment.meteorclient.gui.WidgetScreen;
 import meteordevelopment.meteorclient.gui.renderer.packer.GuiTexture;
@@ -204,6 +202,13 @@ public class CatppuccinGuiTheme extends GuiTheme {
     );
 
     // Screens
+
+    public final Setting<Boolean> catppuccinSearchScreen = sgScreens.add(new BoolSetting.Builder()
+            .name("search-screen")
+            .description("Replaces Meteor's search window with Catppuccin's search screen.")
+            .defaultValue(true)
+            .build()
+    );
 
     public final Setting<Boolean> catppuccinEntityTypeListScreen = sgScreens.add(new BoolSetting.Builder()
             .name("entity-type-list-screen")
@@ -456,6 +461,10 @@ public class CatppuccinGuiTheme extends GuiTheme {
 
     public <T> WMultiSelect<T> multiSelect(String title, List<T> items) {
         return w(new WCatppuccinMultiSelect<>(title, items));
+    }
+
+    public WSearch search() {
+        return w(new WCatppuccinSearch());
     }
 
     // Settings widgets
