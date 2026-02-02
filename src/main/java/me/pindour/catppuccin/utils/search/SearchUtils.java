@@ -2,7 +2,6 @@ package me.pindour.catppuccin.utils.search;
 
 import me.pindour.catppuccin.utils.search.results.ModuleSearchResult;
 import me.pindour.catppuccin.utils.search.results.SettingSearchResult;
-import meteordevelopment.meteorclient.gui.GuiTheme;
 import meteordevelopment.meteorclient.settings.Setting;
 import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.config.Config;

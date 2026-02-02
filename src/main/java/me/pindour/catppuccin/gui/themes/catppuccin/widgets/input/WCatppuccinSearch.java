@@ -12,13 +12,28 @@ import me.pindour.catppuccin.utils.search.SearchResult;
 import me.pindour.catppuccin.utils.search.results.ModuleSearchResult;
 import me.pindour.catppuccin.utils.search.results.SettingSearchResult;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
+import meteordevelopment.meteorclient.gui.renderer.packer.GuiTexture;
 import meteordevelopment.meteorclient.gui.widgets.WLabel;
-import meteordevelopment.meteorclient.gui.widgets.WWidget;
+import meteordevelopment.meteorclient.gui.widgets.containers.WContainer;
 import meteordevelopment.meteorclient.gui.widgets.containers.WHorizontalList;
 import meteordevelopment.meteorclient.gui.widgets.containers.WVerticalList;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 
 public class WCatppuccinSearch extends WSearch implements CatppuccinWidget {
+
+    @Override
+    protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
+        CatppuccinGuiTheme theme = theme();
+        Color shadowColor = ColorUtils.withAlpha(theme.crustColor(), 0.4);
+
+        // Shadow rectangle
+        int shadowOffset = 2;
+        roundedRect().pos(x - shadowOffset, y - shadowOffset)
+                     .size(width + shadowOffset * 2, height + shadowOffset * 2)
+                     .radius(radius() + shadowOffset)
+                     .color(shadowColor)
+                     .render();
+    }
 
     @Override
     protected WSearchHeader createHeader(WSearch search) {
@@ -49,7 +64,7 @@ public class WCatppuccinSearch extends WSearch implements CatppuccinWidget {
             WHorizontalList row = add(theme.horizontalList()).expandX().pad(theme.scale(12)).widget();
 
             // Search texture
-            row.add(theme.texture(CatppuccinBuiltinIcons.SEARCH.texture(), theme.textHeight())).padRight(10).center();
+            row.add(theme.texture(CatppuccinBuiltinIcons.SEARCH.texture(), theme.textHeight())).center();
 
             // Search textbox
             WCatppuccinTextBox textBox = (WCatppuccinTextBox) theme.textBox("", "Search for modules...");
@@ -128,12 +143,11 @@ public class WCatppuccinSearch extends WSearch implements CatppuccinWidget {
                     theme.backgroundOpacity() * 0.5
             );
 
-            background(theme.surface0Color(), outlineColor).render();
+            background(getBackgroundColor(pressed, false), outlineColor).render();
         }
 
-        public static class WResultType extends WWidget implements CatppuccinWidget {
+        public static class WResultType extends WContainer implements CatppuccinWidget {
             private final SearchResult result;
-            private RichText text;
             private Color color;
 
             public WResultType(SearchResult result) {
@@ -143,14 +157,8 @@ public class WCatppuccinSearch extends WSearch implements CatppuccinWidget {
             @Override
             public void init() {
                 color = getColor();
-                text = RichText.of(getLetter()).scale(TextScale.LARGE.get());
-            }
 
-            @Override
-            public void calculateSize() {
-                double pad = theme.pad();
-
-                width = height = pad + theme.textHeight() + pad;
+                add(theme().texture(getIcon(), theme.textHeight()).color(color)).pad(theme.pad()).center();
             }
 
             @Override
@@ -159,11 +167,6 @@ public class WCatppuccinSearch extends WSearch implements CatppuccinWidget {
                              .color(ColorUtils.withAlpha(color, 60))
                              .radius(smallRadius())
                              .render();
-
-                double x = this.x + width / 2 - theme().textWidth(text) / 2;
-                double y = this.y + height / 2 - theme().textHeight(text) / 2;
-
-                renderer().text(text, x, y, color);
             }
 
             private Color getColor() {
@@ -174,11 +177,11 @@ public class WCatppuccinSearch extends WSearch implements CatppuccinWidget {
                 };
             }
 
-            private String getLetter() {
+            private GuiTexture getIcon() {
                 return switch (result) {
-                    case ModuleSearchResult r -> r.hasAlias() ? "A" : "M";
-                    case SettingSearchResult ignored -> "S";
-                    default -> "-";
+                    case ModuleSearchResult ignored -> CatppuccinBuiltinIcons.CUBE.texture();
+                    case SettingSearchResult ignored -> CatppuccinBuiltinIcons.SETTING.texture();
+                    default -> CatppuccinBuiltinIcons.QUESTION_MARK.texture();
                 };
             }
         }

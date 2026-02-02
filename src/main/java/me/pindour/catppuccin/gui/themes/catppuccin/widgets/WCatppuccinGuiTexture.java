@@ -13,6 +13,6 @@ public class WCatppuccinGuiTexture extends WGuiTexture implements CatppuccinWidg
 
     @Override
     protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
-        renderer.quad(x, y, size, size, texture, theme().textColor());
+        renderer.quad(x, y, size, size, texture, color);
     }
 }

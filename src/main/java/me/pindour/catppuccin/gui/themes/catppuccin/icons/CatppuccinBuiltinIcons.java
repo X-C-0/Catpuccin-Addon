@@ -9,6 +9,7 @@ import meteordevelopment.meteorclient.systems.modules.Categories;
 /*
  * Sources: https://www.svgrepo.com/collection/lightning-design-utility-icons/
  *          https://www.svgrepo.com/collection/clarity-project-icons/
+ *          https://www.svgrepo.com/collection/iconsax-bold-oval-icons/ (goated rounded icons)
  */
 public enum CatppuccinBuiltinIcons {
     ARROW,
@@ -27,7 +28,8 @@ public enum CatppuccinBuiltinIcons {
     RESET,
     SWORDS,
     USER,
-    SEARCH;
+    SEARCH,
+    SETTING;
 
     private final String path;
     private GuiTexture texture;
