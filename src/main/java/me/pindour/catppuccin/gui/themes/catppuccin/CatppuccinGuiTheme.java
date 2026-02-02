@@ -1,5 +1,6 @@
 package me.pindour.catppuccin.gui.themes.catppuccin;
 
+import me.pindour.catppuccin.CatppuccinAddon;
 import me.pindour.catppuccin.api.animation.Easing;
 import me.pindour.catppuccin.renderer.CatppuccinRenderer;
 import me.pindour.catppuccin.gui.screens.CatppuccinModuleScreen;
@@ -57,10 +58,11 @@ import java.util.function.Supplier;
 
 import static meteordevelopment.meteorclient.MeteorClient.mc;
 
-//? if <1.21.9
-//import static net.minecraft.client.MinecraftClient.IS_SYSTEM_MAC;
-//? if >=1.21.10
+//? if <=1.21.9 {
+/*import static net.minecraft.client.MinecraftClient.IS_SYSTEM_MAC;
+*///? } else {
 import net.minecraft.client.util.MacWindowUtil;
+//? }
 
 public class CatppuccinGuiTheme extends GuiTheme {
     private final Map<CatppuccinColor, Color> colorCache;
