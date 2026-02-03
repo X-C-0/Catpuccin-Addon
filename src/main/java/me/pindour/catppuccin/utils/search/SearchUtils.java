@@ -37,6 +37,8 @@ public class SearchUtils {
 
     /**
      * Searches for modules matching the query by their title or aliases.
+     * <p>
+     * Best matches (lowest score) are placed at the beginning of the list.
      *
      * @param query    The text to search for.
      * @param maxScore The maximum allowed difference score. Results with a score higher than
@@ -64,11 +66,15 @@ public class SearchUtils {
                 results.add(new ModuleSearchResult(module, matchedAlias, score));
             }
         }
+
+        results.sort(Comparator.comparingInt(SearchResult::score));
         return results;
     }
 
     /**
      * Searches for individual settings within all registered modules.
+     * <p>
+     * Best matches (lowest score) are placed at the beginning of the list.
      *
      * @param query    The text to search for.
      * @param maxScore The maximum allowed difference score. Results with a score higher than
@@ -91,6 +97,8 @@ public class SearchUtils {
                 }
             }
         }
+
+        results.sort(Comparator.comparingInt(SearchResult::score));
         return results;
     }
 }
