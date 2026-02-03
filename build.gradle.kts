@@ -41,6 +41,11 @@ dependencies {
 
 stonecutter {
     replacements {
+        string(current.parsed <= "1.21.9") {
+            // Is Mac OS
+            replace("MacWindowUtil.IS_MAC", "IS_SYSTEM_MAC")
+            replace("net.minecraft.client.util.MacWindowUtil;", "static net.minecraft.client.MinecraftClient.IS_SYSTEM_MAC;")
+        }
         string(current.parsed <= "1.21.8") {
             // Click -> mouseX, mouseY, button
             replace("onMouseClicked(Click click", "onMouseClicked(double mouseX, double mouseY, int button")
@@ -50,6 +55,8 @@ stonecutter {
             replace("onCharTyped(CharInput input)", "onCharTyped(char input)")
             // KeyInput -> key, mods
             replace("onKeyRepeated(KeyInput input)", "onKeyRepeated(int key, int mods)")
+            replace("keyPressed(KeyInput input)", "keyPressed(int keyCode, int scanCode, int modifiers)")
+            replace("keyPressed(input)", "keyPressed(keyCode, scanCode, modifiers)")
         }
         string(current.parsed <= "1.21.4") {
             // String utils

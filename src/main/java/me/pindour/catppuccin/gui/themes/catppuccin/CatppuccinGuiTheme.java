@@ -55,12 +55,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import static meteordevelopment.meteorclient.MeteorClient.mc;
-
-//? if <=1.21.9 {
-/*import static net.minecraft.client.MinecraftClient.IS_SYSTEM_MAC;
-*///? } else {
 import net.minecraft.client.util.MacWindowUtil;
-//? }
 
 public class CatppuccinGuiTheme extends GuiTheme {
     private final Map<CatppuccinColor, Color> colorCache;
@@ -731,11 +726,7 @@ public class CatppuccinGuiTheme extends GuiTheme {
     public double scale(double value) {
         double scaled = value * scale.get();
 
-        if (//? if >=1.21.9
-            MacWindowUtil.IS_MAC
-            //? if <=1.21.8
-            //IS_SYSTEM_MAC
-        ) {
+        if (MacWindowUtil.IS_MAC) {
             scaled /= (double) mc.getWindow().getWidth() / mc.getWindow().getFramebufferWidth();
         }
 

@@ -11,13 +11,15 @@ import meteordevelopment.meteorclient.gui.widgets.containers.WVerticalList;
 import meteordevelopment.meteorclient.gui.widgets.containers.WView;
 import meteordevelopment.meteorclient.gui.widgets.input.WTextBox;
 import meteordevelopment.meteorclient.utils.Utils;
-import net.minecraft.client.gui.Click;
 
 import java.util.List;
 
 import static meteordevelopment.meteorclient.MeteorClient.mc;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_RIGHT;
+
+//? >=1.21.5
+import net.minecraft.client.gui.Click;
 
 public abstract class WSearch extends WVerticalList {
     protected WSearchHeader header;
@@ -110,20 +112,28 @@ public abstract class WSearch extends WVerticalList {
 
         @Override
         public boolean onMouseClicked(Click click, boolean doubled) {
-            if (mouseOver && (click.button() == GLFW_MOUSE_BUTTON_LEFT || click.button() == GLFW_MOUSE_BUTTON_RIGHT)) pressed = true;
+            //? >=1.21.5
+            int button = click.button();
+
+            if (mouseOver && (button == GLFW_MOUSE_BUTTON_LEFT || button == GLFW_MOUSE_BUTTON_RIGHT))
+                pressed = true;
+
             return pressed;
         }
 
         @Override
         public boolean onMouseReleased(Click click) {
             if (pressed) {
-                if (click.button() == GLFW_MOUSE_BUTTON_LEFT) {
+                //? >=1.21.5
+                int button = click.button();
+
+                if (button == GLFW_MOUSE_BUTTON_LEFT) {
                     if (result instanceof ModuleSearchResult r) {
                         r.module().toggle();
                     }
                 }
 
-                if (click.button() == GLFW_MOUSE_BUTTON_RIGHT) {
+                if (button == GLFW_MOUSE_BUTTON_RIGHT) {
                     switch (result) {
                         case ModuleSearchResult r -> mc.setScreen(theme.moduleScreen(r.module()));
                         case SettingSearchResult r -> mc.setScreen(theme.moduleScreen(r.setting().module));
