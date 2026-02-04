@@ -5,11 +5,10 @@ import meteordevelopment.meteorclient.renderer.MeshBuilder;
 import meteordevelopment.meteorclient.renderer.MeshRenderer;
 import meteordevelopment.meteorclient.renderer.MeteorRenderPipelines;
 import meteordevelopment.meteorclient.renderer.text.*;
-import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 import net.minecraft.client.MinecraftClient;
-import org.lwjgl.BufferUtils;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 
 public class RichTextRenderer implements TextRenderer {
@@ -29,27 +28,14 @@ public class RichTextRenderer implements TextRenderer {
     private double fontScale = 1;
     private double scale = 1;
 
-    public RichTextRenderer(FontFace regularFace, FontFace boldFace, FontFace italicFace) {
-        if (boldFace == null || italicFace == null) {
-            FontFamily fontFamily = findFontFamily(regularFace);
-
-            regularFace = fontFamily.get(FontInfo.Type.Regular);
-            boldFace = fontFamily.get(FontInfo.Type.Bold);
-            italicFace = fontFamily.get(FontInfo.Type.Italic);
-        }
-
-        this.regularFonts = loadFonts(regularFace);
-        this.boldFonts = boldFace != null ? loadFonts(boldFace) : regularFonts;
-        this.italicFonts = italicFace != null ? loadFonts(italicFace) : regularFonts;
+    public RichTextRenderer(FontFace fontFace) throws IOException {
+        this.regularFonts = loadFonts(fontFace);
+        this.boldFonts = resolveVariant(fontFace, FontInfo.Type.Bold);
+        this.italicFonts = resolveVariant(fontFace, FontInfo.Type.Italic);
     }
 
-    public RichTextRenderer(FontFace fontFace) {
-        this(fontFace, null, null);
-    }
-
-    private Font[] loadFonts(FontFace fontFace) {
-        byte[] bytes = Utils.readBytes(fontFace.toStream());
-        ByteBuffer buffer = BufferUtils.createByteBuffer(bytes.length).put(bytes).flip();
+    private Font[] loadFonts(FontFace fontFace) throws IOException {
+        ByteBuffer buffer = fontFace.readToDirectByteBuffer();
 
         Font[] fonts = new Font[5];
 
@@ -57,6 +43,16 @@ public class RichTextRenderer implements TextRenderer {
             fonts[i] = new Font(buffer, (int) Math.round(27 * ((i * 0.5) + 1)));
 
         return fonts;
+    }
+
+    private Font[] resolveVariant(FontFace regularFace, FontInfo.Type type) throws IOException {
+        FontFamily family = Fonts.getFamily(regularFace.info.family());
+        FontFace fontVariant = family.get(type);
+
+        if (fontVariant != null && fontVariant != regularFace)
+            return loadFonts(fontVariant);
+
+        return regularFonts; // Fallback
     }
 
     @Override
@@ -249,13 +245,5 @@ public class RichTextRenderer implements TextRenderer {
             return fonts[currentFontIndex];
 
         return fonts[0];
-    }
-
-    private FontFamily findFontFamily(FontFace fontFace) {
-        for (FontFamily fontFamily : Fonts.FONT_FAMILIES)
-            if (fontFamily.getName().equalsIgnoreCase(fontFace.info.family()))
-                return fontFamily;
-
-        return Fonts.FONT_FAMILIES.getFirst();
     }
 }
