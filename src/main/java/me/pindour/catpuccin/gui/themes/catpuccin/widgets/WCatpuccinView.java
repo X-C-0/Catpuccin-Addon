@@ -20,7 +20,7 @@ public class WCatpuccinView extends WView implements CatpuccinWidget {
                     handleY(),
                     handleWidth(),
                     handleHeight(),
-                    theme().scrollbarColor.get(handlePressed, handleMouseOver)
+                    theme().scrollbarColor.get(focused, handleMouseOver)
             );
         }
     }
