@@ -6,7 +6,10 @@ import meteordevelopment.meteorclient.gui.widgets.containers.WView;
 @SuppressWarnings("unused")
 public interface IWidgetBackport {
     boolean catppuccin$isFocused();
+    boolean catppuccin$isSelfFocused();
+
     void catppuccin$setFocused(boolean focused);
+
     WView catppuccin$getView();
     boolean catppuccin$isWidgetInView(WWidget widget);
 }

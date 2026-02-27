@@ -31,7 +31,10 @@ public abstract class WWidgetMixin implements IWidgetBackport {
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
     private void catppuccin$render(GuiRenderer renderer, double mouseX, double mouseY, double delta, CallbackInfoReturnable<Boolean> cir) {
-        if (!visible) cir.setReturnValue(true);
+        if (!visible) {
+            cir.setReturnValue(true);
+            return;
+        }
 
         if (isOver(mouseX, mouseY)) {
             mouseOverTimer += delta;
@@ -48,6 +51,7 @@ public abstract class WWidgetMixin implements IWidgetBackport {
         cir.setReturnValue(false);
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public WView catppuccin$getView() {
         return (Object) this instanceof WView ? (WView) (Object) this : (parent != null ? ((IWidgetBackport) parent).catppuccin$getView() : null);
@@ -55,6 +59,11 @@ public abstract class WWidgetMixin implements IWidgetBackport {
 
     @Override
     public boolean catppuccin$isFocused() {
+        return focused;
+    }
+
+    @Override
+    public boolean catppuccin$isSelfFocused() {
         return focused;
     }
 

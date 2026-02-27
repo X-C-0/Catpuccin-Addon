@@ -5,6 +5,9 @@ import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.widgets.containers.WView;
 import meteordevelopment.meteorclient.utils.Utils;
 
+//? if <=1.21.10
+//import me.pindour.catppuccin.gui.widgets.IWidgetBackport;
+
 public class WCatppuccinView extends WView implements CatppuccinWidget {
 
     @Override
@@ -22,7 +25,7 @@ public class WCatppuccinView extends WView implements CatppuccinWidget {
                                  //? if >=1.21.11 {
                                  focused,
                                  //? } else
-                                 //handlePressed,
+                                 //((IWidgetBackport)this).catppuccin$isSelfFocused(),
                                  handleMouseOver
                          ))
                          .render();

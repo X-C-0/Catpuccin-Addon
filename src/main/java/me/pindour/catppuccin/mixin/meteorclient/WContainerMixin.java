@@ -30,7 +30,10 @@ public abstract class WContainerMixin extends WWidget implements IWidgetBackport
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
     public void catppuccin$render(GuiRenderer renderer, double mouseX, double mouseY, double delta, CallbackInfoReturnable<Boolean> cir) {
-        if (super.render(renderer, mouseX, mouseY, delta)) cir.setReturnValue(true);
+        if (super.render(renderer, mouseX, mouseY, delta)) {
+            cir.setReturnValue(true);
+            return;
+        }
 
         WView view = catppuccin$getView();
         double windowHeight = getWindowHeight();
@@ -49,8 +52,12 @@ public abstract class WContainerMixin extends WWidget implements IWidgetBackport
 
     @Override
     public boolean catppuccin$isFocused() {
-        for (Cell<?> cell : cells)
-            if (((IWidgetBackport) cell.widget()).catppuccin$isFocused()) return true;
+        if (catppuccin$isSelfFocused()) return true;
+
+        for (Cell<?> cell : cells) {
+            if (((IWidgetBackport) cell.widget()).catppuccin$isFocused())
+                return true;
+        }
 
         return false;
     }
