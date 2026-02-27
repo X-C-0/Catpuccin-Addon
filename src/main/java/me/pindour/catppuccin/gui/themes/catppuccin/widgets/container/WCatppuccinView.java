@@ -18,7 +18,13 @@ public class WCatppuccinView extends WView implements CatppuccinWidget {
             roundedRect().pos(handleX(), handleY())
                          .size(handleWidth(), handleHeight())
                          .radius(smallRadius())
-                         .color(theme().scrollbarColor.get(handlePressed, handleMouseOver))
+                         .color(theme().scrollbarColor.get(
+                                 //? if >=1.21.11 {
+                                 focused,
+                                 //? } else
+                                 //handlePressed,
+                                 handleMouseOver
+                         ))
                          .render();
         }
     }
