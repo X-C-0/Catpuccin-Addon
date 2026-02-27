@@ -9,6 +9,8 @@ import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.renderer.operations.TextOperation;
 import meteordevelopment.meteorclient.gui.renderer.Scissor;
 import meteordevelopment.meteorclient.renderer.Renderer2D;
+import meteordevelopment.meteorclient.systems.config.Config;
+import meteordevelopment.meteorclient.utils.misc.Pool;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -47,6 +49,7 @@ public abstract class GuiRendererMixin {
     @Shadow @Final private Renderer2D r;
     @Shadow @Final private Renderer2D rTex;
     @Shadow @Final private List<TextOperation> texts;
+    @Shadow @Final private Pool<TextOperation> textPool;
     @Shadow public GuiTheme theme;
 
     @Inject(method = "init", at = @At("HEAD"))
@@ -83,8 +86,26 @@ public abstract class GuiRendererMixin {
 
         render();
 
+        if (Config.get().customFont.get()) {
+            // Custom renderer
+            renderer().renderText();
+        } else {
+            // Vanilla renderer
+            theme.textRenderer().begin(theme.scale(1));
+            for (TextOperation text : texts) {
+                if (!text.title) text.run(textPool);
+            }
+            theme.textRenderer().end();
+
+            // Title text
+            theme.textRenderer().begin(theme.scale(1.25));
+            for (TextOperation text : texts) {
+                if (text.title) text.run(textPool);
+            }
+            theme.textRenderer().end();
+        }
+
         texts.clear();
-        renderer().renderText();
 
         //? if >=1.21.5
         if (scissor != null) scissor.pop();
@@ -94,7 +115,7 @@ public abstract class GuiRendererMixin {
 
     @Inject(method = "text", at = @At("HEAD"), cancellable = true)
     private void catppuccin$text(String text, double x, double y, Color color, boolean title, CallbackInfo ci) {
-        if (!isCatppuccinActive()) return;
+        if (!isCatppuccinActive() || !Config.get().customFont.get()) return;
 
         renderer().text(RichText.of(text).boldIf(title), x, y, color);
         ci.cancel();
@@ -122,6 +143,9 @@ public abstract class GuiRendererMixin {
 
     @Unique
     private CatppuccinRenderer renderer() {
+        if (CatppuccinRenderer.guiRenderer == null)
+            CatppuccinRenderer.guiRenderer = (GuiRenderer) (Object) this;
+
         return CatppuccinRenderer.get();
     }
 

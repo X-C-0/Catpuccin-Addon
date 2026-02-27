@@ -28,8 +28,10 @@ public class RichText {
     // Chaining texts
 
     public RichText append(String text) {
-        segments.add(new RichTextSegment(text));
-        plainText.append(text);
+        if (text != null) {
+            segments.add(new RichTextSegment(text));
+            plainText.append(text);
+        }
         return this;
     }
 

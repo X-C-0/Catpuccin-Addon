@@ -6,6 +6,8 @@ import me.pindour.catppuccin.api.text.RichText;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import me.pindour.catppuccin.renderer.rounded.RoundedRendererInternal;
 import me.pindour.catppuccin.renderer.text.CatppuccinTextRenderer;
+import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
+import meteordevelopment.meteorclient.systems.config.Config;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 
 //? if >=1.21.5 {
@@ -17,6 +19,7 @@ import net.minecraft.client.util.math.MatrixStack;
 
 public class CatppuccinRenderer implements RoundedRectRenderer {
     private static final CatppuccinRenderer INSTANCE = new CatppuccinRenderer();
+    public static GuiRenderer guiRenderer;
 
     private CatppuccinGuiTheme theme;
 
@@ -86,7 +89,10 @@ public class CatppuccinRenderer implements RoundedRectRenderer {
     public float getClipMaxY() { return clipMaxY; }
 
     public void text(RichText text, double x, double y, Color color) {
-        textRenderer.text(text, x, y, color, theme);
+        if (guiRenderer != null && !Config.get().customFont.get())
+            guiRenderer.text(text.getPlainText(), x, y, color, false);
+
+        else textRenderer.text(text, x, y, color, theme);
     }
 
     /**

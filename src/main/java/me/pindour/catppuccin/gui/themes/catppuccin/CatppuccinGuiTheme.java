@@ -39,7 +39,9 @@ import meteordevelopment.meteorclient.gui.widgets.input.WDropdown;
 import meteordevelopment.meteorclient.gui.widgets.input.WSlider;
 import meteordevelopment.meteorclient.gui.widgets.input.WTextBox;
 import meteordevelopment.meteorclient.gui.widgets.pressable.*;
+import meteordevelopment.meteorclient.renderer.Fonts;
 import meteordevelopment.meteorclient.renderer.text.TextRenderer;
+import meteordevelopment.meteorclient.renderer.text.VanillaTextRenderer;
 import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.accounts.Account;
 import meteordevelopment.meteorclient.systems.config.Config;
@@ -660,7 +662,7 @@ public class CatppuccinGuiTheme extends GuiTheme {
 
     @Override
     public TextRenderer textRenderer() {
-        return richTextRenderer();
+        return Config.get().customFont.get() ? richTextRenderer() : VanillaTextRenderer.INSTANCE;
     }
 
     public RichTextRenderer richTextRenderer() {
@@ -683,16 +685,22 @@ public class CatppuccinGuiTheme extends GuiTheme {
     // Text
 
     public double textWidth(RichTextSegment segment) {
-        return scale(richTextRenderer().getWidth(segment, segment.getText().length()));
+        return scale(Config.get().customFont.get()
+                ? richTextRenderer().getWidth(segment, segment.getText().length())
+                : textRenderer().getWidth(segment.getText()));
     }
 
     public double textWidth(RichText text) {
-        return scale(richTextRenderer().getWidth(text));
+        return scale(Config.get().customFont.get()
+                ? richTextRenderer().getWidth(text)
+                : textRenderer().getWidth(text.getPlainText()));
     }
 
     @Override
     public double textWidth(String text, int length, boolean title) {
-        return scale(richTextRenderer().getWidth(RichText.of(text).boldIf(title), length));
+        return scale(Config.get().customFont.get()
+                ? richTextRenderer().getWidth(RichText.of(text).boldIf(title), length)
+                : textRenderer().getWidth(text, length, title));
     }
 
     @Override
@@ -701,12 +709,14 @@ public class CatppuccinGuiTheme extends GuiTheme {
     }
 
     public double textHeight(RichText text) {
-        return scale(richTextRenderer().getHeight(text));
+        return scale(Config.get().customFont.get()
+                ? richTextRenderer().getHeight(text)
+                : textRenderer().getHeight());
     }
 
     @Override
     public double textHeight(boolean title) {
-        return scale(richTextRenderer().getHeight(title));
+        return scale(textRenderer().getHeight(title));
     }
 
     @Override
