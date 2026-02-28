@@ -15,6 +15,9 @@ import meteordevelopment.meteorclient.gui.widgets.input.WTextBox;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 import net.minecraft.util.math.MathHelper;
 
+//? if <=1.21.10
+//import me.pindour.catppuccin.gui.widgets.IWidgetBackport;
+
 public class WCatppuccinTextBox extends WTextBox implements CatppuccinWidget {
     private final String title;
     private final double padding;
@@ -115,6 +118,9 @@ public class WCatppuccinTextBox extends WTextBox implements CatppuccinWidget {
         CatppuccinGuiTheme theme = theme();
         int HORIZONTAL_LIST_SPACING = 3;
         double titleWidth = (hasTitle() ? pad() + theme.textWidth(title) + HORIZONTAL_LIST_SPACING : 0);
+
+        //? if <=1.21.10
+        //boolean focused = ((IWidgetBackport)this).catppuccin$isSelfFocused();
 
         if (cursorTimer >= 1) {
             cursorVisible = !cursorVisible;

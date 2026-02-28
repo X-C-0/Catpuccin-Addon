@@ -7,7 +7,9 @@ import org.spongepowered.asm.mixin.Mixin;
 /*import me.pindour.catppuccin.gui.widgets.IWidgetBackport;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 *///? }
 
 @Mixin(value = WTextBox.class, remap = false)
@@ -23,7 +25,7 @@ public abstract class WTextBoxMixin extends WWidget {
         )
     )
     private boolean catppuccin$getFocused(WTextBox instance) {
-        return ((IWidgetBackport) instance).catppuccin$isFocused();
+        return ((IWidgetBackport) instance).catppuccin$isSelfFocused();
     }
 
     @Redirect(
@@ -36,6 +38,11 @@ public abstract class WTextBoxMixin extends WWidget {
     )
     private void catppuccin$setFocused(WTextBox instance, boolean value) {
         ((IWidgetBackport) instance).catppuccin$setFocused(value);
+    }
+
+    @Inject(method = "isFocused", at = @At("HEAD"), cancellable = true)
+    public void catppuccin$onIsFocused(CallbackInfoReturnable<Boolean> cir) {
+        cir.setReturnValue(((IWidgetBackport) this).catppuccin$isFocused());
     }
 
     *///? }
