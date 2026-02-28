@@ -91,7 +91,7 @@ public class WCatppuccinSearch extends WSearch implements CatppuccinWidget {
         public void init() {
             super.init();
 
-            addDirect(theme.label("Left click to toggle module; Right click open the module's settings.")).pad(theme.pad()).centerX();
+            addDirect(theme.label("Left click to toggle module; Right click to open the module's settings.").color(theme().textSecondaryColor())).pad(theme.pad()).centerX();
         }
 
         @Override
