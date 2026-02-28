@@ -25,48 +25,39 @@ jobs:
           java-version: 21
           distribution: temurin
 
-      - name: Read version from libs.versions.toml
+      - name: Read version from gradle.properties
         id: version
         run: |
-          VERSION=$(grep "^mod-version" gradle/libs.versions.toml | head -n 1 | cut -d '"' -f2)
-          MC_VERSION=$(grep "^minecraft.*=.*\"" gradle/libs.versions.toml | head -n 1 | cut -d '"' -f2)
-          TAG_NAME="${VERSION}+mc${MC_VERSION}"
-          RELEASE_NAME="v${VERSION} for Minecraft ${MC_VERSION}"
-
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "mc_version=$MC_VERSION" >> "$GITHUB_OUTPUT"
-          echo "tag=$TAG_NAME" >> "$GITHUB_OUTPUT"
-          echo "release_name=$RELEASE_NAME" >> "$GITHUB_OUTPUT"
+          VERSION=$(grep "^mod\.version" gradle.properties | cut -d'=' -f2 | tr -d '[:space:]')
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "TAG=v$VERSION" >> $GITHUB_ENV
 
       - name: Check if tag already exists
         id: tag_check
         run: |
-          if git ls-remote --tags origin refs/tags/${{ steps.version.outputs.tag }} | grep -q .; then
+          git fetch --tags
+          if git rev-parse "${{ env.TAG }}" >/dev/null 2>&1; then
             echo "Tag already exists, skipping build."
             echo "skip=true" >> "$GITHUB_OUTPUT"
           else
             echo "skip=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Stop job if version was already built
-        if: steps.tag_check.outputs.skip == 'true'
-        run: echo "Skipping build because version already exists."
-
       - name: Grant execute permissions to gradlew
         if: steps.tag_check.outputs.skip != 'true'
         run: chmod +x ./gradlew
 
-      - name: Build addon
+      - name: Build all versions
         if: steps.tag_check.outputs.skip != 'true'
-        run: ./gradlew build
+        run: ./gradlew buildAllAndCollect
 
       - name: Create GitHub Release
         if: steps.tag_check.outputs.skip != 'true'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.version.outputs.tag }}
-          name: ${{ steps.version.outputs.release_name }}
-          files: build/libs/*.jar
+          tag_name: ${{ env.TAG }}
+          name: Release ${{ env.VERSION }}
+          files: build/libs/${{ env.VERSION }}/*.jar
           make_latest: ${{ env.MAKE_LATEST }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
