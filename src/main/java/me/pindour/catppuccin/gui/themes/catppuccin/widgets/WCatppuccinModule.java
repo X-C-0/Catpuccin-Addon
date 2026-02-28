@@ -125,6 +125,8 @@ public class WCatppuccinModule extends WPressable implements CatppuccinWidget {
                          .render();
         }
 
+        double lineWidth = theme.scale(4);
+
         // Cool ass line when active
         if (highlightProgress > 0) {
             Corners corners = corners();
@@ -133,7 +135,6 @@ public class WCatppuccinModule extends WPressable implements CatppuccinWidget {
             double offsetTop = isPrevActive() ? 0 : offset;
             double offsetBottom = isNextActive() ? 0 : offset;
 
-            double lineWidth = theme.scale(4);
             double lineHeight = height - offsetTop - offsetBottom;
 
             double finalTop = y + offsetTop;
@@ -149,13 +150,13 @@ public class WCatppuccinModule extends WPressable implements CatppuccinWidget {
                          .render();
         }
 
-        double x = this.x + pad * 2;
-        double w = width - pad * 2;
+        double x = this.x;
+        double w = width;
 
         switch (theme.moduleAlignment.get()) {
             case Center -> x += w / 2 - titleWidth / 2;
             case Right -> x += w - titleWidth - pad * 2;
-            default -> x += pad;
+            default -> x += pad + lineWidth + pad;
         }
 
         Color color = ColorUtils.interpolateColor(
