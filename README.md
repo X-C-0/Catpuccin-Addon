@@ -1,19 +1,19 @@
 <h3 align="center">
   <img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/logos/exports/1544x1544_circle.png" width="100" alt="Logo"/><br/>
-  <img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/misc/transparent.png" height="30" width="0px"/>
+  <img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/misc/transparent.png" height="30" width="0px" alt=""/>
   Catppuccin for <a href="https://meteorclient.com">Meteor Client</a>
-  <img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/misc/transparent.png" height="30" width="0px"/>
+  <img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/misc/transparent.png" height="30" width="0px" alt=""/>
 </h3>
 
 <p align="center">
-    <a href="https://github.com/X-C-0/Catppuccin-Addon/stargazers"><img src="https://img.shields.io/github/stars/X-C-0/Catppuccin-Addon?colorA=363a4f&colorB=b7bdf8&style=for-the-badge"></a>
-    <a href="https://github.com/X-C-0/Catppuccin-Addon/issues"><img src="https://img.shields.io/github/issues/X-C-0/Catppuccin-Addon?colorA=363a4f&colorB=f5a97f&style=for-the-badge"></a>
-    <a href="https://github.com/X-C-0/Catppuccin-Addon/contributors"><img src="https://img.shields.io/github/contributors/X-C-0/Catppuccin-Addon?colorA=363a4f&colorB=a6da95&style=for-the-badge"></a>
-  <a href="https://github.com/X-C-0/Catppuccin-Addon/releases"><img src="https://img.shields.io/github/downloads/X-C-0/Catppuccin-Addon/total?style=for-the-badge&labelColor=363a4f&color=f5c2e7"></a>
+    <a href="https://github.com/X-C-0/Catppuccin-Addon/stargazers"><img src="https://img.shields.io/github/stars/X-C-0/Catppuccin-Addon?colorA=363a4f&colorB=b7bdf8&style=for-the-badge" alt=""></a>
+    <a href="https://github.com/X-C-0/Catppuccin-Addon/issues"><img src="https://img.shields.io/github/issues/X-C-0/Catppuccin-Addon?colorA=363a4f&colorB=f5a97f&style=for-the-badge" alt=""></a>
+    <a href="https://github.com/X-C-0/Catppuccin-Addon/contributors"><img src="https://img.shields.io/github/contributors/X-C-0/Catppuccin-Addon?colorA=363a4f&colorB=a6da95&style=for-the-badge" alt=""></a>
+  <a href="https://github.com/X-C-0/Catppuccin-Addon/releases"><img src="https://img.shields.io/github/downloads/X-C-0/Catppuccin-Addon/total?style=for-the-badge&labelColor=363a4f&color=f5c2e7" alt=""></a>
 </p>
 
 <p align="center">
-  <b>⚠️ v2.0 IS HERE! COMPLETE VISUAL OVERHAUL ⚠️</b><br>
+  <b>⚠️ v2.0 Visual Overhaul ⚠️</b><br>
   <i>Harder, Better, Faster, Stronger</i>
 </p>
 
@@ -26,26 +26,28 @@
 <details>
 <summary>🌻 Latte</summary>
 <br/>
-<img src="assets/latte.png" height="700" alt="Latte preview"/>
+<img src="assets/latte.png" alt="Latte preview"/>
 </details>
 
 <details>
 <summary>🪴 Frappé</summary>
 <br/>
-<img src="assets/frappe.png" height="700" alt="Frappé preview"/>
+<img src="assets/frappe.png" alt="Frappé preview"/>
 </details>
 
 <details>
 <summary>🌺 Macchiato</summary>
 <br/>
-<img src="assets/macchiato.png" height="700" alt="Macchiato preview"/>
+<img src="assets/macchiato.png" alt="Macchiato preview"/>
 </details>
 
 <details>
 <summary>🌿 Mocha</summary>
 <br/>
-<img src="assets/mocha.png" height="700" alt="Mocha preview"/>
+<img src="assets/mocha.png" alt="Mocha preview"/>
 </details>
+
+> Font used in previews: [Lexend Deca](https://fonts.google.com/specimen/Lexend+Deca)
 
 ## 🧰 Installation
 
@@ -60,30 +62,65 @@
 
 ## ✨ Features
 
-- 🟣 **Epic rounded corners™**  
+- 🟣 **Epic Rounded Corners™**  
   *(Powered by custom shaders and meshes. Perfectly smooth rounded corners with configurable radius)*
 
 
-- 🌈 **Epic flavors and colors** from the [Catppuccin Palette](https://catppuccin.com/palette/)  
+- 🌈 **Epic Flavors and Colors** from the [Catppuccin Palette](https://catppuccin.com/palette/)  
   *(Latte, Frappé, Macchiato, Mocha and all the colors)*
 
 
-- 🌀 **Epic smooth animations™**  
+- 🌀 **Epic Smooth Animations™**  
   *(Configurable duration and easing, now even better and smoother after v2 update)*
 
 
-- 🔤 **Epic font rendering™**  
+- 🔤 **Epic Font Rendering™**  
   *(Supports bold, italic, and dynamic font style switching)*
 
 
-- 🧲 **Epic snap-to-grid for Modules Screen™**  
+- 🧲 **Epic Snap-to-Grid for Modules Screen™**  
   *(Keeps your GUI very epic looking and organized)*
 
-## 🛠️ Planned
 
-- Fix bugs
-- Custom HUD elements (Module List, Status bar, Inventory, Nametags etc.)
-- im buggin out
+- 🔎 **Epic Search™**  
+  *(Leveraging advanced query-parsing technology to help you find 'AutoCrystal' 0.4ms faster)*
+
+## 🛠️ For Developers
+
+Want to add support for the Catppuccin Theme in your addon?
+
+### Gradle Setup
+
+Add the JitPack repository and the API dependency to your `build.gradle.kts`.
+
+```kotlin
+repositories {
+    maven {
+      name = "jitpack"
+      url = uri("https://jitpack.io")
+    }
+}
+```
+
+```kotlin
+dependencies {
+    // Use the ':api' classifier to not include the whole theme in your addon
+    // Note: Make sure '${mc_version}' matches your target Minecraft version (e.g. "1.21.1"),
+    //       also replace '${catppuccin_version}' with the latest Catppuccin version (e.g. "2.0.0")
+    include(modImplementation("com.github.X-C-0.catppuccin-addon:${mc_version}:${catppuccin_version}:api"))
+    
+    // Optional: Add the full theme to your runtime environment
+    modLocalRuntime("com.github.X-C-0.catppuccin-addon:${mc_version}:${catppuccin_version}")
+}
+```
+
+### Registering Custom Icons
+If your addon adds new categories, you can register custom icons for them to match the theme style.
+
+```java
+// Check the javadocs for usage
+CatppuccinIcons.registerCategoryIcon(categoryName, texture);
+```
 
 ## 💬 Support
 
@@ -91,5 +128,5 @@
 - Found a bug? Open an [Issue](https://github.com/X-C-0/Catppuccin-Addon/issues) (please include logs/screenshots).
 
 <p align="center">
-    <img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/footers/gray0_ctp_on_line.svg?sanitize=true" />
+    <img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/footers/gray0_ctp_on_line.svg?sanitize=true"  alt="footer"/>
 </p>
