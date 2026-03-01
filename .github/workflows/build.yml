@@ -56,7 +56,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.TAG }}
-          name: Release ${{ env.VERSION }}
+          name: ${{ env.VERSION }}
           files: build/libs/${{ env.VERSION }}/*.jar
           make_latest: ${{ env.MAKE_LATEST }}
         env:
