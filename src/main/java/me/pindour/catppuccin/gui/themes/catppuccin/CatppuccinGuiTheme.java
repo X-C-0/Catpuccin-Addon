@@ -39,7 +39,6 @@ import meteordevelopment.meteorclient.gui.widgets.input.WDropdown;
 import meteordevelopment.meteorclient.gui.widgets.input.WSlider;
 import meteordevelopment.meteorclient.gui.widgets.input.WTextBox;
 import meteordevelopment.meteorclient.gui.widgets.pressable.*;
-import meteordevelopment.meteorclient.renderer.Fonts;
 import meteordevelopment.meteorclient.renderer.text.TextRenderer;
 import meteordevelopment.meteorclient.renderer.text.VanillaTextRenderer;
 import meteordevelopment.meteorclient.settings.*;
@@ -108,6 +107,13 @@ public class CatppuccinGuiTheme extends GuiTheme {
             .onChanged(v -> {
                 if (mc.currentScreen instanceof WidgetScreen) mc.options.hudHidden = v;
             })
+            .build()
+    );
+
+    public final Setting<Boolean> windowShadow = sgGeneral.add(new BoolSetting.Builder()
+            .name("window-shadow")
+            .description("Render a subtle shadow under windows.")
+            .defaultValue(true)
             .build()
     );
 

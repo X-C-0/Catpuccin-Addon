@@ -19,7 +19,7 @@ import meteordevelopment.meteorclient.utils.render.color.Color;
 import net.minecraft.client.gui.Click;
 
 public class WCatppuccinWindow extends WWindow implements CatppuccinWidget {
-    private final int shadowOffset = 2;
+    private static final int SHADOW_OFFSET = 2;
 
     private CatppuccinModulesScreen modulesScreen;
     private boolean shouldSnap = false;
@@ -57,15 +57,21 @@ public class WCatppuccinWindow extends WWindow implements CatppuccinWidget {
     @Override
     protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
         CatppuccinGuiTheme theme = theme();
-        Color shadowColor = ColorUtils.withAlpha(theme.crustColor(), 0.4);
         Color backgroundColor = ColorUtils.withAlpha(theme.mantleColor(), theme.windowOpacity());
 
+        int shadowOffset = getShadowOffset();
+
         // Shadow rectangle
-        roundedRect().pos(x - shadowOffset, y - shadowOffset)
-                     .size(width + shadowOffset * 2, (expanded || animation.isRunning() ? height : header.height) + shadowOffset * 2)
-                     .radius(radius() + shadowOffset)
-                     .color(shadowColor)
-                     .render();
+        if (theme.windowShadow.get()) {
+            Color shadowColor = ColorUtils.withAlpha(theme.crustColor(), 0.4);
+
+            roundedRect().pos(x - shadowOffset, y - shadowOffset)
+                         .size(width + shadowOffset * 2, (expanded || animation.isRunning() ? height : header.height) + shadowOffset * 2)
+                         .radius(radius() + shadowOffset)
+                         .color(shadowColor)
+                         .render();
+
+        }
 
         // Inner rectangle
         if (expanded || animation.isRunning())
@@ -83,13 +89,16 @@ public class WCatppuccinWindow extends WWindow implements CatppuccinWidget {
         double progress = animation.getProgress();
         boolean useScissor = animation.isRunning();
 
-        if (useScissor)
+        if (useScissor) {
+            int shadowOffset = getShadowOffset();
+
             renderer.scissorStart(
                     x - shadowOffset,
                     y - shadowOffset,
                     width + shadowOffset * 2,
                     (height - header.height) * progress + header.height + shadowOffset * 2
             );
+        }
 
         boolean toReturn = super.render(renderer, mouseX, mouseY, delta);
 
@@ -268,5 +277,9 @@ public class WCatppuccinWindow extends WWindow implements CatppuccinWidget {
 
     private double snapToGrid(double value) {
         return (Math.round(value / gridSize) * gridSize);
+    }
+
+    private int getShadowOffset() {
+        return theme().windowShadow.get() ? SHADOW_OFFSET : 0;
     }
 }
