@@ -1,0 +1,54 @@
+name: Bug Report
+description: Create a report to help us improve the Catppuccin addon.
+labels:
+  - bug
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is.
+      placeholder: What went wrong?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: How to trigger this bug?
+      placeholder: |
+        1. Open the Meteor Client GUI...
+        2. Go to '...'
+        3. Click on '....'
+    validations:
+      required: true
+  - type: input
+    id: addon-version
+    attributes:
+      label: Catppuccin Addon Version
+      description: What version of the Catppuccin addon are you currently using?
+      placeholder: v2.0.0
+    validations:
+      required: true
+  - type: input
+    id: mc-version
+    attributes:
+      label: Minecraft Version
+      description: What version of Minecraft are you playing on?
+      placeholder: 1.21.4
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-submission Checks
+      description: Please confirm the following before submitting your report.
+      options:
+        - label: >-
+            This bug wasn't already reported (I have searched bug reports on
+            GitHub).
+          required: true
+        - label: >-
+            I have reproduced this issue on the latest version of the Catppuccin
+            addon.
+          required: true

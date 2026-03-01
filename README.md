@@ -13,7 +13,7 @@
 </p>
 
 <p align="center">
-  <b>⚠️ v2.0 Visual Overhaul ⚠️</b><br>
+  <a href="https://github.com/X-C-0/catppuccin-addon/releases/tag/v2.0.0"><b>⚠️ v2.0 Visual Overhaul ⚠️</b></a><br>
   <i>Harder, Better, Faster, Stronger</i>
 </p>
 
