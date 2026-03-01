@@ -14,11 +14,15 @@ import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static meteordevelopment.meteorclient.MeteorClient.mc;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_RIGHT;
+
+//? if >=1.21.4
+import meteordevelopment.meteorclient.systems.config.Config;
 
 public class WCatppuccinModule extends WPressable implements CatppuccinWidget {
     private final Module module;
@@ -45,11 +49,17 @@ public class WCatppuccinModule extends WPressable implements CatppuccinWidget {
         boolean isActive = module.isActive();
         wasActive = isActive;
 
-        List<Module> categoryModules = Modules.get().getGroup(module.category);
-        int index = categoryModules.indexOf(module);
+        List<Module> visibleModules = new ArrayList<>(Modules.get().getGroup(module.category));
+        //? if >=1.21.4
+        visibleModules.removeAll(Config.get().hiddenModules.get());
 
-        if (index > 0) prevModule = categoryModules.get(index - 1);
-        if (index < categoryModules.size() - 1) nextModule = categoryModules.get(index + 1);
+        int visibleIndex = visibleModules.indexOf(module);
+
+        if (visibleIndex > 0)
+            prevModule = visibleModules.get(visibleIndex - 1);
+
+        if (visibleIndex >= 0 && visibleIndex < visibleModules.size() - 1)
+            nextModule = visibleModules.get(visibleIndex + 1);
 
         highlightAnimation = new Animation(
                 Easing.QUART_OUT,
