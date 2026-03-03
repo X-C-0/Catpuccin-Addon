@@ -4,6 +4,7 @@ import me.pindour.catppuccin.api.icons.CatppuccinIcons;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import me.pindour.catppuccin.gui.themes.catppuccin.icons.CatppuccinBuiltinIcons;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.container.WCatppuccinWindow;
+import me.pindour.catppuccin.systems.integrations.addons.NoraIntegration;
 import me.pindour.catppuccin.utils.search.results.ModuleSearchResult;
 import me.pindour.catppuccin.utils.search.SearchUtils;
 import meteordevelopment.meteorclient.gui.GuiTheme;
@@ -125,8 +126,6 @@ public class CatppuccinModulesScreen extends TabScreen {
         w.padding = theme.pad();
         w.spacing = 0;
 
-        if (shouldSnap) w.initSnapping(this, gridSize);
-
         double size = theme.scale(16);
 
         if (theme.categoryIcons()) {
@@ -187,8 +186,6 @@ public class CatppuccinModulesScreen extends TabScreen {
         WCatppuccinWindow w = (WCatppuccinWindow) theme.window("Search");
         w.id = "search";
 
-        if (shouldSnap) w.initSnapping(this, gridSize);
-
         double size = theme.scale(16);
 
         if (theme.categoryIcons()) {
@@ -225,8 +222,6 @@ public class CatppuccinModulesScreen extends TabScreen {
         w.id = "favorites";
         w.padding = 0;
         w.spacing = 0;
-
-        if (shouldSnap) w.initSnapping(this, gridSize);
 
         double size = theme.scale(16);
 
@@ -282,6 +277,7 @@ public class CatppuccinModulesScreen extends TabScreen {
 
         @Override
         public void init() {
+            // Categories
             for (Category category : Modules.loopCategories()) {
                 List<Module> modules = Modules.get().getGroup(category);
 
@@ -300,8 +296,18 @@ public class CatppuccinModulesScreen extends TabScreen {
 
             CatppuccinGuiTheme catppuccinTheme = (CatppuccinGuiTheme) theme;
 
+            // Search
             if (!catppuccinTheme.catppuccinSearchScreen.get())
                 windows.add(createSearch(this));
+
+            // Nora categories
+            NoraIntegration.ifPresent(nora -> nora.initCustomCategories(this, windows));
+
+            // Init snapping last so it accounts for all windows
+            if (shouldSnap) {
+                for (WWindow window : windows)
+                    ((WCatppuccinWindow) window).initSnapping(CatppuccinModulesScreen.this, gridSize);
+            }
         }
 
         protected void refresh() {

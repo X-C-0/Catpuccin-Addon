@@ -4,6 +4,7 @@ import me.pindour.catppuccin.api.text.RichText;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import me.pindour.catppuccin.gui.themes.catppuccin.icons.CatppuccinBuiltinIcons;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.settings.WCatppuccinKeybind;
+import me.pindour.catppuccin.systems.integrations.addons.NoraIntegration;
 import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.events.meteor.ActiveModulesChangedEvent;
 import meteordevelopment.meteorclient.events.meteor.ModuleBindChangedEvent;
@@ -52,7 +53,7 @@ public class CatppuccinModuleScreen extends WindowScreen {
         double pad = theme.pad();
 
         // Scrollable view - contains description, keybind, settings and custom widget
-        WView view = add(theme.view()).widget();
+        WView view = add(theme.view()).expandX().widget();
         view.maxHeight = window.view.maxHeight - 100; // Has to be smaller than window's max height to prevent double scrollbars
         view.spacing = 0;
 
@@ -116,6 +117,11 @@ public class CatppuccinModuleScreen extends WindowScreen {
         };
 
         bottom.add(theme.label(RichText.of("Active"))).expandCellX().padLeft(4);
+
+        // Add Nora Tweak's "add to category" button
+        NoraIntegration.ifPresent(
+                nora -> bottom.add(nora.addToCategoryButton(theme, module)).padLeft(theme.scale(pad))
+        );
 
         // Config sharing
         WHorizontalList sharing = bottom.add(theme.horizontalList()).right().widget();

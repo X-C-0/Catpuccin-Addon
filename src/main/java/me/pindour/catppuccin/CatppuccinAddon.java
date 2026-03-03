@@ -4,8 +4,10 @@ import me.pindour.catppuccin.api.render.RoundedRect;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import com.mojang.logging.LogUtils;
 import me.pindour.catppuccin.renderer.CatppuccinRenderer;
+import me.pindour.catppuccin.systems.integrations.Integrations;
 import meteordevelopment.meteorclient.addons.MeteorAddon;
 import meteordevelopment.meteorclient.gui.GuiThemes;
+import meteordevelopment.meteorclient.systems.Systems;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 
@@ -19,6 +21,8 @@ public class CatppuccinAddon extends MeteorAddon {
         LOG.info("Initializing Catppuccin Addon");
 
         GuiThemes.add(new CatppuccinGuiTheme());
+
+        Systems.add(new Integrations());
 
         RoundedRect.get().registerRenderer(CatppuccinRenderer.get());
     }
