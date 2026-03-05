@@ -6,10 +6,10 @@
 </h3>
 
 <p align="center">
-    <a href="https://github.com/X-C-0/Catppuccin-Addon/stargazers"><img src="https://img.shields.io/github/stars/X-C-0/Catppuccin-Addon?colorA=363a4f&colorB=b7bdf8&style=for-the-badge" alt=""></a>
-    <a href="https://github.com/X-C-0/Catppuccin-Addon/issues"><img src="https://img.shields.io/github/issues/X-C-0/Catppuccin-Addon?colorA=363a4f&colorB=f5a97f&style=for-the-badge" alt=""></a>
-    <a href="https://github.com/X-C-0/Catppuccin-Addon/contributors"><img src="https://img.shields.io/github/contributors/X-C-0/Catppuccin-Addon?colorA=363a4f&colorB=a6da95&style=for-the-badge" alt=""></a>
-  <a href="https://github.com/X-C-0/Catppuccin-Addon/releases"><img src="https://img.shields.io/github/downloads/X-C-0/Catppuccin-Addon/total?style=for-the-badge&labelColor=363a4f&color=f5c2e7" alt=""></a>
+    <a href="https://github.com/X-C-0/catppuccin-addon/stargazers"><img src="https://img.shields.io/github/stars/X-C-0/catppuccin-addon?colorA=363a4f&colorB=b7bdf8&style=for-the-badge" alt=""></a>
+    <a href="https://github.com/X-C-0/catppuccin-addon/issues"><img src="https://img.shields.io/github/issues/X-C-0/catppuccin-addon?colorA=363a4f&colorB=f5a97f&style=for-the-badge" alt=""></a>
+    <a href="https://github.com/X-C-0/catppuccin-addon/contributors"><img src="https://img.shields.io/github/contributors/X-C-0/catppuccin-addon?colorA=363a4f&colorB=a6da95&style=for-the-badge" alt=""></a>
+  <a href="https://github.com/X-C-0/catppuccin-addon/releases"><img src="https://img.shields.io/github/downloads/X-C-0/catppuccin-addon/total?style=for-the-badge&labelColor=363a4f&color=f5c2e7" alt=""></a>
 </p>
 
 <p align="center">
@@ -125,7 +125,7 @@ CatppuccinIcons.registerCategoryIcon(categoryName, texture);
 ## 💬 Support
 
 - Find me on Meteor's discord (`@Pindour`) or join my silly [Discord Server](https://discord.gg/njM9JFPnT5) if you want to hang out.
-- Found a bug? Open an [Issue](https://github.com/X-C-0/Catppuccin-Addon/issues) (please include logs/screenshots).
+- Found a bug? Open an [Issue](https://github.com/X-C-0/catppuccin-addon/issues) (please include logs/screenshots).
 
 <p align="center">
     <img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/footers/gray0_ctp_on_line.svg?sanitize=true"  alt="footer"/>
