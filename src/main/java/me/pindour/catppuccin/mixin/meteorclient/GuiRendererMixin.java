@@ -4,6 +4,7 @@ import me.pindour.catppuccin.renderer.CatppuccinRenderer;
 import me.pindour.catppuccin.api.text.RichText;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import me.pindour.catppuccin.gui.themes.catppuccin.icons.CatppuccinBuiltinIcons;
+import me.pindour.catppuccin.utils.ScissorAnimOffset;
 import meteordevelopment.meteorclient.gui.GuiTheme;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.renderer.operations.TextOperation;
@@ -123,6 +124,28 @@ public abstract class GuiRendererMixin {
 
     @Inject(method = "scissorStart", at = @At("TAIL"))
     private void catppuccin$scissorStart(double x, double y, double width, double height, CallbackInfo ci) {
+        if (ScissorAnimOffset.active) {
+            GuiRendererAccessor accessor = (GuiRendererAccessor) this;
+            Stack<Scissor> stack = accessor.catppuccin$getScissorStack();
+            if (stack != null && !stack.isEmpty()) {
+                Scissor top = peekScissor(stack);
+
+                double newY = top.y + ScissorAnimOffset.offsetY;
+                double newHeight = top.height + Math.min(ScissorAnimOffset.offsetY, 0);
+                newY = Math.max(newY, 0);
+                newHeight = Math.max(newHeight, 0);
+
+                top.set(top.x, newY, top.width, newHeight);
+
+                accessor.catppuccin$getDrawContext().enableScissor(
+                    (int) top.x,
+                    (int) newY,
+                    (int) (top.x + top.width),
+                    (int) (newY + newHeight)
+                );
+            }
+        }
+
         if (!isCatppuccinActive()) return;
         updateClipFromStack();
     }
@@ -172,7 +195,7 @@ public abstract class GuiRendererMixin {
     @Unique
     private void updateClipFromStack() {
         Stack<Scissor> stack = ((GuiRendererAccessor) this).catppuccin$getScissorStack();
-        if (stack == null || stack.isEmpty()) {
+        if (stack == null || stack.isEmpty() || ScissorAnimOffset.active) {
             renderer().clearClipRect();
             return;
         }

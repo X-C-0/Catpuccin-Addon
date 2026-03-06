@@ -15,5 +15,5 @@ void main() {
     gl_Position = u_Proj * worldPos;
 
     v_LocalPos = Texture;
-    v_ScreenPos = Position;
+    v_ScreenPos = worldPos.xy;
 }
