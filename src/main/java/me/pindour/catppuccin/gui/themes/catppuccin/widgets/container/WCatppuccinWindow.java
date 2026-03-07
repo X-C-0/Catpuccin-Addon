@@ -29,6 +29,7 @@ public class WCatppuccinWindow extends WWindow implements CatppuccinWidget {
     private double mouseOffsetY;
 
     private Animation animation;
+    private Animation cornerAnimation;
 
     public WCatppuccinWindow(WWidget icon, String title) {
         super(icon, title);
@@ -39,6 +40,11 @@ public class WCatppuccinWindow extends WWindow implements CatppuccinWidget {
         super.init();
 
         animation = new Animation(
+                theme().guiAnimationEasing(),
+                theme().guiAnimationDuration(),
+                expanded ? Direction.FORWARDS : Direction.BACKWARDS
+        );
+        cornerAnimation = new Animation(
                 theme().guiAnimationEasing(),
                 theme().guiAnimationDuration(),
                 expanded ? Direction.FORWARDS : Direction.BACKWARDS
@@ -66,8 +72,9 @@ public class WCatppuccinWindow extends WWindow implements CatppuccinWidget {
             Color shadowColor = ColorUtils.withAlpha(theme.crustColor(), 0.4);
 
             roundedRect().pos(x - shadowOffset, y - shadowOffset)
-                         .size(width + shadowOffset * 2, (expanded || animation.isRunning() ? height : header.height) + shadowOffset * 2)
-                         .radius(radius() + shadowOffset)
+                         .size(width + shadowOffset * 2,
+                                 header.height + (height - header.height) * animation.getProgress() + shadowOffset * 2)
+                         .radius(radius() + shadowOffset / 2f)
                          .color(shadowColor)
                          .render();
 
@@ -122,11 +129,14 @@ public class WCatppuccinWindow extends WWindow implements CatppuccinWidget {
     public void setExpanded(boolean expanded) {
         super.setExpanded(expanded);
 
-        if (header != null && header instanceof WCatppuccinHeader catppuccinHeader)
+        if (header instanceof WCatppuccinHeader catppuccinHeader)
             catppuccinHeader.setIndicator(expanded);
 
         if (animation != null)
             animation.reverse();
+
+        if (expanded && cornerAnimation != null)
+            cornerAnimation.finishedAt(Direction.FORWARDS);
     }
 
     @Override
@@ -181,16 +191,33 @@ public class WCatppuccinWindow extends WWindow implements CatppuccinWidget {
         @Override
         protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
             CatppuccinGuiTheme theme = theme();
+            double cornerProgress = cornerAnimation.getProgress();
+
+            // Start corner animation if we're collapsing,
+            // and we're at the end of the main animation
+            if (!expanded
+                    && animation.getProgress() <= 0.0
+                    && !cornerAnimation.isRunning()
+                    && cornerProgress > 0) {
+                cornerAnimation.start(Direction.BACKWARDS);
+            }
 
             roundedRect().bounds(this)
-                         .radius(radius(), !expanded && animation.isFinished() ? Corners.ALL : Corners.TOP)
+                         .radii(radius(),
+                                radius(),
+                                (float) (radius() * (1 - cornerProgress)),
+                                (float) (radius() * (1 - cornerProgress)))
                          .color(theme.crustColor())
                          .render();
 
             // Shadow under the header
             if (expanded || animation.isRunning()) {
                 Color transparentColor = ColorUtils.withAlpha(theme.baseColor(), 0);
-                Color semiTransparentColor = ColorUtils.withAlpha(theme.baseColor(), 0.5 * theme.windowOpacity());
+
+                Color semiTransparentColor = ColorUtils.withAlpha(
+                        theme.baseColor(),
+                        0.5 * theme.windowOpacity()
+                );
 
                 renderer.quad(
                         x,
@@ -276,7 +303,7 @@ public class WCatppuccinWindow extends WWindow implements CatppuccinWidget {
     }
 
     private double snapToGrid(double value) {
-        return (Math.round(value / gridSize) * gridSize);
+        return Math.round(value / gridSize) * gridSize;
     }
 
     private int getShadowOffset() {

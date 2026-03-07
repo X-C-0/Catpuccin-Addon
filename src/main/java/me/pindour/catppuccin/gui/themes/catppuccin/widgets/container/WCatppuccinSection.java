@@ -19,6 +19,7 @@ public class WCatppuccinSection extends WSection implements CatppuccinWidget {
     private WHeader header;
 
     private Animation animation;
+    private Animation cornerAnimation;
 
     public WCatppuccinSection(String title, boolean expanded, WWidget headerWidget) {
         super(title, expanded, headerWidget);
@@ -29,6 +30,11 @@ public class WCatppuccinSection extends WSection implements CatppuccinWidget {
         super.init();
 
         animation = new Animation(
+                theme().guiAnimationEasing(),
+                theme().guiAnimationDuration(),
+                expanded ? Direction.FORWARDS : Direction.BACKWARDS
+        );
+        cornerAnimation = new Animation(
                 theme().guiAnimationEasing(),
                 theme().guiAnimationDuration(),
                 expanded ? Direction.FORWARDS : Direction.BACKWARDS
@@ -103,7 +109,9 @@ public class WCatppuccinSection extends WSection implements CatppuccinWidget {
     @Override
     public void setExpanded(boolean expanded) {
         super.setExpanded(expanded);
+
         animation.reverse();
+        if (expanded) cornerAnimation.finishedAt(Direction.FORWARDS);
     }
 
     @Override
@@ -136,6 +144,17 @@ public class WCatppuccinSection extends WSection implements CatppuccinWidget {
             CatppuccinGuiTheme theme = theme();
             double pad = pad();
             double s = theme.textHeight() * 0.75;
+            double progress = animation.getProgress();
+            double cornerProgress = cornerAnimation.getProgress();
+
+            // Start corner animation if we're collapsing,
+            // and we're almost at the end of the main animation
+            if (!expanded
+                && progress <= 0.1
+                && !cornerAnimation.isRunning()
+                && cornerProgress > 0) {
+                cornerAnimation.start(Direction.BACKWARDS);
+            }
 
             Color bgColor = ColorUtils.withAlpha(
                     mouseOver ? theme.surface1Color() : theme.surface0Color(),
@@ -144,7 +163,10 @@ public class WCatppuccinSection extends WSection implements CatppuccinWidget {
 
             // Background
             roundedRect().bounds(this)
-                         .radius(radius(), expanded || animation.isRunning() ? Corners.TOP : Corners.ALL)
+                         .radii(radius(),
+                                radius(),
+                                (float) (radius() * (1 - cornerProgress)),
+                                (float) (radius() * (1 - cornerProgress)))
                          .color(bgColor)
                          .render();
 
@@ -156,7 +178,7 @@ public class WCatppuccinSection extends WSection implements CatppuccinWidget {
                     y + height / 2 - s / 2,
                     s,
                     s,
-                    90 + 90 * animation.getProgress(),
+                    90 + 90 * progress,
                     CatppuccinBuiltinIcons.ARROW.texture(),
                     theme.textColor()
             );
