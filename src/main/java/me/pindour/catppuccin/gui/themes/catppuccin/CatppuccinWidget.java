@@ -27,11 +27,11 @@ public interface CatppuccinWidget extends BaseWidget {
     // Styling
 
     default float radius() {
-        return (float) (theme().cornerRadius.get() * theme().scale.get());
+        return (float) (theme().scale(theme().cornerRadius.get()));
     }
 
     default float smallRadius() {
-        return (float) (theme().smallCornerRadius.get() * theme().scale.get());
+        return (float) (theme().scale(theme().smallCornerRadius.get()));
     }
 
     default Corners corners() {

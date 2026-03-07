@@ -27,7 +27,7 @@ public class WCatppuccinDropdown<T> extends WDropdown<T> implements CatppuccinWi
 
     @Override
     public void init() {
-        double pad = 6;
+        double pad = theme.pad();
 
         root = createRootWidget();
         root.theme = theme;
@@ -95,10 +95,24 @@ public class WCatppuccinDropdown<T> extends WDropdown<T> implements CatppuccinWi
                 theme.textColor()
         );
 
+        // Dot separator
+        double dotSize = theme.textHeight() / 3;
+        double dotX = x + pad + theme.textWidth(titleText) + pad;
+        double dotY = y + pad + theme.textHeight() / 2 - dotSize / 2;
+
+        renderer.quad(
+                dotX,
+                dotY,
+                dotSize,
+                dotSize,
+                GuiRenderer.CIRCLE,
+                theme.accentColor()
+        );
+
         // Value text
         renderer().text(
                 valueText,
-                x + pad + theme.textWidth(titleText) + pad,
+                dotX + dotSize + pad,
                 y + pad,
                 theme.accentColor()
         );
@@ -176,9 +190,18 @@ public class WCatppuccinDropdown<T> extends WDropdown<T> implements CatppuccinWi
         @Override
         protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
             CatppuccinGuiTheme theme = theme();
-            Color outlineColor = ColorUtils.withAlpha(theme.accentColor(), theme.backgroundOpacity());
 
-            background(getBackgroundColor(false, false), outlineColor).render();
+            Color outlineColor = ColorUtils.withAlpha(
+                    theme.accentColor(),
+                    0.8 + (0.2 * theme.backgroundOpacity())
+            );
+
+            Color backgroundColor = ColorUtils.withAlpha(
+                    theme.backgroundColor.get(false, false),
+                    0.8 + (0.2 * theme.backgroundOpacity())
+            );
+
+            background(backgroundColor, outlineColor).render();
         }
     }
 
@@ -204,7 +227,7 @@ public class WCatppuccinDropdown<T> extends WDropdown<T> implements CatppuccinWi
 
             if (mouseOver)
                 roundedRect().bounds(this)
-                             .radius(radius() - pad())
+                             .radius(smallRadius())
                              .color(ColorUtils.withAlpha(theme.accentColor(), 0.4))
                              .render();
 
