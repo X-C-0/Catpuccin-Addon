@@ -3,6 +3,7 @@ package me.pindour.catppuccin.gui.screens;
 import me.pindour.catppuccin.api.text.RichText;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import me.pindour.catppuccin.gui.themes.catppuccin.icons.CatppuccinBuiltinIcons;
+import me.pindour.catppuccin.gui.themes.catppuccin.widgets.container.WCatppuccinWindow;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.settings.WCatppuccinKeybind;
 import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.events.meteor.ActiveModulesChangedEvent;
@@ -14,7 +15,6 @@ import meteordevelopment.meteorclient.gui.widgets.WWidget;
 import meteordevelopment.meteorclient.gui.widgets.containers.WContainer;
 import meteordevelopment.meteorclient.gui.widgets.containers.WHorizontalList;
 import meteordevelopment.meteorclient.gui.widgets.containers.WVerticalList;
-import meteordevelopment.meteorclient.gui.widgets.containers.WView;
 import meteordevelopment.meteorclient.gui.widgets.input.WDropdown;
 import meteordevelopment.meteorclient.gui.widgets.pressable.WButton;
 import meteordevelopment.meteorclient.gui.widgets.pressable.WCheckbox;
@@ -51,12 +51,10 @@ public class CatppuccinModuleScreen extends WindowScreen {
     public void initWidgets() {
         double pad = theme.pad();
 
-        // Scrollable view - contains description, keybind, settings and custom widget
-        WView view = add(theme.view()).widget();
-        view.maxHeight = window.view.maxHeight - 100; // Has to be smaller than window's max height to prevent double scrollbars
-        view.spacing = 0;
+        WCatppuccinWindow window = (WCatppuccinWindow) this.window;
+        window.view.spacing = 0;
 
-        WVerticalList moduleInfo = view.add(theme.verticalList()).padHorizontal(pad).padBottom(pad).expandX().widget();
+        WVerticalList moduleInfo = window.add(theme.verticalList()).padHorizontal(pad).padBottom(pad).expandX().widget();
         moduleInfo.spacing = pad;
 
         // Description
@@ -90,7 +88,7 @@ public class CatppuccinModuleScreen extends WindowScreen {
 
         // Settings
         if (!module.settings.groups.isEmpty()) {
-            settingsContainer = view.add(theme.verticalList()).expandX().widget();
+            settingsContainer = window.add(theme.verticalList()).expandX().widget();
             settingsContainer.add(theme.settings(module.settings)).expandX();
         }
 
@@ -98,16 +96,25 @@ public class CatppuccinModuleScreen extends WindowScreen {
         WWidget widget = module.getWidget(theme);
 
         if (widget != null) {
-            view.add(theme.horizontalSeparator()).padVertical(pad).expandX();
-            Cell<WWidget> cell = view.add(widget);
+            window.add(theme.horizontalSeparator()).pad(pad).expandX();
+
+            WContainer container = window.add(theme.horizontalList()).expandX().padHorizontal(pad).widget();
+            Cell<WWidget> cell = container.add(widget);
+
             if (widget instanceof WContainer) cell.expandX();
         }
 
+        double windowPadding = window.padding;
+
         if (!module.settings.groups.isEmpty() || widget != null)
-            add(theme.horizontalSeparator()).padBottom(pad).expandX();
+            window.addDirect(theme.horizontalSeparator()).padHorizontal(windowPadding * 2).expandX();
 
         // Bottom - isn't added to the view, making it "stick" at the bottom
-        WHorizontalList bottom = add(theme.horizontalList()).expandX().widget();
+        WHorizontalList bottom = window.addDirect(theme.horizontalList())
+                .expandX()
+                .padHorizontal(windowPadding * 2)
+                .padVertical(windowPadding)
+                .widget();
 
         // Active
         active = bottom.add(theme.checkbox(module.isActive())).widget();

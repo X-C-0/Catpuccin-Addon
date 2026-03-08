@@ -12,6 +12,7 @@ import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.utils.Cell;
 import meteordevelopment.meteorclient.gui.utils.WindowConfig;
 import meteordevelopment.meteorclient.gui.widgets.WWidget;
+import meteordevelopment.meteorclient.gui.widgets.containers.WContainer;
 import meteordevelopment.meteorclient.gui.widgets.containers.WHorizontalList;
 import meteordevelopment.meteorclient.gui.widgets.containers.WWindow;
 import meteordevelopment.meteorclient.utils.render.color.Color;
@@ -58,6 +59,22 @@ public class WCatppuccinWindow extends WWindow implements CatppuccinWidget {
         this.modulesScreen = modulesScreen;
         this.gridSize = gridSize;
         shouldSnap = true;
+    }
+
+    /**
+     * Identical implementation to {@link WContainer#add}
+     */
+    public <T extends WWidget> Cell<T> addDirect(T widget) {
+        widget.parent = this;
+        widget.theme = theme;
+
+        Cell<T> cell = new Cell<>(widget).centerY();
+        cells.add(cell);
+
+        widget.init();
+        invalidate();
+
+        return cell;
     }
 
     @Override
