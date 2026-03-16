@@ -182,7 +182,7 @@ public abstract class WMultiSelect<T> extends WVerticalList {
     }
 
     public void updateFilter(String query) {
-        String normalizedQuery = query.trim().toLowerCase();
+        String normalizedQuery = query.trim().toLowerCase(Locale.ROOT);
         filteredItems.clear();
 
         if (normalizedQuery.isEmpty() && filterMode == FilterMode.ALL)
@@ -204,7 +204,7 @@ public abstract class WMultiSelect<T> extends WVerticalList {
 
     private boolean matchesFilter(T item, String query) {
         boolean matchesQuery = query.isEmpty()
-                || getItemLabel(item).toLowerCase().contains(query);
+                || getItemLabel(item).toLowerCase(Locale.ROOT).contains(query);
 
         boolean matchesFilterMode = switch (filterMode) {
             case ALL -> true;

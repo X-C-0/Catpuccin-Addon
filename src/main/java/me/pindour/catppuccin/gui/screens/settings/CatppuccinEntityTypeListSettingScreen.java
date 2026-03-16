@@ -77,10 +77,7 @@ public class CatppuccinEntityTypeListSettingScreen extends WindowScreen {
         int totalCount = animals.size() + waterAnimals.size() + monsters.size() + ambient.size() + misc.size();
         if (totalCount <= 30) widgets.forEach(widget -> widget.setExpanded(true));
 
-        searchBox.action = () -> {
-            String query = searchBox.get().trim().toLowerCase();
-            widgets.forEach(widget -> widget.updateFilter(query));
-        };
+        searchBox.action = () -> widgets.forEach(widget -> widget.updateFilter(searchBox.get()));
     }
 
     private void createMultiSelectWidget(String title, List<EntityType<?>> items) {

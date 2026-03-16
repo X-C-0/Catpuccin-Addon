@@ -6,6 +6,8 @@ import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.renderer.packer.GuiTexture;
 import meteordevelopment.meteorclient.systems.modules.Categories;
 
+import java.util.Locale;
+
 /*
  * Sources: https://www.svgrepo.com/collection/lightning-design-utility-icons/
  *          https://www.svgrepo.com/collection/clarity-project-icons/
@@ -35,7 +37,7 @@ public enum CatppuccinBuiltinIcons {
     private GuiTexture texture;
 
     CatppuccinBuiltinIcons() {
-        this.path = "textures/icons/gui/" + name().toLowerCase() + ".png";
+        this.path = "textures/icons/gui/" + name().toLowerCase(Locale.ROOT) + ".png";
     }
 
     public static void init() {

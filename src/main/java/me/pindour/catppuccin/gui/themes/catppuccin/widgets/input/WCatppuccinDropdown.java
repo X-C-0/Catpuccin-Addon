@@ -13,6 +13,8 @@ import meteordevelopment.meteorclient.gui.widgets.input.WDropdown;
 import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 
+import java.util.Locale;
+
 public class WCatppuccinDropdown<T> extends WDropdown<T> implements CatppuccinWidget {
     private final RichText titleText;
     private RichText valueText;
@@ -172,10 +174,10 @@ public class WCatppuccinDropdown<T> extends WDropdown<T> implements CatppuccinWi
         String name = value.toString();
 
         // ENUM_NAME -> Enum Name
-        if (name.contains("_")) return Utils.nameToTitle(name.toLowerCase().replace("_", "-"));
+        if (name.contains("_")) return Utils.nameToTitle(name.toLowerCase(Locale.ROOT).replace("_", "-"));
 
         // EnumName -> Enum Name
-        return Utils.nameToTitle(name.replaceAll("(?<=[a-z])([A-Z])", "-$1").toLowerCase());
+        return Utils.nameToTitle(name.replaceAll("(?<=[a-z])([A-Z])", "-$1").toLowerCase(Locale.ROOT));
     }
 
     private static class WRoot extends WDropdownRoot implements CatppuccinWidget {
