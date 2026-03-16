@@ -11,6 +11,9 @@ import meteordevelopment.meteorclient.gui.widgets.containers.WVerticalList;
 import meteordevelopment.meteorclient.gui.widgets.input.WSlider;
 import meteordevelopment.meteorclient.settings.DoubleSetting;
 
+//? if <=1.21.10
+//import me.pindour.catppuccin.mixin.meteorclient.WSliderAccessor;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -218,8 +221,11 @@ public class WCatppuccinDoubleEdit extends WVerticalList implements CatppuccinWi
 
     public boolean showReset() {
         return mouseOver || (slider != null
-                //? if >=1.21.11
+                //? if >=1.21.11 {
                 && slider.focused
+                //? } else {
+                /*&& ((WSliderAccessor) slider).catppuccin$isHandleMouseOver()
+                *///? }
         );
     }
 }

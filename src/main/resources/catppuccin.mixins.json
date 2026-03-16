@@ -19,6 +19,7 @@
     "meteorclient.WContainerMixin",
     "meteorclient.WDropdownMixin",
     "meteorclient.WHeaderMixin",
+    "meteorclient.WSliderAccessor",
     "meteorclient.WSliderMixin",
     "meteorclient.WTextBoxMixin",
     "meteorclient.WViewMixin",

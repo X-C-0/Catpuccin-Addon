@@ -11,6 +11,9 @@ import meteordevelopment.meteorclient.gui.widgets.containers.WVerticalList;
 import meteordevelopment.meteorclient.gui.widgets.input.WSlider;
 import meteordevelopment.meteorclient.settings.IntSetting;
 
+//? if <=1.21.10
+//import me.pindour.catppuccin.mixin.meteorclient.WSliderAccessor;
+
 public class WCatppuccinIntEdit extends WVerticalList implements CatppuccinWidget {
     private final IntSetting setting;
     private int value;
@@ -170,8 +173,11 @@ public class WCatppuccinIntEdit extends WVerticalList implements CatppuccinWidge
 
     public boolean showReset() {
         return mouseOver || (slider != null
-                //? if >=1.21.11
+                //? if >=1.21.11 {
                 && slider.focused
+                //? } else {
+                /*&& ((WSliderAccessor) slider).catppuccin$isHandleMouseOver()
+                *///? }
         );
     }
 }
