@@ -1,5 +1,5 @@
 package me.pindour.catppuccin.gui.themes.catppuccin.widgets.pressable;
-//? if >=1.21.11 {
+//? if >=1.21.10 {
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinWidget;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;

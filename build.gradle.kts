@@ -41,6 +41,11 @@ dependencies {
 
 stonecutter {
     replacements {
+        string(current.parsed <= "1.21.10") {
+            // String utils
+            replace("org.apache.commons.lang3.Strings", "org.apache.commons.lang3.StringUtils")
+            replace("Strings.CI.contains", "StringUtils.containsIgnoreCase")
+        }
         string(current.parsed <= "1.21.9") {
             // Is Mac OS
             replace("MacWindowUtil.IS_MAC", "IS_SYSTEM_MAC")
@@ -57,11 +62,6 @@ stonecutter {
             replace("onKeyRepeated(KeyInput input)", "onKeyRepeated(int key, int mods)")
             replace("keyPressed(KeyInput input)", "keyPressed(int keyCode, int scanCode, int modifiers)")
             replace("keyPressed(input)", "keyPressed(keyCode, scanCode, modifiers)")
-        }
-        string(current.parsed <= "1.21.4") {
-            // String utils
-            replace("org.apache.commons.lang3.Strings", "org.apache.commons.lang3.StringUtils")
-            replace("Strings.CI.contains", "StringUtils.containsIgnoreCase")
         }
     }
 }

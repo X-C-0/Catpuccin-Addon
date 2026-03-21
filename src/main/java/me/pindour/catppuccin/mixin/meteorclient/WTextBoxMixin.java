@@ -7,8 +7,11 @@ import org.spongepowered.asm.mixin.Mixin;
 /*import me.pindour.catppuccin.gui.widgets.IWidgetBackport;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+*///? }
+
+//? if <1.21.10 {
+/*import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 *///? }
 
@@ -17,7 +20,16 @@ public abstract class WTextBoxMixin extends WWidget {
     //? if <=1.21.10 {
 
     /*@Redirect(
-        method = { "render", "onMouseClicked", "onKeyPressed", "onKeyRepeated", "onCharTyped", "isFocused", "setFocused" },
+        method = {
+                "render",
+                "onMouseClicked",
+                "onKeyPressed",
+                "onKeyRepeated",
+                "onCharTyped",
+                "setFocused",
+                //? if <1.21.10
+                //"isFocused"
+        },
         at = @At(
             value = "FIELD",
             target = "Lmeteordevelopment/meteorclient/gui/widgets/input/WTextBox;focused:Z",
@@ -40,10 +52,13 @@ public abstract class WTextBoxMixin extends WWidget {
         ((IWidgetBackport) instance).catppuccin$setFocused(value);
     }
 
-    @Inject(method = "isFocused", at = @At("HEAD"), cancellable = true)
+    // isFocused got removed for some reason?
+    //? if <1.21.10 {
+    /^@Inject(method = "isFocused", at = @At("HEAD"), cancellable = true)
     public void catppuccin$onIsFocused(CallbackInfoReturnable<Boolean> cir) {
         cir.setReturnValue(((IWidgetBackport) this).catppuccin$isFocused());
     }
+    ^///? }
 
     *///? }
 }

@@ -392,7 +392,7 @@ public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
 
         WButton button = list.add(theme.button(CatppuccinBuiltinIcons.EDIT.texture())).widget();
         button.action = () -> mc.setScreen(
-                new BlockDataSettingScreen/*? if >= 1.21.11 >>+ '<>'*/<>(theme, setting)
+                new BlockDataSettingScreen/*? if >= 1.21.10 >>+ '<>'*/<>(theme, setting)
         );
 
         title(list, setting).padLeft(theme.pad()).expandCellX();

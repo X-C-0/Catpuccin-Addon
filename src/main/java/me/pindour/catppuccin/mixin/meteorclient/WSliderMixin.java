@@ -11,6 +11,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 *///? }
 
+//? if =1.21.10
+//import net.minecraft.client.gui.Click;
+
 @Mixin(value = WSlider.class, remap = false)
 public abstract class WSliderMixin extends WWidget {
     //? if <=1.21.10 {

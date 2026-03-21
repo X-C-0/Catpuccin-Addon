@@ -320,7 +320,7 @@ public class CatppuccinGuiTheme extends GuiTheme {
         return w(new WCatppuccinButton(texture));
     }
 
-    //? if >=1.21.11 {
+    //? if >=1.21.10 {
     @Override
     protected WConfirmedButton confirmedButton(String text, String confirmText, GuiTexture texture) {
         return w(new WCatppuccinConfirmedButton(text, confirmText, texture));
@@ -332,7 +332,7 @@ public class CatppuccinGuiTheme extends GuiTheme {
         return w(new WCatppuccinMinus());
     }
 
-    //? if >=1.21.11 {
+    //? if >=1.21.10 {
     @Override
     public WConfirmedMinus confirmedMinus() {
         return w(new WCatppuccinConfirmedMinus());

@@ -214,7 +214,12 @@ public class RichTextRenderer implements TextRenderer {
                     .attachments(MinecraftClient.getInstance().getFramebuffer())
                     .pipeline(MeteorRenderPipelines.UI_TEXT)
                     .mesh(mesh)
+
+                    //? if >=1.21.11 {
                     .sampler("u_Texture", currentFont.texture.getGlTextureView(), currentFont.texture.getSampler())
+                    //? } else
+                    //.sampler("u_Texture", currentFont.texture.getGlTextureView())
+
                     .end();
              //?}
         }

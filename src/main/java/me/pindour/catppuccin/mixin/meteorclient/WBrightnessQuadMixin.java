@@ -9,6 +9,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 *///? }
 
+//? if =1.21.10
+//import net.minecraft.client.gui.Click;
+
 @Mixin(targets = "meteordevelopment.meteorclient.gui.screens.settings.ColorSettingScreen$WBrightnessQuad", remap = false)
 public abstract class WBrightnessQuadMixin {
     //? if <=1.21.10 {
