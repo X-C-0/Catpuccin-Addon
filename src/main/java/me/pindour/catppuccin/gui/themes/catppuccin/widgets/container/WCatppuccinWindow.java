@@ -17,7 +17,7 @@ import meteordevelopment.meteorclient.gui.widgets.containers.WHorizontalList;
 import meteordevelopment.meteorclient.gui.widgets.containers.WWindow;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 //? if >=1.21.9
-import net.minecraft.client.gui.Click;
+import net.minecraft.client.input.MouseButtonEvent;
 
 public class WCatppuccinWindow extends WWindow implements CatppuccinWidget {
     private static final int SHADOW_OFFSET = 2;
@@ -257,7 +257,7 @@ public class WCatppuccinWindow extends WWindow implements CatppuccinWidget {
         }
 
         @Override
-        public boolean onMouseClicked(Click click, boolean used) {
+        public boolean onMouseClicked(MouseButtonEvent click, boolean used) {
             boolean clicked = super.onMouseClicked(
                     //? if >=1.21.9
                     click,
@@ -280,7 +280,7 @@ public class WCatppuccinWindow extends WWindow implements CatppuccinWidget {
         }
 
         @Override
-        public boolean mouseReleased(Click click) {
+        public boolean mouseReleased(MouseButtonEvent click) {
             if (shouldSnap) modulesScreen.showGrid(false);
             return super.mouseReleased(
                     //? if >=1.21.9

@@ -1,12 +1,13 @@
 package me.pindour.catppuccin.renderer.rounded.modern;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+
 //? if >=1.21.5 {
 import me.pindour.catppuccin.renderer.rounded.RoundedRendererInternal;
 import meteordevelopment.meteorclient.renderer.MeshBuilder;
 import meteordevelopment.meteorclient.renderer.MeshRenderer;
 import meteordevelopment.meteorclient.utils.render.color.Color;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.Minecraft;
 
 public class RoundedRendererModern implements RoundedRendererInternal {
     private final MeshBuilder roundedMesh;
@@ -26,7 +27,7 @@ public class RoundedRendererModern implements RoundedRendererInternal {
     }
 
     @Override
-    public void render(MatrixStack matrices) { }
+    public void render(PoseStack matrices) { }
 
     @Override
     public void render(double x, double y,
@@ -50,7 +51,7 @@ public class RoundedRendererModern implements RoundedRendererInternal {
 
         RoundedUniforms.update(width, height, topLeft, topRight, bottomLeft, bottomRight, fillColor, outlineColor, outlineWidth);
         MeshRenderer.begin()
-                .attachments(MinecraftClient.getInstance().getFramebuffer())
+                .attachments(Minecraft.getInstance().getMainRenderTarget())
                 .pipeline(CatppuccinRenderPipelines.ROUNDED_UI)
                 .mesh(roundedMesh)
                 .uniform("RoundedRectData", RoundedUniforms.getUniformStorage())

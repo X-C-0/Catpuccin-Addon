@@ -4,6 +4,7 @@
 build/
 out/
 classes/
+local.properties
 
 # eclipse
 
@@ -15,7 +16,6 @@ classes/
 *.iml
 *.ipr
 *.iws
-.editorconfig
 
 # vscode
 

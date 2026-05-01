@@ -13,7 +13,6 @@ import meteordevelopment.meteorclient.gui.widgets.containers.WContainer;
 import meteordevelopment.meteorclient.gui.widgets.containers.WVerticalList;
 import meteordevelopment.meteorclient.gui.widgets.input.WTextBox;
 import meteordevelopment.meteorclient.utils.render.color.Color;
-import net.minecraft.util.math.MathHelper;
 
 //? if <=1.21.10
 //import me.pindour.catppuccin.gui.widgets.IWidgetBackport;
@@ -170,7 +169,7 @@ public class WCatppuccinTextBox extends WTextBox implements CatppuccinWidget {
 
         // Cursor
         animProgress += delta * 10 * (focused && cursorVisible ? 1 : -1);
-        animProgress = MathHelper.clamp(animProgress, 0, 1);
+        animProgress = Math.clamp(animProgress, 0, 1);
 
         if ((focused && cursorVisible) || animProgress > 0) {
             renderer.setAlpha(animProgress);

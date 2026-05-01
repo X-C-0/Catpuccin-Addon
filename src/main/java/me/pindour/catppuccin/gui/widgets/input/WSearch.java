@@ -11,6 +11,7 @@ import meteordevelopment.meteorclient.gui.widgets.containers.WVerticalList;
 import meteordevelopment.meteorclient.gui.widgets.containers.WView;
 import meteordevelopment.meteorclient.gui.widgets.input.WTextBox;
 import meteordevelopment.meteorclient.utils.Utils;
+import net.minecraft.client.input.MouseButtonEvent;
 
 import java.util.List;
 
@@ -19,7 +20,6 @@ import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_RIGHT;
 
 //? >=1.21.5
-import net.minecraft.client.gui.Click;
 
 public abstract class WSearch extends WVerticalList {
     protected WSearchHeader header;
@@ -111,7 +111,7 @@ public abstract class WSearch extends WVerticalList {
         }
 
         @Override
-        public boolean onMouseClicked(Click click, boolean doubled) {
+        public boolean onMouseClicked(MouseButtonEvent click, boolean doubled) {
             //? >=1.21.5
             int button = click.button();
 
@@ -122,7 +122,7 @@ public abstract class WSearch extends WVerticalList {
         }
 
         @Override
-        public boolean onMouseReleased(Click click) {
+        public boolean onMouseReleased(MouseButtonEvent click) {
             if (pressed) {
                 //? >=1.21.5
                 int button = click.button();

@@ -6,6 +6,7 @@ import me.pindour.catppuccin.api.text.RichTextSegment;
 import meteordevelopment.meteorclient.renderer.*;
 import meteordevelopment.meteorclient.renderer.text.*;
 import meteordevelopment.meteorclient.utils.render.color.Color;
+import net.minecraft.client.Minecraft;
 
 import java.nio.ByteBuffer;
 
@@ -19,7 +20,6 @@ import java.io.IOException;
 //? if <=1.21.4 {
 /*import net.minecraft.client.util.math.MatrixStack;
 *///?} else {
-import net.minecraft.client.MinecraftClient;
 //?}
 
 public class RichTextRenderer implements TextRenderer {
@@ -211,12 +211,12 @@ public class RichTextRenderer implements TextRenderer {
 
             *///?} else {
             MeshRenderer.begin()
-                    .attachments(MinecraftClient.getInstance().getFramebuffer())
+                    .attachments(Minecraft.getInstance().getMainRenderTarget())
                     .pipeline(MeteorRenderPipelines.UI_TEXT)
                     .mesh(mesh)
 
                     //? if >=1.21.11 {
-                    .sampler("u_Texture", currentFont.texture.getGlTextureView(), currentFont.texture.getSampler())
+                    .sampler("u_Texture", currentFont.texture.getTextureView(), currentFont.texture.getSampler())
                     //? } else
                     //.sampler("u_Texture", currentFont.texture.getGlTextureView())
 

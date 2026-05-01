@@ -24,7 +24,7 @@ import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.utils.misc.NbtUtils;
 import meteordevelopment.meteorclient.utils.render.prompts.OkPrompt;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.CompoundTag;
 
 //? if >=1.21.5
 import java.util.Optional;
@@ -169,11 +169,11 @@ public class CatppuccinModuleScreen extends WindowScreen {
 
     @Override
     public boolean toClipboard() {
-        NbtCompound tag = new NbtCompound();
+        CompoundTag tag = new CompoundTag();
 
         tag.putString("name", module.name);
 
-        NbtCompound settingsTag = module.settings.toTag();
+        CompoundTag settingsTag = module.settings.toTag();
         if (!settingsTag.isEmpty()) tag.put("settings", settingsTag);
 
         return writeClipboardTag(tag);
@@ -181,7 +181,7 @@ public class CatppuccinModuleScreen extends WindowScreen {
 
     @Override
     public boolean fromClipboard() {
-        NbtCompound tag = readClipboardTag();
+        CompoundTag tag = readClipboardTag();
         if (tag == null) return false;
 
         if (!applySettingsFromTag(tag)) return false;
@@ -192,7 +192,7 @@ public class CatppuccinModuleScreen extends WindowScreen {
         return true;
     }
 
-    private NbtCompound readClipboardTag() {
+    private CompoundTag readClipboardTag() {
         //? if <=1.21.3 {
         /*NbtCompound schema = new NbtCompound();
         schema.putString("name", module.name);
@@ -207,15 +207,15 @@ public class CatppuccinModuleScreen extends WindowScreen {
         //?}
     }
 
-    private boolean applySettingsFromTag(NbtCompound tag) {
+    private boolean applySettingsFromTag(CompoundTag tag) {
         //? if <=1.21.4 {
         /*if (!tag.contains("name") || !tag.getString("name").equals(module.name)) return false;
         module.settings.fromTag(tag.getCompound("settings"));
 
         *///?} else {
-        if (!tag.getString("name", "").equals(module.name)) return false;
+        if (!tag.getString("name").orElse("").equals(module.name)) return false;
 
-        Optional<NbtCompound> settings = tag.getCompound("settings");
+        Optional<CompoundTag> settings = tag.getCompound("settings");
 
         if (settings.isPresent()) module.settings.fromTag(settings.get());
         else module.settings.reset();
@@ -224,7 +224,7 @@ public class CatppuccinModuleScreen extends WindowScreen {
         return true;
     }
 
-    private boolean writeClipboardTag(NbtCompound tag) {
+    private boolean writeClipboardTag(CompoundTag tag) {
         //? if <=1.21.3
         //return NbtUtils.toClipboard(module.name, tag);
         //? if >=1.21.4

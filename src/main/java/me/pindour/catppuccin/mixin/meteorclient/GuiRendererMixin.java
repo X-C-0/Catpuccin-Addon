@@ -167,7 +167,7 @@ public abstract class GuiRendererMixin {
         r.render();
 
         //? if >=1.21.11 {
-        rTex.render("u_Texture", TEXTURE.getGlTextureView(), TEXTURE.getSampler());
+        rTex.render("u_Texture", TEXTURE.getTextureView(), TEXTURE.getSampler());
         //? } else
         //rTex.render("u_Texture", TEXTURE.getGlTextureView());
 

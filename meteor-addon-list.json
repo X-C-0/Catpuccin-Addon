@@ -1,10 +1,7 @@
 {
-  "description": "🌠 Soothing pastel theme for Meteor Client",
-  "tags": ["Theme"],
-  "supported_versions": [
-    "1.21.1",
-    "1.21.4",
-    "1.21.10",
-    "1.21.11"
-  ]
+    "description": "🌠 Soothing pastel theme for Meteor Client",
+    "tags": ["Theme"],
+    "supported_versions": [
+        "26.1.2"
+    ]
 }

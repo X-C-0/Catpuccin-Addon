@@ -6,6 +6,7 @@ import me.pindour.catppuccin.gui.themes.catppuccin.icons.CatppuccinBuiltinIcons;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.container.WCatppuccinWindow;
 import me.pindour.catppuccin.utils.search.results.ModuleSearchResult;
 import me.pindour.catppuccin.utils.search.SearchUtils;
+import meteordevelopment.meteorclient.events.meteor.KeyInputEvent;
 import meteordevelopment.meteorclient.gui.GuiTheme;
 import meteordevelopment.meteorclient.gui.renderer.packer.GuiTexture;
 import meteordevelopment.meteorclient.gui.tabs.TabScreen;
@@ -22,7 +23,9 @@ import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.misc.NbtUtils;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,11 +34,8 @@ import static meteordevelopment.meteorclient.MeteorClient.mc;
 import static meteordevelopment.meteorclient.utils.Utils.getWindowHeight;
 import static meteordevelopment.meteorclient.utils.Utils.getWindowWidth;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.glfw.GLFW.GLFW_MOD_CONTROL;
-import net.minecraft.client.util.MacWindowUtil;
 
 //? if >=1.21.5
-import net.minecraft.client.input.KeyInput;
 
 public class CatppuccinModulesScreen extends TabScreen {
     private final CatppuccinGuiTheme theme;
@@ -78,8 +78,8 @@ public class CatppuccinModulesScreen extends TabScreen {
     }
 
     @Override
-    public void renderBackground(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
-        super.renderBackground(context, mouseX, mouseY, deltaTicks);
+    public void extractBackground(GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks) {
+        super.extractBackground(context, mouseX, mouseY, deltaTicks);
 
         if (!showGrid) return;
 
@@ -88,16 +88,16 @@ public class CatppuccinModulesScreen extends TabScreen {
         int windowHeight = Utils.getWindowHeight();
 
         for (int x = 0; x <= windowWidth; x += gridSize) {
-            context.drawVerticalLine(x, 0, windowHeight, color);
+            context.verticalLine(x, 0, windowHeight, color);
         }
 
         for (int y = 0; y <= windowHeight; y += gridSize) {
-            context.drawHorizontalLine(0, windowWidth, y, color);
+            context.horizontalLine(0, windowWidth, y, color);
         }
     }
 
     @Override
-    public boolean keyPressed(KeyInput input) {
+    public boolean keyPressed(KeyEvent input) {
         super.keyPressed(input);
 
         if (!theme.catppuccinSearchScreen.get()) return false;
@@ -107,7 +107,7 @@ public class CatppuccinModulesScreen extends TabScreen {
         int modifiers = input.modifiers();
         //? }
 
-        boolean control = MacWindowUtil.IS_MAC ? modifiers == GLFW_MOD_SUPER : modifiers == GLFW_MOD_CONTROL;
+        boolean control = Util.getPlatform() == Util.OS.OSX ? modifiers == GLFW_MOD_SUPER : modifiers == GLFW_MOD_CONTROL;
 
         if (control && keyCode == GLFW_KEY_F) {
             mc.setScreen(new CatppuccinSearchScreen(theme));
