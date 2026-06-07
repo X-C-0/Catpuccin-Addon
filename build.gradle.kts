@@ -88,8 +88,8 @@ tasks {
     val buildAndCollect = register<Copy>("buildAndCollect") {
         group = "build"
 
-        // loomx.mod(Sources)Jar returns the jar task for the applied loom variant
-        from(loomx.modJar.map { it.archiveFile }, loomx.modSourcesJar.map { it.archiveFile })
+        // loomx.modJar returns the jar task for the applied loom variant
+        from(loomx.modJar.map { it.archiveFile })
         into(rootProject.layout.buildDirectory.file("libs/${project.property("mod.version")}"))
         dependsOn("build")
     }
@@ -115,7 +115,6 @@ tasks {
     }
 
     java {
-        withSourcesJar()
         targetCompatibility = requiredJava
         sourceCompatibility = requiredJava
 
