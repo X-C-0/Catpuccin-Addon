@@ -9,8 +9,8 @@ import meteordevelopment.meteorclient.gui.widgets.input.WDropdown;
 import meteordevelopment.meteorclient.gui.widgets.input.WTextBox;
 import meteordevelopment.meteorclient.settings.EntityTypeListSetting;
 import meteordevelopment.meteorclient.utils.misc.Names;
-import net.minecraft.entity.EntityType;
-import net.minecraft.registry.Registries;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.entity.EntityType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,10 +56,10 @@ public class CatppuccinEntityTypeListSettingScreen extends WindowScreen {
         List<EntityType<?>> ambient = new ArrayList<>();
         List<EntityType<?>> misc = new ArrayList<>();
 
-        for (EntityType<?> entityType : Registries.ENTITY_TYPE) {
+        for (EntityType<?> entityType : BuiltInRegistries.ENTITY_TYPE) {
             if (setting.filter != null && !setting.filter.test(entityType)) continue;
 
-            switch (entityType.getSpawnGroup()) {
+            switch (entityType.getCategory()) {
                 case CREATURE -> animals.add(entityType);
                 case WATER_AMBIENT, WATER_CREATURE, UNDERGROUND_WATER_CREATURE, AXOLOTLS -> waterAnimals.add(entityType);
                 case MONSTER -> monsters.add(entityType);

@@ -17,9 +17,9 @@ import java.io.IOException;
 //? }
 
 //? if <=1.21.4 {
-/*import net.minecraft.client.util.math.MatrixStack;
+/*import com.mojang.blaze3d.vertex.PoseStack;
 *///?} else {
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 //?}
 
 public class RichTextRenderer implements TextRenderer {
@@ -198,7 +198,7 @@ public class RichTextRenderer implements TextRenderer {
     @Override
     public void end(
             //? if <=1.21.4
-            //MatrixStack matrices
+            //PoseStack matrices
     ) {
         if (!building) throw new RuntimeException("end() called without calling begin()");
 
@@ -206,19 +206,19 @@ public class RichTextRenderer implements TextRenderer {
             mesh.end();
 
             //? if <=1.21.4 {
-            /*GL.bindTexture(currentFont.texture.getGlId());
+            /*GL.bindTexture(currentFont.texture.getId());
             mesh.render(matrices);
 
             *///?} else {
             MeshRenderer.begin()
-                    .attachments(MinecraftClient.getInstance().getFramebuffer())
+                    .attachments(Minecraft.getInstance().getMainRenderTarget())
                     .pipeline(MeteorRenderPipelines.UI_TEXT)
                     .mesh(mesh)
 
                     //? if >=1.21.11 {
-                    .sampler("u_Texture", currentFont.texture.getGlTextureView(), currentFont.texture.getSampler())
+                    .sampler("u_Texture", currentFont.texture.getTextureView(), currentFont.texture.getSampler())
                     //? } else
-                    //.sampler("u_Texture", currentFont.texture.getGlTextureView())
+                    //.sampler("u_Texture", currentFont.texture.getTextureView())
 
                     .end();
              //?}

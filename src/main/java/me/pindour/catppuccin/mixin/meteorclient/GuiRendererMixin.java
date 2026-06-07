@@ -31,8 +31,8 @@ import it.unimi.dsi.fastutil.Stack;
 //? if <=1.21.4 {
 /*import meteordevelopment.meteorclient.renderer.GL;
 import meteordevelopment.meteorclient.utils.render.ByteTexture;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import com.mojang.blaze3d.vertex.PoseStack;
 *///?} else {
 import meteordevelopment.meteorclient.renderer.Texture;
 //?}
@@ -40,7 +40,7 @@ import meteordevelopment.meteorclient.renderer.Texture;
 @Mixin(value = GuiRenderer.class, remap = false)
 public abstract class GuiRendererMixin {
     //? if <=1.21.4 {
-    /*@Shadow private DrawContext drawContext;
+    /*@Shadow private GuiGraphics drawContext;
     @Shadow private static ByteTexture TEXTURE;
     *///?} else {
     @Shadow private static Texture TEXTURE;
@@ -154,12 +154,12 @@ public abstract class GuiRendererMixin {
         CatppuccinRenderer renderer = renderer();
 
         //? if <=1.21.4 {
-        /*MatrixStack matrices = drawContext.getMatrices();
+        /*PoseStack matrices = drawContext.pose();
 
         renderer.end();
         renderer.render(matrices);
         r.render(matrices);
-        GL.bindTexture(TEXTURE.getGlId());
+        GL.bindTexture(TEXTURE.getId());
         rTex.render(matrices);
         *///?} else {
 
@@ -167,9 +167,9 @@ public abstract class GuiRendererMixin {
         r.render();
 
         //? if >=1.21.11 {
-        rTex.render("u_Texture", TEXTURE.getGlTextureView(), TEXTURE.getSampler());
+        rTex.render("u_Texture", TEXTURE.getTextureView(), TEXTURE.getSampler());
         //? } else
-        //rTex.render("u_Texture", TEXTURE.getGlTextureView());
+        //rTex.render("u_Texture", TEXTURE.getTextureView());
 
         //?}
     }

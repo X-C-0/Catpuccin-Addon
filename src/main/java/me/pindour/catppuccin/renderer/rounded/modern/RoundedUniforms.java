@@ -5,7 +5,7 @@ import com.mojang.blaze3d.buffers.GpuBufferSlice;
 import com.mojang.blaze3d.buffers.Std140Builder;
 import com.mojang.blaze3d.buffers.Std140SizeCalculator;
 import me.pindour.catppuccin.renderer.CatppuccinRenderer;
-import net.minecraft.client.gl.DynamicUniformStorage;
+import net.minecraft.client.renderer.DynamicUniformStorage;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
@@ -26,11 +26,11 @@ public class RoundedUniforms {
     private static final DynamicUniformStorage<RoundedRectData> ROUNDED_STORAGE = new DynamicUniformStorage<>("Catppuccin - Rounded UBO", ROUNDED_DATA_SIZE, 16);
 
     public static GpuBufferSlice getUniformStorage() {
-        return ROUNDED_STORAGE.write(ROUNDED_DATA);
+        return ROUNDED_STORAGE.writeUniform(ROUNDED_DATA);
     }
 
     public static void flipFrame() {
-        ROUNDED_STORAGE.clear();
+        ROUNDED_STORAGE.endFrame();
     }
 
     public static void update(double width, double height,
@@ -55,7 +55,7 @@ public class RoundedUniforms {
         }
     }
 
-    private static final class RoundedRectData implements DynamicUniformStorage.Uploadable {
+    private static final class RoundedRectData implements DynamicUniformStorage.DynamicUniform {
         private final Vector4f fillColor = new Vector4f();
         private final Vector4f borderColor = new Vector4f();
         private final Vector2f borderData = new Vector2f();

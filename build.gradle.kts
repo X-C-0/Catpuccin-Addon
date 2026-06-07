@@ -1,18 +1,28 @@
 plugins {
-    id("fabric-loom")
     id("maven-publish")
+    id("dev.kikugie.loom-back-compat")
 }
 
-val minecraftVersion = stonecutter.current.version
-val modVersion = project.property("mod.version") as String
-val mavenGroup = project.property("mod.group") as String
+val requiredJava: JavaVersion = when {
+    sc.current.parsed >= "26.1" -> JavaVersion.VERSION_25
+    sc.current.parsed >= "1.20.5" -> JavaVersion.VERSION_21
+    else -> JavaVersion.VERSION_1_8
+}
 
-val yarnMappings = project.property("deps.yarn_mappings") as String
-val loaderVersion = project.property("deps.fabric_loader") as String
-val meteorVersion = project.property("deps.meteor_version") as String
+// Global properties
+val mavenGroup = property("mod.group") as String
+val modVersion = property("mod.version") as String
+val modId = property("mod.id") as String
+
+// Per version properties
+val minecraftVersion = stonecutter.current.version
+val minecraftTargets = sc.properties["mc.targets"] as String
+
+val loaderVersion = sc.properties["deps.fabric_loader"] as String
+val meteorVersion = sc.properties["deps.meteor_version"] as String
 
 base {
-    archivesName = project.property("mod.id") as String
+    archivesName = modId
     version = "${modVersion}+mc${minecraftVersion}"
     group = mavenGroup
 }
@@ -30,7 +40,9 @@ repositories {
 
 dependencies {
     minecraft("com.mojang:minecraft:$minecraftVersion")
-    mappings("net.fabricmc:yarn:$yarnMappings:v2")
+
+    // Mappings
+    loomx.applyMojangMappings()
 
     // Fabric
     modImplementation("net.fabricmc:fabric-loader:$loaderVersion")
@@ -39,38 +51,11 @@ dependencies {
     modImplementation("meteordevelopment:meteor-client:$meteorVersion")
 }
 
-stonecutter {
-    replacements {
-        string(current.parsed <= "1.21.10") {
-            // String utils
-            replace("org.apache.commons.lang3.Strings", "org.apache.commons.lang3.StringUtils")
-            replace("Strings.CI.contains", "StringUtils.containsIgnoreCase")
-        }
-        string(current.parsed <= "1.21.9") {
-            // Is Mac OS
-            replace("MacWindowUtil.IS_MAC", "IS_SYSTEM_MAC")
-            replace("net.minecraft.client.util.MacWindowUtil;", "static net.minecraft.client.MinecraftClient.IS_SYSTEM_MAC;")
-        }
-        string(current.parsed <= "1.21.8") {
-            // Click -> mouseX, mouseY, button
-            replace("onMouseClicked(Click click", "onMouseClicked(double mouseX, double mouseY, int button")
-            replace("onMouseReleased(Click click", "onMouseReleased(double mouseX, double mouseY, int button")
-            replace("mouseReleased(Click click", "mouseReleased(double mouseX, double mouseY, int button")
-            // CharInput -> char
-            replace("onCharTyped(CharInput input)", "onCharTyped(char input)")
-            // KeyInput -> key, mods
-            replace("onKeyRepeated(KeyInput input)", "onKeyRepeated(int key, int mods)")
-            replace("keyPressed(KeyInput input)", "keyPressed(int keyCode, int scanCode, int modifiers)")
-            replace("keyPressed(input)", "keyPressed(keyCode, scanCode, modifiers)")
-        }
-    }
-}
-
 tasks {
     processResources {
         val propertyMap = mapOf(
-            "version" to project.property("mod.version"),
-            "mc_targets" to project.property("mod.mc_targets")
+            "version" to minecraftVersion,
+            "mc_targets" to minecraftTargets
         )
 
         inputs.properties(propertyMap)
@@ -102,8 +87,10 @@ tasks {
     // Builds the version into a shared folder in `build/libs/${mod version}/`
     val buildAndCollect = register<Copy>("buildAndCollect") {
         group = "build"
-        from(remapJar.map { it.archiveFile })
-        into(rootProject.layout.buildDirectory.file("libs/$modVersion"))
+
+        // loomx.mod(Sources)Jar returns the jar task for the applied loom variant
+        from(loomx.modJar.map { it.archiveFile }, loomx.modSourcesJar.map { it.archiveFile })
+        into(rootProject.layout.buildDirectory.file("libs/${project.property("mod.version")}"))
         dependsOn("build")
     }
 
@@ -129,13 +116,18 @@ tasks {
 
     java {
         withSourcesJar()
-        targetCompatibility = JavaVersion.VERSION_21
-        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = requiredJava
+        sourceCompatibility = requiredJava
+
+        toolchain {
+            vendor = JvmVendorSpec.ADOPTIUM
+            languageVersion = JavaLanguageVersion.of(requiredJava.majorVersion)
+        }
     }
 
     withType<JavaCompile> {
         options.encoding = "UTF-8"
-        options.release = 21
+        options.release = requiredJava.majorVersion.toInt()
         options.compilerArgs.add("-Xlint:deprecation")
         options.compilerArgs.add("-Xlint:unchecked")
     }

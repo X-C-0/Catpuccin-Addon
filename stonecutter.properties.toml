@@ -1,0 +1,43 @@
+# Mod Properties
+mod.id = "catppuccin-addon"
+mod.name = "Catppuccin Addon"
+mod.version = "2.1.0"
+mod.group = "me.pindour.catppuccin"
+
+# Game
+mc.version = "[VERSIONED]"
+mc.targets = "[VERSIONED]"
+
+# Loom
+loomx.loom_version = "1.16-SNAPSHOT"
+loomx.loom_remap_plugin = "net.fabricmc.fabric-loom-remap"
+loomx.loom_unobf_plugin = "net.fabricmc.fabric-loom"
+
+# Dependencies
+deps.fabric_loader = "0.15.11"
+deps.meteor_version = "[VERSIONED]"
+
+["1.21.1"]
+mc.version = "1.21.1"
+mc.targets = ">=1.21 <=1.21.1"
+deps.meteor_version = "0.5.8-SNAPSHOT"
+
+["1.21.4"]
+mc.version = "1.21.4"
+mc.targets = "1.21.4"
+deps.meteor_version = "1.21.4-SNAPSHOT"
+
+["1.21.10"]
+mc.version = "1.21.10"
+mc.targets = "1.21.10"
+deps.meteor_version = "1.21.10-SNAPSHOT"
+
+["1.21.11"]
+mc.version = "1.21.11"
+mc.targets = "1.21.11"
+deps.meteor_version = "1.21.11-SNAPSHOT"
+
+["26.1.2"]
+mc.version = "26.1.2"
+mc.targets = "26.1.2"
+deps.meteor_version = "26.1.2-SNAPSHOT"

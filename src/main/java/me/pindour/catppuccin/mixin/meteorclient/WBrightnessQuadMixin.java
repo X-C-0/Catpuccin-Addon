@@ -9,8 +9,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 *///? }
 
-//? if =1.21.10
-//import net.minecraft.client.gui.Click;
+//? if >=1.21.10 && <=1.21.11
+//import net.minecraft.client.input.MouseButtonEvent;
 
 @Mixin(targets = "meteordevelopment.meteorclient.gui.screens.settings.ColorSettingScreen$WBrightnessQuad", remap = false)
 public abstract class WBrightnessQuadMixin {
@@ -25,7 +25,7 @@ public abstract class WBrightnessQuadMixin {
                     shift = At.Shift.AFTER
             )
     )
-    private void catppuccin$onMouseClicked(Click click, boolean used, CallbackInfoReturnable<Boolean> cir) {
+    private void catppuccin$onMouseClicked(MouseButtonEvent click, boolean doubled, CallbackInfoReturnable<Boolean> cir) {
         ((IWidgetBackport)this).catppuccin$setFocused(true);
     }
 
@@ -38,7 +38,7 @@ public abstract class WBrightnessQuadMixin {
                     shift = At.Shift.AFTER
             )
     )
-    private void catppuccin$onMouseReleased(Click click, CallbackInfoReturnable<Boolean> cir) {
+    private void catppuccin$onMouseReleased(MouseButtonEvent click, CallbackInfoReturnable<Boolean> cir) {
         ((IWidgetBackport)this).catppuccin$setFocused(false);
     }
 

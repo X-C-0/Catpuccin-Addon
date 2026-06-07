@@ -14,7 +14,7 @@ import meteordevelopment.meteorclient.utils.render.color.Color;
 import me.pindour.catppuccin.renderer.rounded.modern.RoundedRendererModern;
 //?} else {
 /*import me.pindour.catppuccin.renderer.rounded.legacy.RoundedRendererLegacy;
-import net.minecraft.client.util.math.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 *///?}
 
 public class CatppuccinRenderer implements RoundedRectRenderer {
@@ -53,7 +53,7 @@ public class CatppuccinRenderer implements RoundedRectRenderer {
     }
 
     //? if <=1.21.4 {
-    /*public void render(MatrixStack matrices) {
+    /*public void render(PoseStack matrices) {
         roundedRenderer.render(matrices);
     }
     *///?}

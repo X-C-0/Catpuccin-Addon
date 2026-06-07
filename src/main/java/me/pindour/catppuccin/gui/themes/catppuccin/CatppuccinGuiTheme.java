@@ -48,7 +48,7 @@ import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.misc.Keybind;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 import meteordevelopment.meteorclient.utils.render.color.SettingColor;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screens.Screen;
 
 import java.util.EnumMap;
 import java.util.List;
@@ -56,7 +56,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import static meteordevelopment.meteorclient.MeteorClient.mc;
-import net.minecraft.client.util.MacWindowUtil;
+import net.minecraft.util.Util;
 
 public class CatppuccinGuiTheme extends GuiTheme {
     private final Map<CatppuccinColor, Color> colorCache;
@@ -81,7 +81,7 @@ public class CatppuccinGuiTheme extends GuiTheme {
             .sliderRange(0.75, 4)
             .onSliderRelease()
             .onChanged(aDouble -> {
-                if (mc.currentScreen instanceof WidgetScreen) ((WidgetScreen) mc.currentScreen).invalidate();
+                if (mc.screen instanceof WidgetScreen) ((WidgetScreen) mc.screen).invalidate();
             })
             .build()
     );
@@ -105,7 +105,7 @@ public class CatppuccinGuiTheme extends GuiTheme {
             .description("Hide HUD when in GUI.")
             .defaultValue(false)
             .onChanged(v -> {
-                if (mc.currentScreen instanceof WidgetScreen) mc.options.hudHidden = v;
+                if (mc.screen instanceof WidgetScreen) mc.options.hideGui = v;
             })
             .build()
     );
@@ -742,8 +742,8 @@ public class CatppuccinGuiTheme extends GuiTheme {
     public double scale(double value) {
         double scaled = value * scale.get();
 
-        if (MacWindowUtil.IS_MAC) {
-            scaled /= (double) mc.getWindow().getWidth() / mc.getWindow().getFramebufferWidth();
+        if (Util.getPlatform() == Util.OS.OSX) {
+            scaled /= (double) mc.getWindow().getWidth() / mc.getWindow().getWidth();
         }
 
         return scaled;

@@ -1,14 +1,14 @@
 package me.pindour.catppuccin.renderer.rounded;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import meteordevelopment.meteorclient.utils.render.color.Color;
-import net.minecraft.client.util.math.MatrixStack;
 
 public interface RoundedRendererInternal {
     void begin();
 
     void end();
 
-    void render(MatrixStack matrices);
+    void render(PoseStack stack);
 
     void render(double x, double y,
                 double width, double height,

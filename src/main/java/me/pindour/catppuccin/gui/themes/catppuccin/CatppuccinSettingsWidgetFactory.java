@@ -34,7 +34,6 @@ import meteordevelopment.meteorclient.renderer.Fonts;
 import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.render.color.SettingColor;
-import net.minecraft.client.resource.language.I18n;
 import org.apache.commons.lang3.Strings;
 
 import java.util.ArrayList;
@@ -285,18 +284,18 @@ public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
 
         title(list, setting);
 
-        WItem item = list.add(theme.item(setting.get().asItem().getDefaultStack())).widget();
+        WItem item = list.add(theme.item(setting.get().asItem().getDefaultInstance())).widget();
 
         WButton select = list.add(theme.button("Select")).right().widget();
         select.minWidth = theme.textWidth(select.getText()) * 2;
         select.action = () -> {
             BlockSettingScreen screen = new BlockSettingScreen(theme, setting);
-            screen.onClosed(() -> item.set(setting.get().asItem().getDefaultStack()));
+            screen.onClosed(() -> item.set(setting.get().asItem().getDefaultInstance()));
 
             mc.setScreen(screen);
         };
 
-        reset(list, setting, () -> item.set(setting.get().asItem().getDefaultStack()), () -> list.mouseOver);
+        reset(list, setting, () -> item.set(setting.get().asItem().getDefaultInstance()), () -> list.mouseOver);
     }
 
     private void blockPosW(WTable table, BlockPosSetting setting) {
@@ -320,13 +319,13 @@ public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
     private void itemW(WTable table, ItemSetting setting) {
         WHorizontalList list = table.add(theme.horizontalList()).expandX().widget();
 
-        WItem item = theme.item(setting.get().asItem().getDefaultStack());
+        WItem item = theme.item(setting.get().asItem().getDefaultInstance());
 
         WButton select = list.add(theme.button("Select")).widget();
         select.minWidth = theme.textWidth(select.getText()) * 2;
         select.action = () -> {
             ItemSettingScreen screen = new ItemSettingScreen(theme, setting);
-            screen.onClosed(() -> item.set(setting.get().getDefaultStack()));
+            screen.onClosed(() -> item.set(setting.get().getDefaultInstance()));
 
             mc.setScreen(screen);
         };
@@ -336,7 +335,7 @@ public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
         title(list, setting);
 
 
-        reset(list, setting, () -> item.set(setting.get().getDefaultStack()));
+        reset(list, setting, () -> item.set(setting.get().getDefaultInstance()));
     }
 
     private void itemListW(WTable table, ItemListSetting setting) {
@@ -402,20 +401,35 @@ public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
     private void potionW(WTable table, PotionSetting setting) {
         WHorizontalList list = table.add(theme.horizontalList()).expandX().widget();
 
-        WItemWithLabel item = theme.itemWithLabel(setting.get().potion, I18n.translate(setting.get().potion.getItem().getTranslationKey()));
+        //? if >=26.1 {
+        WItemWithLabel item = theme.itemWithLabel(
+                setting.get().potion.get(),
+                setting.get().potion.get().getDisplayName().toString()
+        );
+        //? } else {
+        /*WItemWithLabel item = theme.itemWithLabel(
+                setting.get().potion,
+                setting.get().potion.getDisplayName().toString()
+        );
+        *///? }
 
         WButton button = list.add(theme.button("Select")).widget();
         button.minWidth = theme.textWidth(button.getText()) * 2;
         button.action = () -> {
             WidgetScreen screen = new PotionSettingScreen(theme, setting);
-            screen.onClosed(() -> item.set(setting.get().potion));
+            screen.onClosed(() -> item.set(
+                    setting.get().potion/*? if >=26.1 >>+ ')'*/.get())
+            );
 
             mc.setScreen(screen);
         };
 
         list.add(item).expandCellX();
 
-        reset(list, setting, () -> item.set(setting.get().potion), () -> list.mouseOver);
+        reset(list, setting, () -> item.set(
+                setting.get().potion/*? if >=26.1 >>+ ')'*/.get()),
+                () -> list.mouseOver
+        );
     }
 
     private void fontW(WTable table, FontFaceSetting setting) {

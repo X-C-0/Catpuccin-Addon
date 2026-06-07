@@ -6,7 +6,7 @@ import com.mojang.logging.LogUtils;
 import me.pindour.catppuccin.renderer.CatppuccinRenderer;
 import meteordevelopment.meteorclient.addons.MeteorAddon;
 import meteordevelopment.meteorclient.gui.GuiThemes;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 import org.slf4j.Logger;
 
 public class CatppuccinAddon extends MeteorAddon {
@@ -24,7 +24,7 @@ public class CatppuccinAddon extends MeteorAddon {
     }
 
     public static Identifier identifier(String path) {
-        return Identifier.of(MOD_ID, path);
+        return Identifier.fromNamespaceAndPath(MOD_ID, path);
     }
 
     @Override

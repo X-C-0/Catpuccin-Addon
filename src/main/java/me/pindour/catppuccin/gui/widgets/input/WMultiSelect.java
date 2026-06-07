@@ -21,7 +21,7 @@ import java.util.function.Predicate;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 
 //? if >=1.21.9
-import net.minecraft.client.gui.Click;
+import net.minecraft.client.input.MouseButtonEvent;
 
 public abstract class WMultiSelect<T> extends WVerticalList {
     protected final String title;
@@ -265,7 +265,7 @@ public abstract class WMultiSelect<T> extends WVerticalList {
         }
 
         @Override
-        public boolean onMouseClicked(Click click, boolean used) {
+        public boolean onMouseClicked(MouseButtonEvent click, boolean used) {
             if (mouseOver
                 //? if >=1.21.9
                 && click.button() == GLFW_MOUSE_BUTTON_LEFT
@@ -314,7 +314,7 @@ public abstract class WMultiSelect<T> extends WVerticalList {
         }
 
         @Override
-        public boolean onMouseClicked(Click click, boolean used) {
+        public boolean onMouseClicked(MouseButtonEvent click, boolean used) {
             if (mouseOver
                 //? if >=1.21.9
                 && click.button() == GLFW_MOUSE_BUTTON_LEFT

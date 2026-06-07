@@ -2,12 +2,12 @@ package me.pindour.catppuccin.renderer.rounded.legacy;
 
 //? if <=1.21.4 {
 /*import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import me.pindour.catppuccin.renderer.CatppuccinRenderer;
 import me.pindour.catppuccin.renderer.rounded.RoundedRendererInternal;
 import meteordevelopment.meteorclient.renderer.GL;
 import meteordevelopment.meteorclient.utils.misc.Pool;
 import meteordevelopment.meteorclient.utils.render.color.Color;
-import net.minecraft.client.util.math.MatrixStack;
 import org.joml.Matrix4fStack;
 
 import java.util.ArrayList;
@@ -59,7 +59,7 @@ public class RoundedRendererLegacy implements RoundedRendererInternal {
     }
 
     @Override
-    public void render(MatrixStack matrices) {
+    public void render(PoseStack matrices) {
         if (roundedCalls.isEmpty()) return;
 
         GL.saveState();
@@ -70,7 +70,7 @@ public class RoundedRendererLegacy implements RoundedRendererInternal {
         Matrix4fStack modelView = RenderSystem.getModelViewStack();
         modelView.pushMatrix();
         if (matrices != null) {
-            modelView.mul(matrices.peek().getPositionMatrix());
+            modelView.mul(matrices.last().pose());
         }
 
         ROUNDED_SHADER.bind();

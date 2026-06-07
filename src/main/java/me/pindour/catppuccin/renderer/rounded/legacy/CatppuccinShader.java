@@ -5,9 +5,9 @@ package me.pindour.catppuccin.renderer.rounded.legacy;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import me.pindour.catppuccin.CatppuccinAddon;
 import meteordevelopment.meteorclient.utils.render.color.Color;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.resource.Resource;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.packs.resources.Resource;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL32C;
 
@@ -59,8 +59,11 @@ public class CatppuccinShader {
     }
 
     private InputStream getResource(Identifier id) throws IOException {
-        Resource resource = MinecraftClient.getInstance().getResourceManager().getResource(id).orElseThrow();
+        Resource resource = Minecraft.getInstance().getResourceManager().getResource(id).orElseThrow();
+        //? if >=1.21.5 {
         return resource.getInputStream();
+        //? } else
+        //return resource.open();
     }
 
     public void bind() {

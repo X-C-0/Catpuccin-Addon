@@ -6,7 +6,6 @@ import meteordevelopment.meteorclient.gui.widgets.containers.WView;
 import org.spongepowered.asm.mixin.Mixin;
 //? if <=1.21.10 {
 /*import meteordevelopment.meteorclient.gui.widgets.WWidget;
-import net.minecraft.util.math.MathHelper;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -72,8 +71,13 @@ public abstract class WViewMixin extends WContainer implements IWidgetBackport {
         if (!scrollOnlyWhenMouseOver || mouseOver) {
             double max = actualHeight - height;
 
+            if (max < 0) {
+                cir.setReturnValue(false);
+                return;
+            }
+
             targetScroll -= Math.round(theme.scale(amount * 40));
-            targetScroll = MathHelper.clamp(targetScroll, 0, max);
+            targetScroll = Math.clamp(targetScroll, 0, max);
 
             // Only consume the event if the view actually scrolled, otherwise propagate to parent.
             cir.setReturnValue(targetScroll > 0 && targetScroll < max);

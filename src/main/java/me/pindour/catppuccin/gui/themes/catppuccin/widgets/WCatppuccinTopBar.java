@@ -13,7 +13,7 @@ import meteordevelopment.meteorclient.gui.tabs.Tabs;
 import meteordevelopment.meteorclient.gui.widgets.WTopBar;
 import meteordevelopment.meteorclient.gui.widgets.pressable.WPressable;
 import meteordevelopment.meteorclient.utils.render.color.Color;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screens.Screen;
 
 import static meteordevelopment.meteorclient.MeteorClient.mc;
 import static org.lwjgl.glfw.GLFW.glfwSetCursorPos;
@@ -70,14 +70,22 @@ public class WCatppuccinTopBar extends WTopBar implements CatppuccinWidget {
 
         @Override
         protected void onPressed(int button) {
-            Screen screen = mc.currentScreen;
+            Screen screen = mc.screen;
 
             if (!(screen instanceof TabScreen) || ((TabScreen) screen).tab != tab) {
-                double mouseX = mc.mouse.getX();
-                double mouseY = mc.mouse.getY();
+                double mouseX = mc.mouseHandler.xpos();
+                double mouseY = mc.mouseHandler.ypos();
 
                 tab.openScreen(theme);
-                glfwSetCursorPos(mc.getWindow().getHandle(), mouseX, mouseY);
+
+                glfwSetCursorPos(
+                        //? if <=1.21.4 {
+                        /*mc.getWindow().getWindow(),
+                        *///? } else
+                        mc.getWindow().handle(),
+                        mouseX,
+                        mouseY
+                );
             }
         }
 
@@ -85,7 +93,7 @@ public class WCatppuccinTopBar extends WTopBar implements CatppuccinWidget {
         protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
             CatppuccinGuiTheme theme = theme();
 
-            boolean isSelected = mc.currentScreen instanceof TabScreen && ((TabScreen) mc.currentScreen).tab == tab;
+            boolean isSelected = mc.screen instanceof TabScreen && ((TabScreen) mc.screen).tab == tab;
 
             // Start the animation if it wasn't started yet, selecting a new tab
             // will automatically reset the animation, since it gets reinitialized
