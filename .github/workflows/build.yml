@@ -25,10 +25,10 @@ jobs:
           java-version: 21
           distribution: temurin
 
-      - name: Read version from gradle.properties
+      - name: Read version from stonecutter.properties.toml
         id: version
         run: |
-          VERSION=$(grep "^mod\.version" gradle.properties | cut -d'=' -f2 | tr -d '[:space:]')
+          VERSION=$(grep "^mod\.version" stonecutter.properties.toml | cut -d'=' -f2 | tr -d '[:space:]' | tr -d '"')
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "TAG=v$VERSION" >> $GITHUB_ENV
 
