@@ -62,4 +62,18 @@ public class ColorUtils {
         c.validate();
         return c;
     }
+
+    /**
+     * Checks if a string contains characters outside the Latin script ranges.
+     * Custom font atlases (e.g. Meteor's Font class) typically don't include
+     * CJK or other non-Latin glyphs, causing text to render as invisible.
+     * When this returns true, the rendering path should fall back to
+     * Minecraft's built-in font renderer which handles Unicode correctly.
+     */
+    public static boolean containsNonLatinChars(String text) {
+        for (int i = 0; i < text.length(); i++) {
+            if (text.charAt(i) > 0x05FF) return true;
+        }
+        return false;
+    }
 }

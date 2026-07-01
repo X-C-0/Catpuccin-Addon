@@ -3,12 +3,18 @@ package me.pindour.catppuccin.renderer;
 import me.pindour.catppuccin.api.render.RoundedRect;
 import me.pindour.catppuccin.api.render.RoundedRectRenderer;
 import me.pindour.catppuccin.api.text.RichText;
+import me.pindour.catppuccin.api.text.RichTextSegment;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import me.pindour.catppuccin.renderer.rounded.RoundedRendererInternal;
 import me.pindour.catppuccin.renderer.text.CatppuccinTextRenderer;
+import me.pindour.catppuccin.utils.ColorUtils;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
+import meteordevelopment.meteorclient.renderer.text.VanillaTextRenderer;
 import meteordevelopment.meteorclient.systems.config.Config;
 import meteordevelopment.meteorclient.utils.render.color.Color;
+
+import java.util.ArrayList;
+import java.util.List;
 
 //? if >=1.21.5 {
 import me.pindour.catppuccin.renderer.rounded.modern.RoundedRendererModern;
@@ -29,6 +35,10 @@ public class CatppuccinRenderer implements RoundedRectRenderer {
     //private final RoundedRendererInternal roundedRenderer = new RoundedRendererLegacy();
 
     private final CatppuccinTextRenderer textRenderer = new CatppuccinTextRenderer();
+
+    // Collects texts that contain non-Latin characters (e.g. CJK) which the
+    // custom font atlas can't render. These are drawn via VanillaTextRenderer.
+    private final List<VanillaTextEntry> vanillaTexts = new ArrayList<>();
 
     private boolean clipEnabled = false;
     private float clipMinX;
@@ -63,6 +73,31 @@ public class CatppuccinRenderer implements RoundedRectRenderer {
         textRenderer.render(theme);
     }
 
+    public void renderVanillaTexts() {
+        if (vanillaTexts.isEmpty()) return;
+
+        double scale = theme != null ? theme.scale(1) : 1;
+        double titleScale = scale * 1.25;
+
+        // Group by shadow flag to avoid begin/end per entry
+        for (boolean shadow : new boolean[]{false, true}) {
+            boolean started = false;
+            for (VanillaTextEntry entry : vanillaTexts) {
+                if (entry.shadow != shadow) continue;
+                if (!started) {
+                    VanillaTextRenderer.INSTANCE.begin(shadow ? titleScale : scale);
+                    started = true;
+                }
+                VanillaTextRenderer.INSTANCE.render(
+                        entry.text, entry.x, entry.y, entry.color, entry.shadow
+                );
+            }
+            if (started) VanillaTextRenderer.INSTANCE.end();
+        }
+
+        vanillaTexts.clear();
+    }
+
     public void setClipRect(double minX, double minY, double maxX, double maxY) {
         clipEnabled = true;
         clipMinX = (float) minX;
@@ -91,8 +126,21 @@ public class CatppuccinRenderer implements RoundedRectRenderer {
     public void text(RichText text, double x, double y, Color color) {
         if (guiRenderer != null && !Config.get().customFont.get())
             guiRenderer.text(text.getPlainText(), x, y, color, false);
+        else if (theme != null && ColorUtils.containsNonLatinChars(text.getPlainText()))
+            collectVanillaText(text, x, y, color);
+        else
+            textRenderer.text(text, x, y, color, theme);
+    }
 
-        else textRenderer.text(text, x, y, color, theme);
+    private void collectVanillaText(RichText text, double startX, double y, Color color) {
+        double x = startX;
+        for (RichTextSegment segment : text.getSegments()) {
+            if (segment.getText().isEmpty()) continue;
+            vanillaTexts.add(new VanillaTextEntry(
+                    segment.getText(), x, y, color, segment.hasShadow()
+            ));
+            x += VanillaTextRenderer.INSTANCE.getWidth(segment.getText());
+        }
     }
 
     /**
@@ -130,4 +178,6 @@ public class CatppuccinRenderer implements RoundedRectRenderer {
     public void flipFrame() {
         roundedRenderer.flipFrame();
     }
+
+    private record VanillaTextEntry(String text, double x, double y, Color color, boolean shadow) {}
 }

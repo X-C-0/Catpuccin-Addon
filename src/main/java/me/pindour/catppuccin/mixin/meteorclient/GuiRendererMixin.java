@@ -89,6 +89,8 @@ public abstract class GuiRendererMixin {
         if (Config.get().customFont.get()) {
             // Custom renderer
             renderer().renderText();
+            // Render non-Latin (CJK etc.) texts via vanilla Minecraft renderer
+            renderer().renderVanillaTexts();
         } else {
             // Vanilla renderer
             theme.textRenderer().begin(theme.scale(1));
@@ -117,6 +119,9 @@ public abstract class GuiRendererMixin {
     private void catppuccin$text(String text, double x, double y, Color color, boolean title, CallbackInfo ci) {
         if (!isCatppuccinActive() || !Config.get().customFont.get()) return;
 
+        // Let CatppuccinRenderer.text() decide the rendering path:
+        //  - Latin text   → custom font batch (RichTextRenderer)
+        //  - Non-Latin text → vanilla font batch (VanillaTextRenderer)
         renderer().text(RichText.of(text).boldIf(title), x, y, color);
         ci.cancel();
     }
