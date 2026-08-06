@@ -10,6 +10,11 @@
     <a href="https://github.com/X-C-0/catppuccin-addon/issues"><img src="https://img.shields.io/github/issues/X-C-0/catppuccin-addon?colorA=363a4f&colorB=f5a97f&style=for-the-badge" alt=""></a>
     <a href="https://github.com/X-C-0/catppuccin-addon/contributors"><img src="https://img.shields.io/github/contributors/X-C-0/catppuccin-addon?colorA=363a4f&colorB=a6da95&style=for-the-badge" alt=""></a>
   <a href="https://github.com/X-C-0/catppuccin-addon/releases"><img src="https://img.shields.io/github/downloads/X-C-0/catppuccin-addon/total?style=for-the-badge&labelColor=363a4f&color=f5c2e7" alt=""></a>
+
+  <br>
+  <br>
+    <a href="https://modrinth.com/mod/catppuccin-theme-addon"><img src="https://img.shields.io/badge/Download%20from-Modrinth-00AF5C?style=for-the-badge&labelColor=363a4f&logo=modrinth&logoColor=white" alt="Download from Modrinth"></a>
+    <a href="https://github.com/X-C-0/catppuccin-addon/releases"><img src="https://img.shields.io/badge/Download%20from-Releases-8aadf4?style=for-the-badge&labelColor=363a4f&logo=github&logoColor=white" alt="Download from Releases"></a>
 </p>
 
 <p align="center">
