@@ -5,12 +5,14 @@ import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import me.pindour.catppuccin.gui.themes.catppuccin.icons.CatppuccinBuiltinIcons;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.container.WCatppuccinWindow;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.settings.WCatppuccinKeybind;
+import me.pindour.catppuccin.utils.WidgetUtils;
 import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.events.meteor.ActiveModulesChangedEvent;
 import meteordevelopment.meteorclient.events.meteor.ModuleBindChangedEvent;
 import meteordevelopment.meteorclient.gui.WidgetScreen;
 import meteordevelopment.meteorclient.gui.WindowScreen;
 import meteordevelopment.meteorclient.gui.utils.Cell;
+import meteordevelopment.meteorclient.gui.widgets.WLabel;
 import meteordevelopment.meteorclient.gui.widgets.WWidget;
 import meteordevelopment.meteorclient.gui.widgets.containers.WContainer;
 import meteordevelopment.meteorclient.gui.widgets.containers.WHorizontalList;
@@ -67,14 +69,30 @@ public class CatppuccinModuleScreen extends WindowScreen {
         }
 
         // Keybind
-        WHorizontalList bind = moduleInfo.add(theme.horizontalList()).expandX().widget();
+        WHorizontalList bind = moduleInfo.add(
+                theme.horizontalList()).expandX().padVertical(pad).widget();
+        bind.spacing = pad;
 
-        keybind = bind.add(theme.catppuccinKeybind(module.keybind)).expandX().widget();
+        keybind = bind.add(theme.catppuccinKeybind(module.keybind)).widget();
         keybind.actionOnSet = () -> Modules.get().setModuleToBind(module);
 
-        WDropdown<BindAction> bindAction = bind.add(theme.dropdown(module.toggleOnBindRelease ? BindAction.HOLD : BindAction.TOGGLE)).widget();
-        bindAction.action = () -> module.toggleOnBindRelease = bindAction.get().isHold();
-        bindAction.tooltip = "Determines whether the module toggles or remains active only while holding the key.";
+        BindAction bindAction = module.toggleOnBindRelease ? BindAction.HOLD : BindAction.TOGGLE;
+
+        WDropdown<BindAction> bindActionWidget = bind.add(theme.dropdown(bindAction)).expandCellX().widget();
+        bindActionWidget.action = () -> module.toggleOnBindRelease = bindActionWidget.get().isHold();
+        bindActionWidget.tooltip = "Determines whether the module toggles or remains active only while holding the key.";
+
+        WidgetUtils.reset(
+                bind,
+                null,
+                () -> {
+                    BindAction toggle = BindAction.TOGGLE;
+                    keybind.resetBind();
+                    module.toggleOnBindRelease = toggle.isHold();
+                    bindActionWidget.set(toggle);
+                },
+                () -> bind.mouseOver
+        );
 
         // Chat feedback
         WHorizontalList cf = moduleInfo.add(theme.horizontalList()).expandX().widget();
@@ -82,7 +100,9 @@ public class CatppuccinModuleScreen extends WindowScreen {
         WCheckbox cfC = cf.add(theme.checkbox(module.chatFeedback)).widget();
         cfC.action = () -> module.chatFeedback = cfC.checked;
 
-        cf.add(theme.label("Chat Feedback"));
+        WLabel cfLabel = theme.label("Chat Feedback");
+        cfLabel.tooltip = "Displays a toggle message in chat when enabled.";
+        cf.add(cfLabel);
 
         moduleInfo.add(theme.horizontalSeparator()).expandX();
 

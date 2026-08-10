@@ -20,7 +20,7 @@ public class WidgetUtils {
         button.setVisibilityCondition(visibilityCondition);
         button.tooltip = "Reset";
         button.action = () -> {
-            setting.reset();
+            if (setting != null) setting.reset();
             if (action != null) action.run();
         };
 
