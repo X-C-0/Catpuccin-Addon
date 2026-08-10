@@ -2,6 +2,7 @@ package me.pindour.catppuccin.gui.themes.catppuccin.widgets.input;
 
 import me.pindour.catppuccin.api.animation.Animation;
 import me.pindour.catppuccin.api.animation.Direction;
+import me.pindour.catppuccin.api.animation.Easing;
 import me.pindour.catppuccin.api.text.RichText;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinWidget;
@@ -19,7 +20,8 @@ public class WCatppuccinDropdown<T> extends WDropdown<T> implements CatppuccinWi
     private final RichText titleText;
     private RichText valueText;
 
-    private Animation animation;
+    private Animation hoverAnimation;
+    private Animation indicatorAnimation;
 
     public WCatppuccinDropdown(String title, T[] values, T value) {
         super(values, value);
@@ -48,7 +50,9 @@ public class WCatppuccinDropdown<T> extends WDropdown<T> implements CatppuccinWi
             if (i == values.length - 1) cell.padBottom(pad);
         }
 
-        animation = new Animation(
+        hoverAnimation = new Animation(Easing.QUAD_OUT, 250);
+
+        indicatorAnimation = new Animation(
                 theme().guiAnimationEasing(),
                 theme().guiAnimationDuration(),
                 Direction.BACKWARDS
@@ -87,7 +91,19 @@ public class WCatppuccinDropdown<T> extends WDropdown<T> implements CatppuccinWi
         double pad = pad();
         double s = theme.textHeight() * 0.75;
 
-        background(pressed, mouseOver).render();
+        double hoverProgress = hoverAnimation.getProgress();
+
+        if (mouseOver && hoverProgress == 0)
+            hoverAnimation.start();
+
+        if (!mouseOver && hoverProgress > 0)
+            hoverAnimation.reset();
+
+        Color bg = theme.backgroundColor.get(pressed, mouseOver);
+        Color accent = ColorUtils.withAlpha(theme.accentColor(), 0.8);
+        Color outline = ColorUtils.interpolateColor(bg, accent, hoverProgress);
+
+        background(bg, outline).render();
 
         // Title text
         renderer().text(
@@ -125,7 +141,7 @@ public class WCatppuccinDropdown<T> extends WDropdown<T> implements CatppuccinWi
                 y + height / 2 - s / 2,
                 s,
                 s,
-                180 * (1 - animation.getProgress()),
+                180 * (1 - indicatorAnimation.getProgress()),
                 CatppuccinBuiltinIcons.ARROW.texture(),
                 theme.textColor()
         );
@@ -136,7 +152,7 @@ public class WCatppuccinDropdown<T> extends WDropdown<T> implements CatppuccinWi
         animProgress = -8008135; // Small hack to cancel out WDropdown scissors, so we can use our animation
 
         boolean render = super.render(renderer, mouseX, mouseY, delta);
-        double progress = animation.getProgress();
+        double progress = indicatorAnimation.getProgress();
 
         if (!render && progress > 0) {
             renderer.absolutePost(() -> {
@@ -159,15 +175,15 @@ public class WCatppuccinDropdown<T> extends WDropdown<T> implements CatppuccinWi
     public void set(T value) {
         super.set(value);
 
-        if (animation == null) return;
+        if (indicatorAnimation == null) return;
 
-        animation.reset();
+        indicatorAnimation.reset();
         handlePressed();
     }
 
     private void handlePressed() {
         valueText = RichText.of(getNameFor(value));
-        animation.reverse();
+        indicatorAnimation.reverse();
     }
 
     private String getNameFor(T value) {
