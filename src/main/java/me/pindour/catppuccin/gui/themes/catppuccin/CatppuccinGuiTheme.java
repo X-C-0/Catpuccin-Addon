@@ -25,6 +25,7 @@ import me.pindour.catppuccin.gui.widgets.pressable.WColorPicker;
 import me.pindour.catppuccin.gui.widgets.pressable.WOpenIndicator;
 import me.pindour.catppuccin.renderer.CatppuccinRenderer;
 import me.pindour.catppuccin.renderer.text.RichTextRenderer;
+import me.pindour.catppuccin.utils.ColorUtils;
 import meteordevelopment.meteorclient.gui.GuiTheme;
 import meteordevelopment.meteorclient.gui.WidgetScreen;
 import meteordevelopment.meteorclient.gui.renderer.packer.GuiTexture;
@@ -691,12 +692,20 @@ public class CatppuccinGuiTheme extends GuiTheme {
     // Text
 
     public double textWidth(RichTextSegment segment) {
+        // Non-Latin chars (e.g. CJK) won't render in the custom font atlas;
+        // use vanilla Minecraft renderer width for correct layout sizing.
+        if (ColorUtils.containsNonLatinChars(segment.getText()))
+            return scale(VanillaTextRenderer.INSTANCE.getWidth(segment.getText()));
+
         return scale(Config.get().customFont.get()
                 ? richTextRenderer().getWidth(segment, segment.getText().length())
                 : textRenderer().getWidth(segment.getText()));
     }
 
     public double textWidth(RichText text) {
+        if (ColorUtils.containsNonLatinChars(text.getPlainText()))
+            return scale(VanillaTextRenderer.INSTANCE.getWidth(text.getPlainText()));
+
         return scale(Config.get().customFont.get()
                 ? richTextRenderer().getWidth(text)
                 : textRenderer().getWidth(text.getPlainText()));
@@ -715,6 +724,9 @@ public class CatppuccinGuiTheme extends GuiTheme {
     }
 
     public double textHeight(RichText text) {
+        if (ColorUtils.containsNonLatinChars(text.getPlainText()))
+            return scale(VanillaTextRenderer.INSTANCE.getHeight());
+
         return scale(Config.get().customFont.get()
                 ? richTextRenderer().getHeight(text)
                 : textRenderer().getHeight());
