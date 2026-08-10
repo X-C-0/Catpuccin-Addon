@@ -45,6 +45,11 @@ import java.util.function.Consumer;
 import static me.pindour.catppuccin.utils.WidgetUtils.reset;
 import static meteordevelopment.meteorclient.MeteorClient.mc;
 
+//? if >=21.1.2 {
+import org.lwjgl.util.tinyfd.TinyFileDialogs;
+import java.io.File;
+//? }
+
 public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
     private static final SettingColor WHITE = new SettingColor();
     private final CatppuccinGuiTheme theme;
@@ -84,6 +89,9 @@ public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
         factories.put(ColorListSetting.class, (table, setting) -> colorListW(table, (ColorListSetting) setting));
         factories.put(FontFaceSetting.class, (table, setting) -> fontW(table, (FontFaceSetting) setting));
         factories.put(Vector3dSetting.class, (table, setting) -> vector3dW(table, (Vector3dSetting) setting));
+
+        //? if >= 21.1.2
+        factories.put(FileSetting.class, (table, setting) -> fileW(table, (FileSetting) setting));
     }
 
     // Spacing
@@ -391,7 +399,7 @@ public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
 
         WButton button = list.add(theme.button(CatppuccinBuiltinIcons.EDIT.texture())).widget();
         button.action = () -> mc.setScreen(
-                new BlockDataSettingScreen/*? if >= 1.21.10 >>+ '<>'*/<>(theme, setting)
+                new BlockDataSettingScreen/*? if >=1.21.10 >>+ '<>'*/<>(theme, setting)
         );
 
         title(list, setting).padLeft(theme.pad()).expandCellX();
@@ -560,6 +568,37 @@ public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
         return component;
     }
 
+    private void fileW(WTable table, FileSetting setting) {
+        WHorizontalList list = table.add(theme.horizontalList()).expandX().widget();
+
+        WButton selectFile = list.add(theme.button("Select File")).widget();
+
+        WLabel fileName = list.add(theme.label((setting.get() != null && setting.get().exists()) ? setting.get().getName() : "No file selected.")).widget();
+
+        selectFile.action = () -> {
+            String path = TinyFileDialogs.tinyfd_openFileDialog(
+                    "Select File",
+                    null,
+                    setting.filters,
+                    null,
+                    false
+            );
+
+            if (path != null) {
+                setting.set(new File(path));
+                fileName.set(setting.get().getName());
+            }
+        };
+
+        Runnable action = () -> fileName.set(
+                (setting.get() != null && setting.get().exists())
+                ? setting.get().getName()
+                : "No file selected."
+        );
+
+        reset(table, setting, action, () -> list.mouseOver);
+    }
+
     // Other
 
     private void selectW(WContainer c, Setting<?> setting, Runnable action) {
@@ -577,8 +616,6 @@ public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
 
         reset(list, setting, null, () -> list.mouseOver);
     }
-
-
 
     private Cell<WLabel> title(WContainer c, Setting<?> setting) {
         return title(c, setting, false);
