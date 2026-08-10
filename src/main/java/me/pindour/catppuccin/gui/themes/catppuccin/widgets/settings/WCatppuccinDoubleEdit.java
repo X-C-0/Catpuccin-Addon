@@ -74,7 +74,7 @@ public class WCatppuccinDoubleEdit extends WVerticalList implements CatppuccinWi
         }
 
         // Title
-        list.add(theme().label(title + ":")).widget().tooltip = description;
+        list.add(theme().label(title + " ")).widget().tooltip = description;
 
         // Value
         textBox = (WCatppuccinTextBox) list.add(theme().textBox(valueString(), this::filter, 0)).expandX().expandCellX().widget();
