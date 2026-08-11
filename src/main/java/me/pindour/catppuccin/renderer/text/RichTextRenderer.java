@@ -9,6 +9,9 @@ import meteordevelopment.meteorclient.utils.render.color.Color;
 
 import java.nio.ByteBuffer;
 
+//? if >=26.2
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+
 //? if <=1.21.10 {
 /*import meteordevelopment.meteorclient.utils.Utils;
 import org.lwjgl.BufferUtils;
@@ -62,8 +65,12 @@ public class RichTextRenderer implements TextRenderer {
     }
 
     @Override
-    public void begin(double scale, boolean scaleOnly, boolean big) {
-        if (building) throw new RuntimeException("begin() called twice");
+    public void begin(
+            //? if >=26.2
+            GuiGraphicsExtractor graphics,
+            double scale, boolean scaleOnly, boolean big
+    ) {
+        if (building) throw new RuntimeException("RichTextRenderer.begin() called twice");
 
         if (!scaleOnly) mesh.begin();
 
@@ -166,8 +173,12 @@ public class RichTextRenderer implements TextRenderer {
 
     @Override
     public double render(String text, double x, double y, Color color, boolean shadow) {
-        boolean wasBuilding = building;
+        //? if >=26.2 {
+        if (!building) throw new RuntimeException("RichTextRenderer.render() called without calling begin()");
+        //? } else {
+        /*boolean wasBuilding = building;
         if (!wasBuilding) begin();
+        *///? }
 
         double renderScale = scale / 1.5;
         double width;
@@ -186,7 +197,8 @@ public class RichTextRenderer implements TextRenderer {
             width = currentFont.render(mesh, text, x, y, color, renderScale);
         }
 
-        if (!wasBuilding) end();
+        //? if <=26.1
+        //if (!wasBuilding) end();
         return width;
     }
 
@@ -211,7 +223,7 @@ public class RichTextRenderer implements TextRenderer {
 
             *///?} else {
             MeshRenderer.begin()
-                    .attachments(Minecraft.getInstance().getMainRenderTarget())
+                    .attachments(Minecraft.getInstance().gameRenderer.mainRenderTarget())
                     .pipeline(MeteorRenderPipelines.UI_TEXT)
                     .mesh(mesh)
 

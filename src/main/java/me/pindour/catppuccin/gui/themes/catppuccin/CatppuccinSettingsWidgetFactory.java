@@ -259,7 +259,7 @@ public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
         WHorizontalList list = table.add(theme.horizontalList()).expandX().widget();
 
         WButton edit = list.add(theme.button(CatppuccinBuiltinIcons.EDIT.texture())).widget();
-        edit.action = () -> mc.setScreen(
+        edit.action = () -> mc.gui.setScreen(
                 setting/*? if <=1.21.4 >>+ '()' *//*.get()*/.createScreen(theme)
         );
 
@@ -271,7 +271,7 @@ public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
         WHorizontalList list = table.add(theme.horizontalList()).expandX().widget();
 
         WColorPicker colorPicker = list.add(theme.colorPicker(setting.get(), CatppuccinBuiltinIcons.EDIT.texture())).widget();
-        colorPicker.action = () -> mc.setScreen(new ColorSettingScreen(theme, setting));
+        colorPicker.action = () -> mc.gui.setScreen(new ColorSettingScreen(theme, setting));
 
         title(list, setting).padLeft(theme.pad()).expandCellX();
 
@@ -300,7 +300,7 @@ public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
             BlockSettingScreen screen = new BlockSettingScreen(theme, setting);
             screen.onClosed(() -> item.set(setting.get().asItem().getDefaultInstance()));
 
-            mc.setScreen(screen);
+            mc.gui.setScreen(screen);
         };
 
         reset(list, setting, () -> item.set(setting.get().asItem().getDefaultInstance()), () -> list.mouseOver);
@@ -321,7 +321,7 @@ public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
     }
 
     private void blockListW(WTable table, BlockListSetting setting) {
-        selectW(table, setting, () -> mc.setScreen(new BlockListSettingScreen(theme, setting)));
+        selectW(table, setting, () -> mc.gui.setScreen(new BlockListSettingScreen(theme, setting)));
     }
 
     private void itemW(WTable table, ItemSetting setting) {
@@ -335,7 +335,7 @@ public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
             ItemSettingScreen screen = new ItemSettingScreen(theme, setting);
             screen.onClosed(() -> item.set(setting.get().getDefaultInstance()));
 
-            mc.setScreen(screen);
+            mc.gui.setScreen(screen);
         };
 
         list.add(item);
@@ -347,58 +347,58 @@ public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
     }
 
     private void itemListW(WTable table, ItemListSetting setting) {
-        selectW(table, setting, () -> mc.setScreen(new ItemListSettingScreen(theme, setting)));
+        selectW(table, setting, () -> mc.gui.setScreen(new ItemListSettingScreen(theme, setting)));
     }
 
     private void entityTypeListW(WTable table, EntityTypeListSetting setting) {
         selectW(table, setting, () ->
-                mc.setScreen(theme.catppuccinEntityTypeListScreen.get()
+                mc.gui.setScreen(theme.catppuccinEntityTypeListScreen.get()
                         ? new CatppuccinEntityTypeListSettingScreen(theme, setting)
                         : new EntityTypeListSettingScreen(theme, setting))
         );
     }
 
     private void enchantmentListW(WTable table, EnchantmentListSetting setting) {
-        selectW(table, setting, () -> mc.setScreen(new EnchantmentListSettingScreen(theme, setting)));
+        selectW(table, setting, () -> mc.gui.setScreen(new EnchantmentListSettingScreen(theme, setting)));
     }
 
     private void moduleListW(WTable table, ModuleListSetting setting) {
-        selectW(table, setting, () -> mc.setScreen(new ModuleListSettingScreen(theme, setting)));
+        selectW(table, setting, () -> mc.gui.setScreen(new ModuleListSettingScreen(theme, setting)));
     }
 
     private void packetListW(WTable table, PacketListSetting setting) {
-        selectW(table, setting, () -> mc.setScreen(new PacketBoolSettingScreen(theme, setting)));
+        selectW(table, setting, () -> mc.gui.setScreen(new PacketBoolSettingScreen(theme, setting)));
     }
 
     private void particleTypeListW(WTable table, ParticleTypeListSetting setting) {
-        selectW(table, setting, () -> mc.setScreen(new ParticleTypeListSettingScreen(theme, setting)));
+        selectW(table, setting, () -> mc.gui.setScreen(new ParticleTypeListSettingScreen(theme, setting)));
     }
 
     private void soundEventListW(WTable table, SoundEventListSetting setting) {
-        selectW(table, setting, () -> mc.setScreen(new SoundEventListSettingScreen(theme, setting)));
+        selectW(table, setting, () -> mc.gui.setScreen(new SoundEventListSettingScreen(theme, setting)));
     }
 
     private void statusEffectAmplifierMapW(WTable table, StatusEffectAmplifierMapSetting setting) {
-        selectW(table, setting, () -> mc.setScreen(new StatusEffectAmplifierMapSettingScreen(theme, setting)));
+        selectW(table, setting, () -> mc.gui.setScreen(new StatusEffectAmplifierMapSettingScreen(theme, setting)));
     }
 
     private void statusEffectListW(WTable table, StatusEffectListSetting setting) {
-        selectW(table, setting, () -> mc.setScreen(new StatusEffectListSettingScreen(theme, setting)));
+        selectW(table, setting, () -> mc.gui.setScreen(new StatusEffectListSettingScreen(theme, setting)));
     }
 
     private void storageBlockListW(WTable table, StorageBlockListSetting setting) {
-        selectW(table, setting, () -> mc.setScreen(new StorageBlockListSettingScreen(theme, setting)));
+        selectW(table, setting, () -> mc.gui.setScreen(new StorageBlockListSettingScreen(theme, setting)));
     }
 
     private void screenHandlerListW(WTable table, ScreenHandlerListSetting setting) {
-        selectW(table, setting, () -> mc.setScreen(new ScreenHandlerSettingScreen(theme, setting)));
+        selectW(table, setting, () -> mc.gui.setScreen(new ScreenHandlerSettingScreen(theme, setting)));
     }
 
     private void blockDataW(WTable table, BlockDataSetting<?> setting) {
         WHorizontalList list = table.add(theme.horizontalList()).expandX().widget();
 
         WButton button = list.add(theme.button(CatppuccinBuiltinIcons.EDIT.texture())).widget();
-        button.action = () -> mc.setScreen(
+        button.action = () -> mc.gui.setScreen(
                 new BlockDataSettingScreen/*? if >=1.21.10 >>+ '<>'*/<>(theme, setting)
         );
 
@@ -429,7 +429,7 @@ public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
                     setting.get().potion/*? if >=26.1 >>+ ')'*/.get())
             );
 
-            mc.setScreen(screen);
+            mc.gui.setScreen(screen);
         };
 
         list.add(item).expandCellX();
@@ -452,7 +452,7 @@ public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
 
             screen.onClosed(() -> label.set(getFontLabel(setting, setting.get().info.family())));
 
-            mc.setScreen(screen);
+            mc.gui.setScreen(screen);
         };
 
         list.add(label).expandCellX().padLeft(theme.pad());
@@ -517,7 +517,7 @@ public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
                 );
 
                 set.set(setting.get().get(_i));
-                mc.setScreen(new ColorSettingScreen(theme, set));
+                mc.gui.setScreen(new ColorSettingScreen(theme, set));
             };
 
             list.add(theme.label(RichText.of("Example Text").scale(TextScale.SMALL.get())).color(color)).expandX();

@@ -50,7 +50,7 @@ public class RoundedRendererModern implements RoundedRendererInternal {
 
         RoundedUniforms.update(width, height, topLeft, topRight, bottomLeft, bottomRight, fillColor, outlineColor, outlineWidth);
         MeshRenderer.begin()
-                .attachments(Minecraft.getInstance().getMainRenderTarget())
+                .attachments(Minecraft.getInstance().gameRenderer.mainRenderTarget())
                 .pipeline(CatppuccinRenderPipelines.ROUNDED_UI)
                 .mesh(roundedMesh)
                 .uniform("RoundedRectData", RoundedUniforms.getUniformStorage())

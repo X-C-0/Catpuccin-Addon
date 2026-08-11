@@ -3,6 +3,7 @@
   "package": "me.pindour.catppuccin.mixin",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "MinecraftRenderFrameMixin",
     "RenderSystemMixin"
   ],
   "injectors": {
@@ -15,10 +16,10 @@
     "meteorclient.MeteorWidgetMixin",
     "meteorclient.TabMixin",
     "meteorclient.WBrightnessQuadMixin",
-    "meteorclient.WHueQuadMixin",
     "meteorclient.WContainerMixin",
     "meteorclient.WDropdownMixin",
     "meteorclient.WHeaderMixin",
+    "meteorclient.WHueQuadMixin",
     "meteorclient.WSliderAccessor",
     "meteorclient.WSliderMixin",
     "meteorclient.WTextBoxMixin",

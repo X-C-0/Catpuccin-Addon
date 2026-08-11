@@ -135,8 +135,8 @@ public abstract class WSearch extends WVerticalList {
 
                 if (button == GLFW_MOUSE_BUTTON_RIGHT) {
                     switch (result) {
-                        case ModuleSearchResult r -> mc.setScreen(theme.moduleScreen(r.module()));
-                        case SettingSearchResult r -> mc.setScreen(theme.moduleScreen(r.setting().module));
+                        case ModuleSearchResult r -> mc.gui.setScreen(theme.moduleScreen(r.module()));
+                        case SettingSearchResult r -> mc.gui.setScreen(theme.moduleScreen(r.setting().module));
                         default -> { } // ignored
                     }
                 }

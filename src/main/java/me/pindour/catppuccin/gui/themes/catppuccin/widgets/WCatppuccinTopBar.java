@@ -70,7 +70,7 @@ public class WCatppuccinTopBar extends WTopBar implements CatppuccinWidget {
 
         @Override
         protected void onPressed(int button) {
-            Screen screen = mc.screen;
+            Screen screen = mc.gui.screen();
 
             if (!(screen instanceof TabScreen) || ((TabScreen) screen).tab != tab) {
                 double mouseX = mc.mouseHandler.xpos();
@@ -93,7 +93,7 @@ public class WCatppuccinTopBar extends WTopBar implements CatppuccinWidget {
         protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
             CatppuccinGuiTheme theme = theme();
 
-            boolean isSelected = mc.screen instanceof TabScreen && ((TabScreen) mc.screen).tab == tab;
+            boolean isSelected = mc.gui.screen() instanceof TabScreen && ((TabScreen) mc.gui.screen()).tab == tab;
 
             // Start the animation if it wasn't started yet, selecting a new tab
             // will automatically reset the animation, since it gets reinitialized

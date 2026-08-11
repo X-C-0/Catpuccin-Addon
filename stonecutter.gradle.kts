@@ -2,7 +2,7 @@ plugins {
     id("dev.kikugie.stonecutter")
 }
 
-stonecutter active "26.1.2" /* [SC] DO NOT EDIT */
+stonecutter active "26.2" /* [SC] DO NOT EDIT */
 
 tasks.register("buildAllAndCollect") {
     group = "build"
@@ -14,6 +14,15 @@ tasks.register("buildAllAndCollect") {
 
 stonecutter parameters {
     replacements {
+        string(current.parsed < "26.2") {
+            // Screen
+            replace("mc.gui.screen()", "mc.screen")
+            replace("mc.gui.setScreen(", "mc.setScreen(")
+            // Render
+            replace("Minecraft.getInstance().gameRenderer.mainRenderTarget()", "Minecraft.getInstance().getMainRenderTarget()")
+            // Options
+            replace("mc.gameRenderer.gameRenderState().guiRenderState.isHudHidden", "mc.options.hideGui")
+        }
         string(current.parsed <= "26.1") {
             // Screen
             replace("extractBackground(GuiGraphicsExtractor", "renderBackground(GuiGraphics")

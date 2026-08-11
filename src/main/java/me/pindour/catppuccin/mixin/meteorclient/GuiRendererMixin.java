@@ -91,14 +91,24 @@ public abstract class GuiRendererMixin {
             renderer().renderText();
         } else {
             // Vanilla renderer
-            theme.textRenderer().begin(theme.scale(1));
+            theme.textRenderer().begin(
+                    //? if >=26.2
+                    null,
+                    theme.scale(1)
+            );
+
             for (TextOperation text : texts) {
                 if (!text.title) text.run(textPool);
             }
             theme.textRenderer().end();
 
             // Title text
-            theme.textRenderer().begin(theme.scale(1.25));
+            theme.textRenderer().begin(
+                    //? if >=26.2
+                    null,
+                    theme.scale(1.25)
+            );
+
             for (TextOperation text : texts) {
                 if (text.title) text.run(textPool);
             }

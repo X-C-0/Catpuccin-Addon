@@ -85,7 +85,7 @@ public class WCatppuccinModule extends WPressable implements CatppuccinWidget {
             module.toggle();
 
         else if (button == GLFW_MOUSE_BUTTON_RIGHT)
-            mc.setScreen(theme.moduleScreen(module));
+            mc.gui.setScreen(theme.moduleScreen(module));
     }
 
     @Override

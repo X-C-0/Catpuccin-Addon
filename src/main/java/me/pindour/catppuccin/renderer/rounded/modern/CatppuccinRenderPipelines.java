@@ -3,7 +3,6 @@ package me.pindour.catppuccin.renderer.rounded.modern;
 //? if >=1.21.5 {
 import com.mojang.blaze3d.pipeline.BlendFunction;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
-import com.mojang.blaze3d.vertex.VertexFormat;
 import me.pindour.catppuccin.CatppuccinAddon;
 import meteordevelopment.meteorclient.renderer.ExtendedRenderPipelineBuilder;
 import meteordevelopment.meteorclient.renderer.MeteorRenderPipelines;
@@ -19,18 +18,40 @@ import java.util.Optional;
 /*import com.mojang.blaze3d.platform.DepthTestFunction;
 *///? }
 
+//? if >=26.2 {
+import com.mojang.blaze3d.PrimitiveTopology;
+import com.mojang.blaze3d.pipeline.BindGroupLayout;
+//? } else {
+/*import com.mojang.blaze3d.vertex.VertexFormat;
+*///?}
+
 public class CatppuccinRenderPipelines {
 
     private static final RenderPipeline.Snippet MESH_UNIFORMS = RenderPipeline.builder()
-        .withUniform("MeshData", UniformType.UNIFORM_BUFFER)
+        //? if >=26.2 {
+        .withBindGroupLayout(BindGroupLayout.builder()
+                .withUniform("MeshData", UniformType.UNIFORM_BUFFER)
+                .build())
+        //? } else {
+        /*.withUniform("MeshData", UniformType.UNIFORM_BUFFER)
+        *///? }
         .buildSnippet();
 
     public static final RenderPipeline ROUNDED_UI = register(new ExtendedRenderPipelineBuilder(MESH_UNIFORMS)
         .withLocation(CatppuccinAddon.identifier("pipeline/rounded_ui"))
-        .withVertexFormat(MeteorVertexFormats.POS2_TEXTURE_COLOR, VertexFormat.Mode.TRIANGLES)
         .withVertexShader(CatppuccinAddon.identifier("shaders/rounded_ui.vert"))
         .withFragmentShader(CatppuccinAddon.identifier("shaders/rounded_ui.frag"))
+
+        //? if >=26.2 {
+        .withVertexBinding(0, MeteorVertexFormats.POS2_TEXTURE_COLOR)
+        .withPrimitiveTopology(PrimitiveTopology.TRIANGLES)
+        .withBindGroupLayout(BindGroupLayout.builder()
+                .withUniform("RoundedRectData", UniformType.UNIFORM_BUFFER)
+                .build())
+        //? } else {
+        /*.withVertexFormat(MeteorVertexFormats.POS2_TEXTURE_COLOR, VertexFormat.Mode.TRIANGLES)
         .withUniform("RoundedRectData", UniformType.UNIFORM_BUFFER)
+        *///? }
 
         //? if >=26.1 {
         .withDepthStencilState(Optional.empty())

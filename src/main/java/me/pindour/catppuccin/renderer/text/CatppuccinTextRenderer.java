@@ -45,7 +45,11 @@ public class CatppuccinTextRenderer {
             StyleKey key = entry.getKey();
 
             theme.richTextRenderer().setFontStyle(key.style());
-            theme.richTextRenderer().begin(theme.scale(key.scale()));
+            theme.richTextRenderer().begin(
+                    //? if >=26.2
+                    null,
+                    theme.scale(key.scale())
+            );
 
             for (RichTextOperation text : textOps) {
                 text.run(textPool);

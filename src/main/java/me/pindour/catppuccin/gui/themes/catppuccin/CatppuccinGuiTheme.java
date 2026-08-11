@@ -81,7 +81,7 @@ public class CatppuccinGuiTheme extends GuiTheme {
             .sliderRange(0.75, 4)
             .onSliderRelease()
             .onChanged(aDouble -> {
-                if (mc.screen instanceof WidgetScreen) ((WidgetScreen) mc.screen).invalidate();
+                if (mc.gui.screen() instanceof WidgetScreen) ((WidgetScreen) mc.gui.screen()).invalidate();
             })
             .build()
     );
@@ -105,7 +105,7 @@ public class CatppuccinGuiTheme extends GuiTheme {
             .description("Hide HUD when in GUI.")
             .defaultValue(false)
             .onChanged(v -> {
-                if (mc.screen instanceof WidgetScreen) mc.options.hideGui = v;
+                if (mc.gui.screen() instanceof WidgetScreen) mc.gameRenderer.gameRenderState().guiRenderState.isHudHidden = v;
             })
             .build()
     );

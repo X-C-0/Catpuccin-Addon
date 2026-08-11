@@ -9,7 +9,7 @@ mc.version = "[VERSIONED]"
 mc.targets = "[VERSIONED]"
 
 # Loom
-loomx.loom_version = "1.16-SNAPSHOT"
+loomx.loom_version = "1.17-SNAPSHOT"
 loomx.loom_remap_plugin = "net.fabricmc.fabric-loom-remap"
 loomx.loom_unobf_plugin = "net.fabricmc.fabric-loom"
 
@@ -41,3 +41,8 @@ deps.meteor_version = "1.21.11-SNAPSHOT"
 mc.version = "26.1.2"
 mc.targets = "26.1.2"
 deps.meteor_version = "26.1.2-SNAPSHOT"
+
+["26.2"]
+mc.version = "26.2"
+mc.targets = "26.2"
+deps.meteor_version = "26.2-SNAPSHOT"

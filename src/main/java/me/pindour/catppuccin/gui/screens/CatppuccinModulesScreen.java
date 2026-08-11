@@ -37,6 +37,7 @@ import net.minecraft.util.Util;
 
 //? if >=1.21.5
 import net.minecraft.client.input.KeyEvent;
+import org.jspecify.annotations.NonNull;
 
 public class CatppuccinModulesScreen extends TabScreen {
     private final CatppuccinGuiTheme theme;
@@ -79,7 +80,7 @@ public class CatppuccinModulesScreen extends TabScreen {
     }
 
     @Override
-    public void extractBackground(GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks) {
+    public void extractBackground(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks) {
         super.extractBackground(context, mouseX, mouseY, deltaTicks);
 
         if (!showGrid) return;
@@ -98,7 +99,7 @@ public class CatppuccinModulesScreen extends TabScreen {
     }
 
     @Override
-    public boolean keyPressed(KeyEvent input) {
+    public boolean keyPressed(@NonNull KeyEvent input) {
         super.keyPressed(input);
 
         if (!theme.catppuccinSearchScreen.get()) return false;
@@ -111,7 +112,7 @@ public class CatppuccinModulesScreen extends TabScreen {
         boolean control = Util.getPlatform() == Util.OS.OSX ? modifiers == GLFW_MOD_SUPER : modifiers == GLFW_MOD_CONTROL;
 
         if (control && keyCode == GLFW_KEY_F) {
-            mc.setScreen(new CatppuccinSearchScreen(theme));
+            mc.gui.setScreen(new CatppuccinSearchScreen(theme));
             return true;
         }
 
