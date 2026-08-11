@@ -37,6 +37,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import meteordevelopment.meteorclient.renderer.Texture;
 //?}
 
+//? if >=26.2
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+
 @Mixin(value = GuiRenderer.class, remap = false)
 public abstract class GuiRendererMixin {
     //? if <=1.21.4 {
@@ -51,6 +54,9 @@ public abstract class GuiRendererMixin {
     @Shadow @Final private List<TextOperation> texts;
     @Shadow @Final private Pool<TextOperation> textPool;
     @Shadow public GuiTheme theme;
+
+    //? if >=26.2
+    @Shadow private GuiGraphicsExtractor graphics;
 
     @Inject(method = "init", at = @At("HEAD"))
     private static void catppuccin$init(CallbackInfo ci) {
@@ -88,12 +94,16 @@ public abstract class GuiRendererMixin {
 
         if (Config.get().customFont.get()) {
             // Custom renderer
-            renderer().renderText();
+            renderer().renderText(
+                    //? if >=26.2
+                    graphics
+            );
+
         } else {
             // Vanilla renderer
             theme.textRenderer().begin(
                     //? if >=26.2
-                    null,
+                    graphics,
                     theme.scale(1)
             );
 
@@ -105,7 +115,7 @@ public abstract class GuiRendererMixin {
             // Title text
             theme.textRenderer().begin(
                     //? if >=26.2
-                    null,
+                    graphics,
                     theme.scale(1.25)
             );
 

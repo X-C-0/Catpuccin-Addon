@@ -13,6 +13,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+//? if >=26.2
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+
 public class CatppuccinTextRenderer {
     private final Pool<RichTextOperation> textPool = new Pool<>(RichTextOperation::new);
     private final Map<StyleKey, List<RichTextOperation>> groupedOperations = new HashMap<>();
@@ -36,7 +39,11 @@ public class CatppuccinTextRenderer {
         }
     }
 
-    public void render(CatppuccinGuiTheme theme) {
+    public void render(
+            //? if >=26.2
+            GuiGraphicsExtractor graphics,
+            CatppuccinGuiTheme theme
+    ) {
         for (Map.Entry<StyleKey, List<RichTextOperation>> entry : groupedOperations.entrySet()) {
             List<RichTextOperation> textOps = entry.getValue();
 
@@ -47,7 +54,7 @@ public class CatppuccinTextRenderer {
             theme.richTextRenderer().setFontStyle(key.style());
             theme.richTextRenderer().begin(
                     //? if >=26.2
-                    null,
+                    graphics,
                     theme.scale(key.scale())
             );
 

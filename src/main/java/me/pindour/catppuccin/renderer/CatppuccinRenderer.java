@@ -17,6 +17,9 @@ import me.pindour.catppuccin.renderer.rounded.modern.RoundedRendererModern;
 import com.mojang.blaze3d.vertex.PoseStack;
 *///?}
 
+//? >=26.2
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+
 public class CatppuccinRenderer implements RoundedRectRenderer {
     private static final CatppuccinRenderer INSTANCE = new CatppuccinRenderer();
     public static GuiRenderer guiRenderer;
@@ -58,9 +61,17 @@ public class CatppuccinRenderer implements RoundedRectRenderer {
     }
     *///?}
 
-    public void renderText() {
+    public void renderText(
+            //? if >=26.2
+            GuiGraphicsExtractor graphics
+    ) {
         if (theme == null) return;
-        textRenderer.render(theme);
+
+        textRenderer.render(
+                //? if >=26.2
+                graphics,
+                theme
+        );
     }
 
     public void setClipRect(double minX, double minY, double maxX, double maxY) {
