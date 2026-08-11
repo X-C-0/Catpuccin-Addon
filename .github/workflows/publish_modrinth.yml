@@ -1,0 +1,82 @@
+name: Publish to Modrinth
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.extract.outputs.matrix }}
+      latest_version: ${{ steps.extract.outputs.latest }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract Data
+        id: extract
+        run: |
+          VERSIONS=$(grep 'versions(' settings.gradle.kts)
+          MATRIX_JSON=$(echo "$VERSIONS" | sed 's/.*versions(\(.*\)).*/[\1]/')
+          echo "matrix=$MATRIX_JSON" >> $GITHUB_OUTPUT
+          
+          LATEST_VER=$(grep 'vcsVersion' settings.gradle.kts | cut -d '"' -f2)
+          echo "latest=$LATEST_VER" >> $GITHUB_OUTPUT
+
+  publish:
+    needs: prepare
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        mc_version: ${{ fromJson(needs.prepare.outputs.matrix) }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download JAR from GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p build/libs/${{ matrix.mc_version }}
+          gh release download ${{ github.event.release.tag_name }} --pattern "*+mc${{ matrix.mc_version }}.jar" --dir build/libs/${{ matrix.mc_version }}
+
+      - name: Prepare Changelog
+        id: prep
+        run: |
+          if [ "${{ matrix.mc_version }}" == "${{ needs.prepare.outputs.latest_version }}" ]; then
+            echo "changelog<<EOF" >> $GITHUB_OUTPUT
+            echo "${{ github.event.release.body }}" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          else
+            echo "changelog=" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Test print
+        run: |
+          echo "=== Debug for mc${{ matrix.mc_version }} ==="
+          ls -la build/libs/${{ matrix.mc_version }}/
+          
+          echo "=== METADATA ==="
+          echo "name: Catppuccin Addon ${{ github.event.release.name }} for Minecraft ${{ matrix.mc_version }}"
+          echo "version: ${{ github.event.release.name }}+mc${{ matrix.mc_version }}"
+          
+          echo "=== CHANGELOG ==="
+          echo "${{ steps.prep.outputs.changelog }}"
+
+#      - name: Publish ${{ matrix.mc_version }} to Modrinth
+#        uses: Kira-NT/mc-publish@v3
+#        with:
+#          modrinth-id: ${{ vars.MODRINTH_ID }}
+#          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+#          files: build/libs/${{ matrix.mc_version }}/*.jar
+#          name: Catppuccin Addon ${{ github.event.release.name }} for Minecraft ${{ matrix.mc_version }}
+#          version: ${{ github.event.release.name }}+mc${{ matrix.mc_version }}
+#          version-type: release
+#          changelog: ${{ steps.prep.outputs.changelog }}
+#          loaders: fabric
+#          game-versions: ${{ matrix.mc_version }}
+#          dependencies: |
+#            asteroid(optional)

@@ -19,10 +19,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up JDK 21
+      - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          java-version: 21
+          java-version: 25
           distribution: temurin
 
       - name: Read version from stonecutter.properties.toml
@@ -59,5 +59,6 @@ jobs:
           name: ${{ env.VERSION }}
           files: build/libs/${{ env.VERSION }}/*.jar
           make_latest: ${{ env.MAKE_LATEST }}
+          draft: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
