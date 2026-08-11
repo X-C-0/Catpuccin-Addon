@@ -19,6 +19,7 @@ import me.pindour.catppuccin.gui.themes.catppuccin.widgets.settings.WCatppuccinD
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.settings.WCatppuccinIntEdit;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.settings.WCatppuccinKeybind;
 import me.pindour.catppuccin.gui.widgets.WGuiTexture;
+import me.pindour.catppuccin.gui.widgets.container.WTreeTable;
 import me.pindour.catppuccin.gui.widgets.input.WMultiSelect;
 import me.pindour.catppuccin.gui.widgets.input.WSearch;
 import me.pindour.catppuccin.gui.widgets.pressable.WColorPicker;
@@ -33,6 +34,7 @@ import meteordevelopment.meteorclient.gui.utils.AlignmentX;
 import meteordevelopment.meteorclient.gui.utils.CharFilter;
 import meteordevelopment.meteorclient.gui.widgets.*;
 import meteordevelopment.meteorclient.gui.widgets.containers.WSection;
+import meteordevelopment.meteorclient.gui.widgets.containers.WTable;
 import meteordevelopment.meteorclient.gui.widgets.containers.WView;
 import meteordevelopment.meteorclient.gui.widgets.containers.WWindow;
 import meteordevelopment.meteorclient.gui.widgets.input.WDropdown;
@@ -53,6 +55,10 @@ import net.minecraft.client.gui.screens.Screen;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import static meteordevelopment.meteorclient.MeteorClient.mc;
@@ -113,6 +119,13 @@ public class CatppuccinGuiTheme extends GuiTheme {
     public final Setting<Boolean> windowShadow = sgGeneral.add(new BoolSetting.Builder()
             .name("window-shadow")
             .description("Render a subtle shadow under windows.")
+            .defaultValue(true)
+            .build()
+    );
+
+    public final Setting<Boolean> indentSettings = sgGeneral.add(new BoolSetting.Builder()
+            .name("indent-settings")
+            .description("Indents setting that have conditional visibility like in a Tree View.")
             .defaultValue(true)
             .build()
     );
@@ -468,6 +481,10 @@ public class CatppuccinGuiTheme extends GuiTheme {
 
     public WSearch search() {
         return w(new WCatppuccinSearch());
+    }
+
+    public <T> WTreeTable<T> treeTable(List<T> items, Function<T, Set<T>> dependencyResolver, Predicate<T> visibility, BiConsumer<WTable, T> factoryCreator) {
+        return w(new WTreeTable<>(items, dependencyResolver, visibility, factoryCreator));
     }
 
     // Settings widgets

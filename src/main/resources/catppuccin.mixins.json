@@ -14,6 +14,8 @@
     "meteorclient.GuiRendererAccessor",
     "meteorclient.GuiRendererMixin",
     "meteorclient.MeteorWidgetMixin",
+    "meteorclient.SettingAccessor",
+    "meteorclient.SettingMixin",
     "meteorclient.TabMixin",
     "meteorclient.WBrightnessQuadMixin",
     "meteorclient.WContainerMixin",

@@ -9,9 +9,10 @@ import me.pindour.catppuccin.gui.themes.catppuccin.widgets.pressable.WCatppuccin
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.settings.WCatppuccinDoubleEdit;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.settings.WCatppuccinIntEdit;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.settings.WCatppuccinKeybind;
+import me.pindour.catppuccin.gui.widgets.container.WTreeTable;
 import me.pindour.catppuccin.gui.widgets.pressable.WColorPicker;
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntList;
+import me.pindour.catppuccin.mixin.meteorclient.SettingAccessor;
+import me.pindour.catppuccin.utils.SettingWatcher;
 import meteordevelopment.meteorclient.gui.GuiTheme;
 import meteordevelopment.meteorclient.gui.WidgetScreen;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
@@ -36,10 +37,7 @@ import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.render.color.SettingColor;
 import org.apache.commons.lang3.Strings;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 
 import static me.pindour.catppuccin.utils.WidgetUtils.reset;
@@ -106,74 +104,77 @@ public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
     public WWidget create(GuiTheme theme, Settings settings, String filter) {
         WVerticalList list = theme.verticalList();
 
-        List<RemoveInfo> removeInfoList = new ArrayList<>();
-
         // Add all settings
         for (SettingGroup group : settings.groups) {
-            group(list, group, filter, removeInfoList);
+            group(list, group, filter);
         }
 
         // Calculate width and set it as minimum width
         list.calculateSize();
         list.minWidth = list.width;
 
-        // Remove hidden settings
-        for (RemoveInfo removeInfo : removeInfoList) {
-            removeInfo.remove(list);
-        }
-
         return list;
     }
 
-    private void group(WVerticalList list, SettingGroup group, String filter, List<RemoveInfo> removeInfoList) {
+    private void group(WVerticalList list, SettingGroup group, String filter) {
         WSection section = list.add(theme.section(group.name, group.sectionExpanded)).expandX().pad(theme.pad()).widget();
         section.action = () -> group.sectionExpanded = section.isExpanded();
 
+        // --- Tree view
+
+        if (theme.indentSettings.get() && (filter == null || filter.isEmpty())) {
+            List<Setting<?>> settings = new ArrayList<>();
+            group.forEach(settings::add);
+
+            WTreeTable<Setting<?>> treeTable = section.add(theme.treeTable(
+                settings,
+                this::resolveDependencies,
+                this::isVisible,
+                (table, setting) -> {
+                    Factory factory = getFactory(setting.getClass());
+                    if (factory != null) factory.create(table, setting);
+                }
+            )).expandX().pad(theme.pad() * 2).widget();
+
+            treeTable.verticalSpacing = settingSpacing();
+            return;
+        }
+
+        // --- Basic table
+
         WTable table = section.add(theme.table()).expandX().pad(theme.pad() * 2).widget();
         table.verticalSpacing = settingSpacing();
-
-        RemoveInfo removeInfo = null;
 
         for (Setting<?> setting : group) {
             if (!Strings.CI.contains(setting.title, filter)) continue;
 
             boolean visible = setting.isVisible();
             setting.lastWasVisible = visible;
-            if (!visible) {
-                if (removeInfo == null) removeInfo = new RemoveInfo(section, table);
-                removeInfo.markRowForRemoval();
-            }
+
+            if (!visible) continue;
 
             Factory factory = getFactory(setting.getClass());
             if (factory != null) factory.create(table, setting);
 
             table.row();
         }
-
-        if (removeInfo != null) removeInfoList.add(removeInfo);
     }
 
-    private static class RemoveInfo {
-        private final WSection section;
-        private final WTable table;
-        private final IntList rowIds = new IntArrayList();
-
-        public RemoveInfo(WSection section, WTable table) {
-            this.section = section;
-            this.table = table;
+    private Set<Setting<?>> resolveDependencies(Setting<?> setting) {
+        IVisible visibilityCondition = ((SettingAccessor) setting).catppuccin$getVisible();
+        if (visibilityCondition == null) {
+            return Collections.emptySet();
         }
 
-        public void markRowForRemoval() {
-            rowIds.add(table.rowI());
-        }
+        SettingWatcher.start();
+        setting.isVisible();
+        return SettingWatcher.stop();
+    }
 
-        public void remove(WVerticalList list) {
-            for (int i = 0; i < rowIds.size(); i++) {
-                table.removeRow(rowIds.getInt(i) - i);
-            }
-
-            if (table.cells.isEmpty()) list.cells.removeIf(cell -> cell.widget() == section);
-        }
+    private boolean isVisible(Setting<?> setting) {
+        boolean visible = setting.isVisible();
+        setting.lastWasVisible = visible;
+        return visible;
     }
 
     // Settings
