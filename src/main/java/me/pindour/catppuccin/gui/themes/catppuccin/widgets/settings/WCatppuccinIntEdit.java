@@ -53,7 +53,7 @@ public class WCatppuccinIntEdit extends WVerticalList implements CatppuccinWidge
         list.add(theme().label(setting.title + " ")).widget().tooltip = setting.description;
 
         // Value
-        textBox = (WCatppuccinTextBox) list.add(theme().textBox(Integer.toString(value), this::filter, 0)).expandX().expandCellX().widget();
+        textBox = (WCatppuccinTextBox) list.add(theme().textBox(Integer.toString(value), this::filter, 0)).expandX().widget();
         textBox.shouldRenderBackground(false);
         textBox.color(theme().accentColor());
 

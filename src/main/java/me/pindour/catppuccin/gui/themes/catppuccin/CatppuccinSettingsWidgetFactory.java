@@ -487,10 +487,12 @@ public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
             colorListWFill(t, setting);
         };
 
-        reset(tab, setting, () -> {
+        Runnable action = () -> {
             t.clear();
             colorListWFill(t, setting);
-        });
+        };
+
+        reset(tab, setting, action, () -> tab.mouseOver);
     }
 
     private void colorListWFill(WTable t, ColorListSetting setting) {
@@ -538,32 +540,34 @@ public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
 
     private void vector3dW(WTable table, Vector3dSetting setting) {
         WVerticalList list = table.add(theme.verticalList()).expandX().widget();
-        WHorizontalList horizontalList = list.add(theme.horizontalList()).expandX().widget();
+        WHorizontalList headerList = list.add(theme.horizontalList()).expandX().widget();
+        WHorizontalList indentedList = list.add(theme.horizontalList()).expandX().widget();
 
-        title(horizontalList, setting, true);
+        title(headerList, setting, true).expandX();
 
-        WTable internal = list.add(theme.table()).expandX().widget();
+        indentedList.add(theme.verticalSeparator()).expandWidgetY().padRight(theme.pad());
+        WVerticalList sliderList = indentedList.add(theme.verticalList()).expandX().widget();
 
-        WCatppuccinDoubleEdit x = addVectorComponent(internal, "X", setting.get().x, val -> setting.get().x = val, setting);
-        WCatppuccinDoubleEdit y = addVectorComponent(internal, "Y", setting.get().y, val -> setting.get().y = val, setting);
-        WCatppuccinDoubleEdit z = addVectorComponent(internal, "Z", setting.get().z, val -> setting.get().z = val, setting);
+        WCatppuccinDoubleEdit x = addVectorComponent(sliderList, "X", setting.get().x, val -> setting.get().x = val, setting);
+        WCatppuccinDoubleEdit y = addVectorComponent(sliderList, "Y", setting.get().y, val -> setting.get().y = val, setting);
+        WCatppuccinDoubleEdit z = addVectorComponent(sliderList, "Z", setting.get().z, val -> setting.get().z = val, setting);
 
-        reset(horizontalList, setting, () -> {
+        Runnable action =() -> {
             x.set(setting.get().x);
             y.set(setting.get().y);
             z.set(setting.get().z);
-        });
+        };
+
+        reset(headerList, setting, action, () -> list.mouseOver);
     }
 
-    private WCatppuccinDoubleEdit addVectorComponent(WTable table, String label, double value, Consumer<Double> update, Vector3dSetting setting) {
-        WCatppuccinDoubleEdit component = table.add(theme.catppuccinDoubleEdit(label, setting.description, value, setting.min, setting.max, setting.decimalPlaces, setting.sliderMin, setting.sliderMax, setting.noSlider)).expandX().widget();
+    private WCatppuccinDoubleEdit addVectorComponent(WContainer container, String label, double value, Consumer<Double> update, Vector3dSetting setting) {
+        WCatppuccinDoubleEdit component = container.add(theme.catppuccinDoubleEdit(label, setting.description, value, setting.min, setting.max, setting.decimalPlaces, setting.sliderMin, setting.sliderMax, setting.noSlider)).expandX().widget();
         if (setting.onSliderRelease) {
             component.actionOnRelease = () -> update.accept(component.get());
         } else {
             component.action = () -> update.accept(component.get());
         }
-
-        table.row();
 
         return component;
     }
