@@ -18,6 +18,9 @@ public class WTreeTable<T> extends WTable {
     private final Predicate<T> visibility;
     private final BiConsumer<WTable, T> factoryCreator;
 
+    private final List<Runnable> removalTasks = new ArrayList<>();
+    private int totalVisible;
+
     public WTreeTable(List<T> items, Function<T, Set<T>> dependencyResolver, Predicate<T> visibility, BiConsumer<WTable, T> factoryCreator) {
         this.items = items;
         this.dependencyResolver = dependencyResolver;
@@ -32,10 +35,11 @@ public class WTreeTable<T> extends WTable {
     }
 
     private void buildTree() {
+        removalTasks.clear();
+        totalVisible = 0;
+
         Map<T, Node<T>> nodes = new HashMap<>();
-        for (T item : items) {
-            nodes.put(item, new Node<>(item));
-        }
+        for (T item : items) nodes.put(item, new Node<>(item));
 
         List<Node<T>> roots = new ArrayList<>();
         for (int i = 0; i < items.size(); i++) {
@@ -43,45 +47,40 @@ public class WTreeTable<T> extends WTable {
             Node<T> node = nodes.get(item);
 
             T parent = findParent(item, i);
-            if (parent != null) {
-                nodes.get(parent).children.add(node);
-            } else {
-                roots.add(node);
-            }
+            if (parent != null) nodes.get(parent).children.add(node);
+            else roots.add(node);
         }
 
-        for (Node<T> root : roots) {
-            renderNode(this, root);
-        }
+        for (Node<T> root : roots) renderNode(this, root);
     }
 
     private T findParent(T item, int index) {
         Set<T> dependencies = dependencyResolver.apply(item);
-        if (dependencies == null || dependencies.isEmpty()) {
-            return null;
-        }
+        if (dependencies == null || dependencies.isEmpty()) return null;
 
         for (int i = index - 1; i >= 0; i--) {
             T candidate = items.get(i);
-            if (dependencies.contains(candidate)) {
-                return candidate;
-            }
+            if (dependencies.contains(candidate)) return candidate;
         }
         return null;
     }
 
-    private void renderNode(WTable table, Node<T> node) {
+    private boolean renderNode(WTable table, Node<T> node) {
         T item = node.item;
         boolean visible = visibility.test(item);
+        if (visible) totalVisible++;
 
-        if (visible) {
-            factoryCreator.accept(table, item);
-            table.row();
-        }
+        int itemRow = table.rowI();
+        factoryCreator.accept(table, item);
+        table.row();
 
-        if (visible && !node.children.isEmpty()) {
+        if (!visible) removalTasks.add(() -> table.removeRow(itemRow));
+
+        if (!node.children.isEmpty()) {
+            int childrenRow = table.rowI();
+
             WHorizontalList indentList = theme.horizontalList();
-            indentList.add(theme.verticalSeparator()).padRight(theme.pad()).expandWidgetY();
+            indentList.add(theme.verticalSeparator()).padHorizontal(theme.textHeight() / 2).expandWidgetY();
 
             WTable childTable = theme.table();
             childTable.verticalSpacing = this.verticalSpacing;
@@ -89,17 +88,26 @@ public class WTreeTable<T> extends WTable {
 
             boolean hasVisibleChildren = false;
             for (Node<T> child : node.children) {
-                if (visibility.test(child.item)) {
-                    hasVisibleChildren = true;
-                }
-                renderNode(childTable, child);
+                hasVisibleChildren |= renderNode(childTable, child);
             }
 
-            if (hasVisibleChildren) {
-                table.add(indentList).expandX();
-                table.row();
-            }
+            table.add(indentList).expandX();
+            table.row();
+
+            if (!visible || !hasVisibleChildren) removalTasks.add(() -> table.removeRow(childrenRow));
         }
+
+        return visible;
+    }
+
+    public void performRemovals() {
+        for (int i = removalTasks.size() - 1; i >= 0; i--) {
+            removalTasks.get(i).run();
+        }
+    }
+
+    public boolean isEmpty() {
+        return totalVisible == 0;
     }
 
     private static class Node<T> {

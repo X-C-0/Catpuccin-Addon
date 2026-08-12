@@ -1,5 +1,7 @@
 package me.pindour.catppuccin.gui.themes.catppuccin;
 
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import me.pindour.catppuccin.gui.themes.catppuccin.icons.CatppuccinBuiltinIcons;
 import me.pindour.catppuccin.gui.screens.settings.CatppuccinEntityTypeListSettingScreen;
 import me.pindour.catppuccin.api.text.RichText;
@@ -104,29 +106,32 @@ public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
     public WWidget create(GuiTheme theme, Settings settings, String filter) {
         WVerticalList list = theme.verticalList();
 
-        // Add all settings
+        List<Consumer<WVerticalList>> removals = new ArrayList<>();
+
         for (SettingGroup group : settings.groups) {
-            group(list, group, filter);
+            group(list, group, filter, removals);
         }
 
-        // Calculate width and set it as minimum width
+        // Calculate width before removing hidden settings so the layout is measured correctly
         list.calculateSize();
         list.minWidth = list.width;
+
+        for (Consumer<WVerticalList> removal : removals) {
+            removal.accept(list);
+        }
 
         return list;
     }
 
-    private void group(WVerticalList list, SettingGroup group, String filter) {
+    private void group(WVerticalList list, SettingGroup group, String filter, List<Consumer<WVerticalList>> removals) {
         WSection section = list.add(theme.section(group.name, group.sectionExpanded)).expandX().pad(theme.pad()).widget();
         section.action = () -> group.sectionExpanded = section.isExpanded();
-
-        // --- Tree view
 
         if (theme.indentSettings.get() && (filter == null || filter.isEmpty())) {
             List<Setting<?>> settings = new ArrayList<>();
             group.forEach(settings::add);
 
-            WTreeTable<Setting<?>> treeTable = section.add(theme.treeTable(
+            WTreeTable<Setting<?>> treeTable = theme.treeTable(
                 settings,
                 this::resolveDependencies,
                 this::isVisible,
@@ -134,16 +139,22 @@ public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
                     Factory factory = getFactory(setting.getClass());
                     if (factory != null) factory.create(table, setting);
                 }
-            )).expandX().pad(theme.pad() * 2).widget();
+            );
 
+            section.add(treeTable).expandX().pad(theme.pad() * 2);
             treeTable.verticalSpacing = settingSpacing();
+
+            removals.add(parentList -> {
+                treeTable.performRemovals();
+                if (treeTable.isEmpty()) parentList.cells.removeIf(cell -> cell.widget() == section);
+            });
             return;
         }
 
-        // --- Basic table
-
         WTable table = section.add(theme.table()).expandX().pad(theme.pad() * 2).widget();
         table.verticalSpacing = settingSpacing();
+
+        RowRemoval removal = null;
 
         for (Setting<?> setting : group) {
             if (!Strings.CI.contains(setting.title, filter)) continue;
@@ -151,12 +162,40 @@ public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
             boolean visible = setting.isVisible();
             setting.lastWasVisible = visible;
 
-            if (!visible) continue;
-
             Factory factory = getFactory(setting.getClass());
             if (factory != null) factory.create(table, setting);
 
+            if (!visible) {
+                if (removal == null) removal = new RowRemoval(section, table);
+                removal.markRowForRemoval();
+            }
+
             table.row();
+        }
+
+        if (removal != null) removals.add(removal);
+    }
+
+    private static class RowRemoval implements Consumer<WVerticalList> {
+        private final WSection section;
+        private final WTable table;
+        private final IntList rowIds = new IntArrayList();
+
+        RowRemoval(WSection section, WTable table) {
+            this.section = section;
+            this.table = table;
+        }
+
+        void markRowForRemoval() {
+            rowIds.add(table.rowI());
+        }
+
+        @Override
+        public void accept(WVerticalList list) {
+            for (int i = 0; i < rowIds.size(); i++) {
+                table.removeRow(rowIds.getInt(i) - i);
+            }
+            if (table.cells.isEmpty()) list.cells.removeIf(cell -> cell.widget() == section);
         }
     }
 
