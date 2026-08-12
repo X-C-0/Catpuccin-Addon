@@ -214,6 +214,7 @@ public class CatppuccinGuiTheme extends GuiTheme {
             .description("The size of the snapping grid.")
             .defaultValue(10)
             .sliderRange(5, 50)
+            .visible(snapModuleCategories::get)
             .build()
     );
 
