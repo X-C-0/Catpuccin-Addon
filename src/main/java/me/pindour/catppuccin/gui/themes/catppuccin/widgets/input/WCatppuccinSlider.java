@@ -2,14 +2,9 @@ package me.pindour.catppuccin.gui.themes.catppuccin.widgets.input;
 
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinWidget;
-import me.pindour.catppuccin.api.render.Corners;
 import me.pindour.catppuccin.utils.ColorUtils;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.widgets.input.WSlider;
-import meteordevelopment.meteorclient.utils.render.color.Color;
-
-import java.util.Arrays;
-import java.util.Collections;
 
 public class WCatppuccinSlider extends WSlider implements CatppuccinWidget {
 

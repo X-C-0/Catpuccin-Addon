@@ -28,6 +28,10 @@ public class WCatppuccinFavorite extends WFavorite implements CatppuccinWidget {
 
     @Override
     protected Color getColor() {
-        return theme().textColor();
+        return checked
+                ? theme().accentColor()
+                : mouseOver
+                    ? theme().textSecondaryColor()
+                    : theme().textColor();
     }
 }

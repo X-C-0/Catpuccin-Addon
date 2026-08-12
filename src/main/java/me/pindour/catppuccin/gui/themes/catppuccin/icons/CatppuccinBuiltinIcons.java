@@ -31,7 +31,8 @@ public enum CatppuccinBuiltinIcons {
     SWORDS,
     USER,
     SEARCH,
-    SETTING;
+    SETTING,
+    TICK;
 
     private final String path;
     private GuiTexture texture;

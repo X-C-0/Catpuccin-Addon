@@ -89,7 +89,7 @@ public class WCatppuccinDropdown<T> extends WDropdown<T> implements CatppuccinWi
     protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
         CatppuccinGuiTheme theme = theme();
         double pad = pad();
-        double s = theme.textHeight() * 0.75;
+        double s = theme.textHeight();
 
         double hoverProgress = hoverAnimation.getProgress();
 

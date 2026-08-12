@@ -2,6 +2,7 @@ package me.pindour.catppuccin.gui.themes.catppuccin.widgets.container;
 
 import me.pindour.catppuccin.api.animation.Animation;
 import me.pindour.catppuccin.api.animation.Direction;
+import me.pindour.catppuccin.api.animation.Easing;
 import me.pindour.catppuccin.api.render.Corners;
 import me.pindour.catppuccin.gui.screens.CatppuccinModulesScreen;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
@@ -29,6 +30,8 @@ public class WCatppuccinWindow extends WWindow implements CatppuccinWidget {
     private double mouseOffsetX;
     private double mouseOffsetY;
 
+    private double contentOffsetY;
+
     private Animation animation;
     private Animation cornerAnimation;
 
@@ -46,8 +49,8 @@ public class WCatppuccinWindow extends WWindow implements CatppuccinWidget {
                 expanded ? Direction.FORWARDS : Direction.BACKWARDS
         );
         cornerAnimation = new Animation(
-                theme().guiAnimationEasing(),
-                theme().guiAnimationDuration(),
+                Easing.QUART_OUT,
+                200,
                 expanded ? Direction.FORWARDS : Direction.BACKWARDS
         );
 
@@ -78,11 +81,32 @@ public class WCatppuccinWindow extends WWindow implements CatppuccinWidget {
     }
 
     @Override
+    public void clear() {
+        view.clear();
+        // Remove all directly added widgets
+        cells.removeIf(cell -> cell.widget() != header && cell.widget() != view);
+    }
+
+    @Override
+    protected void onCalculateWidgetPositions() {
+        super.onCalculateWidgetPositions();
+
+        if (contentOffsetY != 0) {
+            for (Cell<?> cell : cells) {
+                if (cell.widget() != header) cell.move(0, contentOffsetY);
+            }
+
+            contentOffsetY = 0;
+        }
+    }
+
+    @Override
     protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
         CatppuccinGuiTheme theme = theme();
         Color backgroundColor = ColorUtils.withAlpha(theme.mantleColor(), theme.windowOpacity());
 
         int shadowOffset = getShadowOffset();
+        double windowHeight = Math.max((height - header.height) * animation.getProgress(), 0);
 
         // Shadow rectangle
         if (theme.windowShadow.get()) {
@@ -90,7 +114,7 @@ public class WCatppuccinWindow extends WWindow implements CatppuccinWidget {
 
             roundedRect().pos(x - shadowOffset, y - shadowOffset)
                          .size(width + shadowOffset * 2,
-                                 header.height + (height - header.height) * animation.getProgress() + shadowOffset * 2)
+                                 header.height + windowHeight + shadowOffset * 2)
                          .radius(radius() + shadowOffset / 2f)
                          .color(shadowColor)
                          .render();
@@ -100,7 +124,7 @@ public class WCatppuccinWindow extends WWindow implements CatppuccinWidget {
         // Inner rectangle
         if (expanded || animation.isRunning())
             roundedRect().pos(x, y + header.height)
-                         .size(width, height - header.height)
+                         .size(width, windowHeight)
                          .radius(radius() - shadowOffset, Corners.BOTTOM)
                          .color(backgroundColor)
                          .render();
@@ -111,22 +135,35 @@ public class WCatppuccinWindow extends WWindow implements CatppuccinWidget {
         if (!visible) return true;
 
         double progress = animation.getProgress();
-        boolean useScissor = animation.isRunning();
+        boolean isAnimating = animation.isRunning();
+        double contentHeight = height - header.height;
 
-        if (useScissor) {
+        if (isAnimating) {
             int shadowOffset = getShadowOffset();
+            double windowHeight = Math.max(contentHeight * progress, 0);
+
+            // Calculate overshot
+            if (progress > 1.0) {
+                double overshot = Math.max(progress - 1, 0) * contentHeight;
+                double shift = overshot / 2;
+
+                if (contentOffsetY != shift) {
+                    contentOffsetY = shift;
+                    invalidate();
+                }
+            }
 
             renderer.scissorStart(
                     x - shadowOffset,
                     y - shadowOffset,
                     width + shadowOffset * 2,
-                    (height - header.height) * progress + header.height + shadowOffset * 2
+                    header.height + windowHeight + shadowOffset * 2
             );
         }
 
         boolean toReturn = super.render(renderer, mouseX, mouseY, delta);
 
-        if (useScissor) renderer.scissorEnd();
+        if (isAnimating) renderer.scissorEnd();
 
         return toReturn;
     }

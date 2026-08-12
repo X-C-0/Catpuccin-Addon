@@ -2,12 +2,14 @@ package me.pindour.catppuccin.gui.themes.catppuccin.widgets.container;
 
 import me.pindour.catppuccin.api.animation.Animation;
 import me.pindour.catppuccin.api.animation.Direction;
+import me.pindour.catppuccin.api.animation.Easing;
 import me.pindour.catppuccin.gui.themes.catppuccin.icons.CatppuccinBuiltinIcons;
 import me.pindour.catppuccin.api.render.Corners;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinWidget;
 import me.pindour.catppuccin.utils.ColorUtils;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
+import meteordevelopment.meteorclient.gui.utils.Cell;
 import meteordevelopment.meteorclient.gui.widgets.WWidget;
 import meteordevelopment.meteorclient.gui.widgets.containers.WSection;
 import meteordevelopment.meteorclient.utils.render.color.Color;
@@ -15,6 +17,7 @@ import meteordevelopment.meteorclient.utils.render.color.Color;
 public class WCatppuccinSection extends WSection implements CatppuccinWidget {
     private double actualHeight;
     private double forcedHeight = -1;
+    private double contentOffsetY;
 
     private WHeader header;
 
@@ -35,8 +38,8 @@ public class WCatppuccinSection extends WSection implements CatppuccinWidget {
                 expanded ? Direction.FORWARDS : Direction.BACKWARDS
         );
         cornerAnimation = new Animation(
-                theme().guiAnimationEasing(),
-                theme().guiAnimationDuration(),
+                Easing.QUART_OUT,
+                200,
                 expanded ? Direction.FORWARDS : Direction.BACKWARDS
         );
     }
@@ -48,13 +51,23 @@ public class WCatppuccinSection extends WSection implements CatppuccinWidget {
         actualHeight = height;
 
         if (animation.isRunning() || animation.getProgress() < 1) {
-            forcedHeight = (actualHeight - header.height) * animation.getProgress() + header.height;
+            double contentHeight = actualHeight - header.height;
+            double animatedHeight = Math.max(contentHeight * animation.getProgress(), 0);
+            forcedHeight = animatedHeight + header.height;
             height = forcedHeight;
         }
+    }
 
-        if (headerWidget != null) {
-            headerWidget.height = header.height * 0.8;
-            headerWidget.width = header.height * 0.8;
+    @Override
+    protected void onCalculateWidgetPositions() {
+        super.onCalculateWidgetPositions();
+
+        if (contentOffsetY != 0) {
+            for (Cell<?> cell : cells) {
+                if (cell.widget() != header) cell.move(0, contentOffsetY);
+            }
+
+            contentOffsetY = 0;
         }
     }
 
@@ -82,19 +95,34 @@ public class WCatppuccinSection extends WSection implements CatppuccinWidget {
 
     @Override
     public boolean render(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
-        boolean isAnimationRunning = animation.isRunning();
+        if (!visible) return true;
+
         double progress = animation.getProgress();
+        boolean isAnimating = animation.isRunning();
+        double contentHeight = height - header.height;
 
         animProgress = expanded ? 1 : 0; // Small hack to cancel out WSection scissors, so we can use our animation
 
-        if (isAnimationRunning) {
+        if (isAnimating) {
             forcedHeight = (actualHeight - header.height) * progress + header.height;
+
+            // Calculate overshot
+            if (progress > 1.0) {
+                double overshot = Math.max(progress - 1, 0) * contentHeight;
+                double shift = overshot / 2;
+
+                if (contentOffsetY != shift)
+                    contentOffsetY = shift;
+            }
+
             invalidate();
+
+            renderer.scissorStart(x, y, width, contentHeight * progress + header.height);
         }
 
-        if (isAnimationRunning) renderer.scissorStart(x, y, width, (height - header.height) * progress + header.height);
         boolean toReturn = super.render(renderer, mouseX, mouseY, delta);
-        if (isAnimationRunning) renderer.scissorEnd();
+
+        if (isAnimating) renderer.scissorEnd();
 
         return toReturn;
     }
@@ -128,22 +156,20 @@ public class WCatppuccinSection extends WSection implements CatppuccinWidget {
 
         @Override
         public void init() {
-            add(theme.horizontalSeparator(title)).expandX();
+            add(theme.horizontalSeparator(title))
+                    .padVertical(theme.scale(3))
+                    .padHorizontal(theme.scale(2))
+                    .expandX();
 
-            if (headerWidget != null) add(headerWidget);
-        }
-
-        @Override
-        protected void onCalculateSize() {
-            super.onCalculateSize();
-            height = theme.textHeight() * 1.5;
+            if (headerWidget != null)
+                add(headerWidget).pad(theme.scale(4));
         }
 
         @Override
         protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
             CatppuccinGuiTheme theme = theme();
             double pad = pad();
-            double s = theme.textHeight() * 0.75;
+            double s = theme.textHeight();
             double progress = animation.getProgress();
             double cornerProgress = cornerAnimation.getProgress();
 
