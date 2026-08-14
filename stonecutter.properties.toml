@@ -1,7 +1,7 @@
 # Mod Properties
 mod.id = "catppuccin-addon"
 mod.name = "Catppuccin Addon"
-mod.version = "2.1.0"
+mod.version = "2.2.0"
 mod.group = "me.pindour.catppuccin"
 
 # Game
