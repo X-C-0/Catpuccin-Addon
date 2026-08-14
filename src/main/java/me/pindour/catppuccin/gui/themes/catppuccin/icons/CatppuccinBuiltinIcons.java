@@ -4,13 +4,13 @@ import me.pindour.catppuccin.CatppuccinAddon;
 import me.pindour.catppuccin.api.icons.CatppuccinIcons;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.renderer.packer.GuiTexture;
+import meteordevelopment.meteorclient.gui.tabs.Tab;
 import meteordevelopment.meteorclient.gui.tabs.builtin.ConfigTab;
 import meteordevelopment.meteorclient.gui.tabs.builtin.FriendsTab;
 import meteordevelopment.meteorclient.gui.tabs.builtin.GuiTab;
 import meteordevelopment.meteorclient.gui.tabs.builtin.HudTab;
 import meteordevelopment.meteorclient.gui.tabs.builtin.MacrosTab;
 import meteordevelopment.meteorclient.gui.tabs.builtin.ModulesTab;
-import meteordevelopment.meteorclient.gui.tabs.builtin.PathManagerTab;
 import meteordevelopment.meteorclient.gui.tabs.builtin.ProfilesTab;
 import meteordevelopment.meteorclient.systems.modules.Categories;
 
@@ -70,7 +70,15 @@ public enum CatppuccinBuiltinIcons {
         CatppuccinIcons.registerTabIcon(FriendsTab.class, PEOPLE.texture());
         CatppuccinIcons.registerTabIcon(MacrosTab.class, MOUSE.texture());
         CatppuccinIcons.registerTabIcon(ProfilesTab.class, PERSON.texture());
-        CatppuccinIcons.registerTabIcon(PathManagerTab.class, MOVEMENT.texture());
+
+        // Asteroid support :)
+        try {
+            Class<? extends Tab> pathManagerClass = Class
+                    .forName("meteordevelopment.meteorclient.gui.tabs.builtin.PathManagerTab")
+                    .asSubclass(Tab.class);
+
+            CatppuccinIcons.registerTabIcon(pathManagerClass, MOVEMENT.texture());
+        } catch (ClassNotFoundException ignored) { }
     }
 
     public void initIcon() {
