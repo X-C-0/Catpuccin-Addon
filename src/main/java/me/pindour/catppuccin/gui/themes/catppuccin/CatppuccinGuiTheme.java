@@ -86,9 +86,7 @@ public class CatppuccinGuiTheme extends GuiTheme {
             .min(0.75)
             .sliderRange(0.75, 4)
             .onSliderRelease()
-            .onChanged(aDouble -> {
-                if (mc.gui.screen() instanceof WidgetScreen) ((WidgetScreen) mc.gui.screen()).invalidate();
-            })
+            .onChanged(this::invalidateScreen)
             .build()
     );
 
@@ -103,6 +101,14 @@ public class CatppuccinGuiTheme extends GuiTheme {
             .name("category-icons")
             .description("Displays icons next to module categories.")
             .defaultValue(true)
+            .build()
+    );
+
+    public final Setting<Boolean> tabIcons = sgGeneral.add(new BoolSetting.Builder()
+            .name("tab-icons")
+            .description("Displays icons next to tabs in the top bar.")
+            .defaultValue(true)
+            .onChanged(this::invalidateScreen)
             .build()
     );
 
@@ -775,6 +781,11 @@ public class CatppuccinGuiTheme extends GuiTheme {
     @Override
     public boolean hideHUD() {
         return hideHUD.get();
+    }
+
+    private void invalidateScreen(Object ignored) {
+        if (mc.gui.screen() instanceof WidgetScreen)
+            ((WidgetScreen) mc.gui.screen()).invalidate();
     }
 
     public class ThreeStateColor {
