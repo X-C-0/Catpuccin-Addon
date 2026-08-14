@@ -612,6 +612,7 @@ public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
         return component;
     }
 
+    //? if >= 21.1.2 {
     private void fileW(WTable table, FileSetting setting) {
         WHorizontalList list = table.add(theme.horizontalList()).expandX().widget();
 
@@ -642,6 +643,7 @@ public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
 
         reset(table, setting, action, () -> list.mouseOver);
     }
+    //? }
 
     // Other
 

@@ -22,6 +22,9 @@ stonecutter parameters {
             replace("Minecraft.getInstance().gameRenderer.mainRenderTarget()", "Minecraft.getInstance().getMainRenderTarget()")
             // Options
             replace("mc.gameRenderer.gameRenderState().guiRenderState.isHudHidden", "mc.options.hideGui")
+            // Annotation bullshit
+            replace("extractBackground(@NonNull GuiGraphicsExtractor", "extractBackground(GuiGraphicsExtractor")
+            replace("keyPressed(@NonNull KeyEvent input)", "keyPressed(KeyEvent input)")
         }
         string(current.parsed <= "26.1") {
             // Screen

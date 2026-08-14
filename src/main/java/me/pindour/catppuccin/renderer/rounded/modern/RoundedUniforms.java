@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.DynamicUniformStorage;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
+//? if >=26.2
 import org.jspecify.annotations.NonNull;
 
 import java.nio.ByteBuffer;
@@ -65,7 +66,11 @@ public class RoundedUniforms {
         private final Vector4f clipRect = new Vector4f();
 
         @Override
-        public void write(@NonNull ByteBuffer buffer) {
+        public void write(
+                //? >=26.2
+                @NonNull
+                ByteBuffer buffer
+        ) {
             Std140Builder.intoBuffer(buffer)
                     .putVec4(fillColor)
                     .putVec4(borderColor)

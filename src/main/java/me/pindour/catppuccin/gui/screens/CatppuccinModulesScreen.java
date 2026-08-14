@@ -38,6 +38,7 @@ import net.minecraft.util.Util;
 
 //? if >=1.21.5
 import net.minecraft.client.input.KeyEvent;
+//? if >=26.2
 import org.jspecify.annotations.NonNull;
 
 public class CatppuccinModulesScreen extends TabScreen {
