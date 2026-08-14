@@ -256,8 +256,8 @@ public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
         CharFilter filter = setting.filter == null ? (text, c) -> true : setting.filter;
         Cell<WTextBox> cell = list.add(theme.textBox(setting.get(), "", setting.title, filter, setting.renderer));
 
-        if (setting.wide) cell.minWidth(Utils.getWindowWidth() - Utils.getWindowWidth() / 4.0);
-        else cell.minWidth(250);
+        if (setting.wide) cell.minWidth(Utils.getWindowWidth() / 3.0d);
+        else cell.minWidth(theme.scale(200));
 
         WTextBox textBox = cell.expandX().widget();
         textBox.action = () -> setting.set(textBox.get());

@@ -35,18 +35,11 @@ public abstract class WSearch extends WVerticalList {
         searchResults = add(createResultsContainer()).expandX().widget();
     }
 
-    @Override
-    protected void onCalculateSize() {
-        super.onCalculateSize();
-
-        // This should prevent funny business on ultra-wide monitors (hopefully?)
-        minWidth = Math.min(Utils.getWindowWidth() / 3.0, theme.scale(500));
-    }
-
     public void initTextBox(WTextBox textBox) {
         this.textBox = textBox;
         this.textBox.action = this::updateResults;
         this.textBox.setFocused(true);
+        this.textBox.minWidth = Utils.getWindowWidth() / 3.0d;
     }
 
     protected abstract WSearchHeader createHeader(WSearch search);

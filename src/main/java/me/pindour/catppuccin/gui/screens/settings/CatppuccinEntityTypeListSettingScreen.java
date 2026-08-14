@@ -33,7 +33,12 @@ public class CatppuccinEntityTypeListSettingScreen extends WindowScreen {
         // Top bar to filter the entities
         WHorizontalList list = add(theme.horizontalList()).expandX().widget();
 
-        WTextBox searchBox = list.add(theme.textBox("", "Search entities...")).padBottom(theme.pad()).minWidth(250).expandX().widget();
+        WTextBox searchBox = list.add(theme.textBox("", "Search entities..."))
+                .padBottom(theme.pad())
+                .minWidth(theme.scale(250))
+                .expandX()
+                .widget();
+
         searchBox.setFocused(true);
 
         WDropdown<WMultiSelect.FilterMode> filterDropdown = list.add(theme.dropdown("Show", WMultiSelect.FilterMode.ALL)).widget();

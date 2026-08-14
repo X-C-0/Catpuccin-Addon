@@ -55,6 +55,12 @@ public class WCatppuccinWindow extends WWindow implements CatppuccinWidget {
         );
     }
 
+    @Override
+    protected void onCalculateSize() {
+        super.onCalculateSize();
+        minWidth = theme().scale(200);
+    }
+
     public void initSnapping(CatppuccinModulesScreen modulesScreen, int gridSize) {
         this.modulesScreen = modulesScreen;
         this.gridSize = gridSize;
@@ -228,12 +234,6 @@ public class WCatppuccinWindow extends WWindow implements CatppuccinWidget {
         public <T extends WWidget> Cell<T> add(T widget) {
             if (list != null) return list.add(widget);
             return super.add(widget);
-        }
-
-        @Override
-        protected void onCalculateSize() {
-            super.onCalculateSize();
-            minWidth = 200;
         }
 
         @Override

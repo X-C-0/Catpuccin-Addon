@@ -69,8 +69,8 @@ public class WCatppuccinDoubleEdit extends WVerticalList implements CatppuccinWi
 
         // Buttons
         if (noSlider) {
-            list.add(theme.button("+")).minWidth(30).widget().action = () -> setButton(get() + 1);
-            list.add(theme.button("-")).minWidth(30).widget().action = () -> setButton(get() - 1);
+            list.add(theme.button("+")).minWidth(theme.scale(30)).widget().action = () -> setButton(get() + 1);
+            list.add(theme.button("-")).minWidth(theme.scale(30)).widget().action = () -> setButton(get() - 1);
         }
 
         // Title
@@ -99,7 +99,7 @@ public class WCatppuccinDoubleEdit extends WVerticalList implements CatppuccinWi
             // Slider
             slider = sliderList.add(theme.slider(value, sliderMin, sliderMax))
                     .padHorizontal(6)
-                    .minWidth(200)
+                    .minWidth(theme.scale(250))
                     .expandX()
                     .widget();
 
