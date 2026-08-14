@@ -50,6 +50,9 @@ import org.lwjgl.util.tinyfd.TinyFileDialogs;
 import java.io.File;
 //? }
 
+//? if >=26.2
+import net.minecraft.client.resources.language.I18n;
+
 public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
     private static final SettingColor WHITE = new SettingColor();
     private final CatppuccinGuiTheme theme;
@@ -449,12 +452,21 @@ public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
     private void potionW(WTable table, PotionSetting setting) {
         WHorizontalList list = table.add(theme.horizontalList()).expandX().widget();
 
-        //? if >=26.1 {
+        //? if >=26.2 {
+        var potion = setting.get().potion.get();
+
         WItemWithLabel item = theme.itemWithLabel(
+                potion,
+                I18n.get(potion.getItem().getDescriptionId())
+        );
+
+        //? } else if >=26.1 {
+        /*WItemWithLabel item = theme.itemWithLabel(
                 setting.get().potion.get(),
                 setting.get().potion.get().getDisplayName().toString()
         );
-        //? } else {
+
+        *///? } else {
         /*WItemWithLabel item = theme.itemWithLabel(
                 setting.get().potion,
                 setting.get().potion.getDisplayName().toString()
