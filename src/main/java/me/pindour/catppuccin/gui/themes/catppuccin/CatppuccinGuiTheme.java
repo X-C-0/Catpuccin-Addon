@@ -23,7 +23,6 @@ import me.pindour.catppuccin.gui.widgets.container.WTreeTable;
 import me.pindour.catppuccin.gui.widgets.input.WMultiSelect;
 import me.pindour.catppuccin.gui.widgets.input.WSearch;
 import me.pindour.catppuccin.gui.widgets.pressable.WColorPicker;
-import me.pindour.catppuccin.gui.widgets.pressable.WOpenIndicator;
 import me.pindour.catppuccin.renderer.CatppuccinRenderer;
 import me.pindour.catppuccin.renderer.text.RichTextRenderer;
 import meteordevelopment.meteorclient.gui.GuiTheme;
@@ -468,10 +467,6 @@ public class CatppuccinGuiTheme extends GuiTheme {
 
     public WCatppuccinKeybind catppuccinKeybind(String title, Keybind keybind, Keybind defaultValue) {
         return w(new WCatppuccinKeybind(title, keybind, defaultValue));
-    }
-
-    public WOpenIndicator openIndicator(boolean open) {
-        return w(new WCatppuccinOpenIndicator(open));
     }
 
     public WGuiTexture texture(GuiTexture texture, double size) {

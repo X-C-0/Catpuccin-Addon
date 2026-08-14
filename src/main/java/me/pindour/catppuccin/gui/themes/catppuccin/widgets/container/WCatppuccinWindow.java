@@ -7,7 +7,6 @@ import me.pindour.catppuccin.api.render.Corners;
 import me.pindour.catppuccin.gui.screens.CatppuccinModulesScreen;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinWidget;
-import me.pindour.catppuccin.gui.widgets.pressable.WOpenIndicator;
 import me.pindour.catppuccin.utils.ColorUtils;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.utils.Cell;
@@ -16,6 +15,7 @@ import meteordevelopment.meteorclient.gui.widgets.WWidget;
 import meteordevelopment.meteorclient.gui.widgets.containers.WContainer;
 import meteordevelopment.meteorclient.gui.widgets.containers.WHorizontalList;
 import meteordevelopment.meteorclient.gui.widgets.containers.WWindow;
+import meteordevelopment.meteorclient.gui.widgets.pressable.WTriangle;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 //? if >=1.21.9
 import net.minecraft.client.input.MouseButtonEvent;
@@ -53,9 +53,6 @@ public class WCatppuccinWindow extends WWindow implements CatppuccinWidget {
                 200,
                 expanded ? Direction.FORWARDS : Direction.BACKWARDS
         );
-
-        if (header instanceof WCatppuccinHeader catppuccinHeader)
-            catppuccinHeader.setIndicator(expanded);
     }
 
     public void initSnapping(CatppuccinModulesScreen modulesScreen, int gridSize) {
@@ -183,9 +180,6 @@ public class WCatppuccinWindow extends WWindow implements CatppuccinWidget {
     public void setExpanded(boolean expanded) {
         super.setExpanded(expanded);
 
-        if (header instanceof WCatppuccinHeader catppuccinHeader)
-            catppuccinHeader.setIndicator(expanded);
-
         if (animation != null)
             animation.reverse();
 
@@ -200,7 +194,7 @@ public class WCatppuccinWindow extends WWindow implements CatppuccinWidget {
 
     private class WCatppuccinHeader extends WHeader {
         private WHorizontalList list;
-        private WOpenIndicator indicator;
+        private WTriangle openIndicator;
 
         public WCatppuccinHeader(WWidget icon) {
             super(icon);
@@ -208,26 +202,26 @@ public class WCatppuccinWindow extends WWindow implements CatppuccinWidget {
 
         @Override
         public void init() {
-            if (icon != null) {
-                createList();
-                add(icon).centerY().pad(4);
-            }
+            list = add(theme.horizontalList())
+                    .padHorizontal(theme.scale(10))
+                    .padVertical(theme.scale(8))
+                    .expandX()
+                    .widget();
 
-            if (beforeHeaderInit != null) {
-                createList();
+            list.spacing = theme().scale(6);
+
+            if (icon != null)
+                add(icon).centerY();
+
+            if (beforeHeaderInit != null)
                 beforeHeaderInit.accept(this);
-            }
 
-            boolean hasIcon = beforeHeaderInit != null || icon != null;
-            add(theme.label(title, true)).expandCellX().centerY().pad(hasIcon ? 0 : 12);
+            add(theme.label(title, true)).expandX().centerY();
 
-            indicator = add(theme().openIndicator(expanded)).pad(4).right().centerY().widget();
-            indicator.action = () -> setExpanded(!expanded);
-        }
-
-        private void createList() {
-            list = add(theme.horizontalList()).expandX().widget();
-            list.spacing = 0;
+            openIndicator = add(theme().triangle())
+                    .right()
+                    .centerY()
+                    .widget();
         }
 
         @Override
@@ -256,6 +250,7 @@ public class WCatppuccinWindow extends WWindow implements CatppuccinWidget {
                 cornerAnimation.start(Direction.BACKWARDS);
             }
 
+            // Background
             roundedRect().bounds(this)
                          .radii(radius(),
                                 radius(),
@@ -265,7 +260,7 @@ public class WCatppuccinWindow extends WWindow implements CatppuccinWidget {
                          .render();
 
             // Shadow under the header
-            if (expanded || animation.isRunning()) {
+            if (expanded || (animation.isRunning() && !cornerAnimation.isRunning())) {
                 Color transparentColor = ColorUtils.withAlpha(theme.baseColor(), 0);
 
                 Color semiTransparentColor = ColorUtils.withAlpha(
@@ -284,6 +279,9 @@ public class WCatppuccinWindow extends WWindow implements CatppuccinWidget {
                         transparentColor
                 );
             }
+
+            // Update open indicator
+            openIndicator.rotation = 90 + 90 * animation.getProgress();
         }
 
         @Override
@@ -349,10 +347,6 @@ public class WCatppuccinWindow extends WWindow implements CatppuccinWidget {
 
             if (shouldSnap && !modulesScreen.showGrid()) modulesScreen.showGrid(true);
             dragged = true;
-        }
-
-        public void setIndicator(boolean open) {
-            indicator.open = open;
         }
     }
 

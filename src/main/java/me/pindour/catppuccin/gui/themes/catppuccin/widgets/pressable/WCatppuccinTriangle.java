@@ -8,12 +8,11 @@ import meteordevelopment.meteorclient.gui.widgets.pressable.WTriangle;
 public class WCatppuccinTriangle extends WTriangle implements CatppuccinWidget {
     @Override
     protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
-        double s = theme.textHeight() * 0.75;
-        double pad = pad();
+        double s = theme.textHeight();
 
         renderer.rotatedQuad(
-                x + width - pad - s,
-                y + height / 2 - s / 2,
+                x,
+                y,
                 s,
                 s,
                 rotation,

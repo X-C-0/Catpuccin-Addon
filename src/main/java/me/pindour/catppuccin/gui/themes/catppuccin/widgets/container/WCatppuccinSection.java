@@ -3,7 +3,6 @@ package me.pindour.catppuccin.gui.themes.catppuccin.widgets.container;
 import me.pindour.catppuccin.api.animation.Animation;
 import me.pindour.catppuccin.api.animation.Direction;
 import me.pindour.catppuccin.api.animation.Easing;
-import me.pindour.catppuccin.gui.themes.catppuccin.icons.CatppuccinBuiltinIcons;
 import me.pindour.catppuccin.api.render.Corners;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinWidget;
@@ -11,7 +10,9 @@ import me.pindour.catppuccin.utils.ColorUtils;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.utils.Cell;
 import meteordevelopment.meteorclient.gui.widgets.WWidget;
+import meteordevelopment.meteorclient.gui.widgets.containers.WHorizontalList;
 import meteordevelopment.meteorclient.gui.widgets.containers.WSection;
+import meteordevelopment.meteorclient.gui.widgets.pressable.WTriangle;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 
 public class WCatppuccinSection extends WSection implements CatppuccinWidget {
@@ -149,6 +150,8 @@ public class WCatppuccinSection extends WSection implements CatppuccinWidget {
     }
 
     protected class WCatppuccinHeader extends WHeader {
+        private WHorizontalList list;
+        private WTriangle openIndicator;
 
         public WCatppuccinHeader(String title) {
             super(title);
@@ -156,20 +159,39 @@ public class WCatppuccinSection extends WSection implements CatppuccinWidget {
 
         @Override
         public void init() {
-            add(theme.horizontalSeparator(title))
-                    .padVertical(theme.scale(3))
-                    .padHorizontal(theme.scale(2))
-                    .expandX();
+            list = add(theme.horizontalList())
+                    .padHorizontal(theme.scale(6))
+                    .padVertical(theme.scale(4))
+                    .expandX()
+                    .widget();
 
-            if (headerWidget != null)
-                add(headerWidget).pad(theme.scale(4));
+            WWidget widget = headerWidget;
+
+            if (widget == null) {
+                openIndicator = theme.triangle();
+                widget = openIndicator;
+            }
+
+            // Calculate left offset to make the title centered
+            widget.calculateSize();
+            double pad = widget.width;
+
+            add(theme.horizontalSeparator(title))
+                    .expandX()
+                    .padLeft(pad);
+
+            add(widget);
+        }
+
+        @Override
+        public <T extends WWidget> Cell<T> add(T widget) {
+            if (list != null) return list.add(widget);
+            return super.add(widget);
         }
 
         @Override
         protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
             CatppuccinGuiTheme theme = theme();
-            double pad = pad();
-            double s = theme.textHeight();
             double progress = animation.getProgress();
             double cornerProgress = cornerAnimation.getProgress();
 
@@ -196,18 +218,9 @@ public class WCatppuccinSection extends WSection implements CatppuccinWidget {
                          .color(bgColor)
                          .render();
 
-            if (headerWidget != null) return;
-
-            // Expanded indicator
-            renderer.rotatedQuad(
-                    x + width - pad - s,
-                    y + height / 2 - s / 2,
-                    s,
-                    s,
-                    90 + 90 * progress,
-                    CatppuccinBuiltinIcons.ARROW.texture(),
-                    theme.textColor()
-            );
+            // Update open indicator
+            if (openIndicator != null)
+                openIndicator.rotation = 90 + 90 * animation.getProgress();
         }
     }
 }

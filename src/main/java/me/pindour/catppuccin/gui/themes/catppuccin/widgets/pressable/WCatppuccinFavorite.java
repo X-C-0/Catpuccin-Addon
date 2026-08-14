@@ -15,24 +15,20 @@ public class WCatppuccinFavorite extends WFavorite implements CatppuccinWidget {
 
     @Override
     public void init() {
-        size = theme.textHeight() * 1.15f;
+        size = theme.textHeight();
     }
 
     @Override
     protected void onCalculateSize() {
-        double pad = pad();
-
-        width = pad + size + pad;
-        height = pad + size + pad;
+        width = size;
+        height = size;
     }
 
     @Override
     protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
-        double pad = pad();
-
         renderer.quad(
-                x + pad,
-                y + pad,
+                x,
+                y,
                 size,
                 size,
                 checked ? CatppuccinBuiltinIcons.BOOKMARK_YES.texture() : CatppuccinBuiltinIcons.BOOKMARK_NO.texture(),

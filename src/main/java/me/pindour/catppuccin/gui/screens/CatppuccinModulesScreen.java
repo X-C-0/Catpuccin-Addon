@@ -4,6 +4,7 @@ import me.pindour.catppuccin.api.icons.CatppuccinIcons;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import me.pindour.catppuccin.gui.themes.catppuccin.icons.CatppuccinBuiltinIcons;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.container.WCatppuccinWindow;
+import me.pindour.catppuccin.gui.widgets.WGuiTexture;
 import me.pindour.catppuccin.utils.search.results.ModuleSearchResult;
 import me.pindour.catppuccin.utils.search.SearchUtils;
 import meteordevelopment.meteorclient.gui.GuiTheme;
@@ -122,22 +123,16 @@ public class CatppuccinModulesScreen extends TabScreen {
     // Category
 
     protected WWindow createCategory(WContainer c, Category category, List<Module> moduleList) {
-        WCatppuccinWindow w = (WCatppuccinWindow) theme.window(category.name);
+        WGuiTexture icon = theme.categoryIcons()
+                ? theme.texture(getIconForCategory(category), theme.textHeight())
+                : null;
+
+        WCatppuccinWindow w = (WCatppuccinWindow) theme.window(icon, category.name);
         w.id = category.name;
         w.padding = theme.pad();
         w.spacing = 0;
 
         if (shouldSnap) w.initSnapping(this, gridSize);
-
-        double size = theme.scale(16);
-
-        if (theme.categoryIcons()) {
-            w.beforeHeaderInit = wContainer -> wContainer.add(
-                    theme.texture(getIconForCategory(category), size))
-                    .centerY()
-                    .pad(4)
-                    .padHorizontal(10);
-        }
 
         c.add(w);
         w.view.scrollOnlyWhenMouseOver = true;
@@ -186,16 +181,14 @@ public class CatppuccinModulesScreen extends TabScreen {
     }
 
     protected WWindow createSearch(WContainer c) {
-        WCatppuccinWindow w = (WCatppuccinWindow) theme.window("Search");
+        WCatppuccinWindow w = (WCatppuccinWindow) theme.window(
+                theme.texture(CatppuccinBuiltinIcons.SEARCH.texture(), theme.textHeight()),
+                "Search"
+        );
+
         w.id = "search";
 
         if (shouldSnap) w.initSnapping(this, gridSize);
-
-        double size = theme.scale(16);
-
-        if (theme.categoryIcons()) {
-            w.beforeHeaderInit = wContainer -> wContainer.add(theme.texture(CatppuccinBuiltinIcons.SEARCH.texture(), size)).centerY().pad(4).padHorizontal(10);
-        }
 
         c.add(w);
         w.view.scrollOnlyWhenMouseOver = true;
@@ -223,18 +216,16 @@ public class CatppuccinModulesScreen extends TabScreen {
         boolean hasFavorites = Modules.get().getAll().stream().anyMatch(module -> module.favorite);
         if (!hasFavorites) return null;
 
-        WCatppuccinWindow w = (WCatppuccinWindow) theme.window("Favorites");
+        WCatppuccinWindow w = (WCatppuccinWindow) theme.window(
+                theme.texture(CatppuccinBuiltinIcons.BOOKMARK_YES.texture(), theme.textHeight()),
+                "Favorites"
+        );
+
         w.id = "favorites";
         w.padding = 0;
         w.spacing = 0;
 
         if (shouldSnap) w.initSnapping(this, gridSize);
-
-        double size = theme.scale(16);
-
-        if (theme.categoryIcons()) {
-            w.beforeHeaderInit = wContainer -> wContainer.add(theme.texture(CatppuccinBuiltinIcons.BOOKMARK_YES.texture(), size)).centerY().pad(4).padHorizontal(10);
-        }
 
         Cell<WWindow> cell = c.add(w);
         w.view.scrollOnlyWhenMouseOver = true;
