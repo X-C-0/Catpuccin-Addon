@@ -54,29 +54,17 @@ jobs:
             echo "changelog=" >> $GITHUB_OUTPUT
           fi
 
-      - name: Test print
-        run: |
-          echo "=== Debug for mc${{ matrix.mc_version }} ==="
-          ls -la build/libs/${{ matrix.mc_version }}/
-          
-          echo "=== METADATA ==="
-          echo "name: Catppuccin Addon ${{ github.event.release.name }} for Minecraft ${{ matrix.mc_version }}"
-          echo "version: ${{ github.event.release.name }}+mc${{ matrix.mc_version }}"
-          
-          echo "=== CHANGELOG ==="
-          echo "${{ steps.prep.outputs.changelog }}"
-
-#      - name: Publish ${{ matrix.mc_version }} to Modrinth
-#        uses: Kira-NT/mc-publish@v3
-#        with:
-#          modrinth-id: ${{ vars.MODRINTH_ID }}
-#          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
-#          files: build/libs/${{ matrix.mc_version }}/*.jar
-#          name: Catppuccin Addon ${{ github.event.release.name }} for Minecraft ${{ matrix.mc_version }}
-#          version: ${{ github.event.release.name }}+mc${{ matrix.mc_version }}
-#          version-type: release
-#          changelog: ${{ steps.prep.outputs.changelog }}
-#          loaders: fabric
-#          game-versions: ${{ matrix.mc_version }}
-#          dependencies: |
-#            asteroid(optional)
+      - name: Publish ${{ matrix.mc_version }} to Modrinth
+        uses: Kira-NT/mc-publish@v3
+        with:
+          modrinth-id: ${{ vars.MODRINTH_ID }}
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          files: build/libs/${{ matrix.mc_version }}/*.jar
+          name: Catppuccin Addon ${{ github.event.release.name }} for Minecraft ${{ matrix.mc_version }}
+          version: ${{ github.event.release.name }}+mc${{ matrix.mc_version }}
+          version-type: release
+          changelog: ${{ steps.prep.outputs.changelog }}
+          loaders: fabric
+          game-versions: ${{ matrix.mc_version }}
+          dependencies: |
+            asteroid(optional)
