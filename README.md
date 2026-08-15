@@ -120,11 +120,12 @@ dependencies {
 ```
 
 ### Registering Custom Icons
-If your addon adds new categories, you can register custom icons for them to match the theme style.
+If your addon adds new categories or tabs, you can register custom icons for them to match the theme style.
 
 ```java
-// Check the javadocs for usage
+// Check the Javadocs for usage
 CatppuccinIcons.registerCategoryIcon(categoryName, texture);
+CatppuccinIcons.registerTabIcon(YourAddonTab.class, texture);
 ```
 
 ## 💬 Support
