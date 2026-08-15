@@ -56,6 +56,17 @@ jobs:
             echo "changelog=" >> $GITHUB_OUTPUT
           fi
 
+      - name: Determine Dependencies
+        id: deps
+        run: |
+          if [[ "${{ matrix.mc_version }}" == "1.21.1" || \
+                "${{ matrix.mc_version }}" == "1.21.4" || \
+                "${{ matrix.mc_version }}" == "1.21.11" ]]; then
+            echo "asteroid_dep=asteroid(incompatible)" >> $GITHUB_OUTPUT
+          else
+            echo "asteroid_dep=asteroid(optional)" >> $GITHUB_OUTPUT
+          fi
+
       - name: Publish ${{ matrix.mc_version }} to Modrinth
         uses: Kira-NT/mc-publish@v3
         with:
@@ -69,4 +80,4 @@ jobs:
           loaders: fabric
           game-versions: ${{ matrix.mc_version }}
           dependencies: |
-            asteroid(optional)
+            ${{ steps.deps.outputs.asteroid_dep }}
