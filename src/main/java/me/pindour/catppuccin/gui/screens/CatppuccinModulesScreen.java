@@ -65,11 +65,13 @@ public class CatppuccinModulesScreen extends TabScreen {
         // Help
         WVerticalList help = add(theme.verticalList()).pad(4).bottom().widget();
 
-        if (theme.catppuccinSearchScreen.get())
-            help.add(theme.label("Ctrl + F - Open search"));
+        if (theme.modulesHelpText()) {
+            if (theme.catppuccinSearchScreen.get())
+                help.add(theme.label("Ctrl + F - Open search"));
 
-        help.add(theme.label("Left click - Toggle module"));
-        help.add(theme.label("Right click - Open module settings"));
+            help.add(theme.label("Left click - Toggle module"));
+            help.add(theme.label("Right click - Open module settings"));
+        }
 
         // Credit
         add(theme.label("Catppuccin Theme by Pindour")).bottom().right();

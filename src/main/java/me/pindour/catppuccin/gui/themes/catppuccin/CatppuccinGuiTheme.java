@@ -121,6 +121,13 @@ public class CatppuccinGuiTheme extends GuiTheme {
             .build()
     );
 
+    public final Setting<Boolean> modulesHelpText = sgGeneral.add(new BoolSetting.Builder()
+            .name("modules-help-text")
+            .description("Toggle help text in the modules screen.")
+            .defaultValue(false)
+            .build()
+    );
+
     public final Setting<Boolean> windowShadow = sgGeneral.add(new BoolSetting.Builder()
             .name("window-shadow")
             .description("Render a subtle shadow under windows.")
@@ -771,6 +778,12 @@ public class CatppuccinGuiTheme extends GuiTheme {
     @Override
     public boolean categoryIcons() {
         return categoryIcons.get();
+    }
+
+    //? if >=26.2
+    @Override
+    public boolean modulesHelpText() {
+        return modulesHelpText.get();
     }
 
     @Override
