@@ -5,22 +5,21 @@
   <img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/misc/transparent.png" height="30" width="0px" alt=""/>
 </h3>
 
-<p align="center">
-    <a href="https://github.com/X-C-0/catppuccin-addon/stargazers"><img src="https://img.shields.io/github/stars/X-C-0/catppuccin-addon?colorA=363a4f&colorB=b7bdf8&style=for-the-badge" alt=""></a>
-    <a href="https://github.com/X-C-0/catppuccin-addon/issues"><img src="https://img.shields.io/github/issues/X-C-0/catppuccin-addon?colorA=363a4f&colorB=f5a97f&style=for-the-badge" alt=""></a>
-    <a href="https://github.com/X-C-0/catppuccin-addon/contributors"><img src="https://img.shields.io/github/contributors/X-C-0/catppuccin-addon?colorA=363a4f&colorB=a6da95&style=for-the-badge" alt=""></a>
-  <a href="https://github.com/X-C-0/catppuccin-addon/releases"><img src="https://img.shields.io/github/downloads/X-C-0/catppuccin-addon/total?style=for-the-badge&labelColor=363a4f&color=f5c2e7" alt=""></a>
+<div align="center">
+  <a href="https://github.com/X-C-0/catppuccin-addon/stargazers"><img src="https://img.shields.io/github/stars/X-C-0/catppuccin-addon?colorA=363a4f&colorB=b7bdf8&style=for-the-badge" alt="Stars"></a>
+  <a href="https://github.com/X-C-0/catppuccin-addon/issues"><img src="https://img.shields.io/github/issues/X-C-0/catppuccin-addon?colorA=363a4f&colorB=f5a97f&style=for-the-badge" alt="Issues"></a>
+  <a href="https://github.com/X-C-0/catppuccin-addon/contributors"><img src="https://img.shields.io/github/contributors/X-C-0/catppuccin-addon?colorA=363a4f&colorB=a6da95&style=for-the-badge" alt="Contributors"></a>
+  <a href="https://github.com/X-C-0/catppuccin-addon/releases"><img src="https://img.shields.io/github/downloads/X-C-0/catppuccin-addon/total?style=for-the-badge&labelColor=363a4f&color=f5c2e7" alt="Downloads"></a>
 
   <br>
-  <br>
-    <a href="https://modrinth.com/mod/catppuccin-theme-addon"><img src="https://img.shields.io/badge/Download%20from-Modrinth-00AF5C?style=for-the-badge&labelColor=363a4f&logo=modrinth&logoColor=white" alt="Download from Modrinth"></a>
-    <a href="https://github.com/X-C-0/catppuccin-addon/releases"><img src="https://img.shields.io/badge/Download%20from-Releases-8aadf4?style=for-the-badge&labelColor=363a4f&logo=github&logoColor=white" alt="Download from Releases"></a>
-</p>
+  <h3>Download</h3>
 
-<p align="center">
-  <a href="https://github.com/X-C-0/catppuccin-addon/releases/tag/v2.0.0"><b>⚠️ v2.0 Visual Overhaul ⚠️</b></a><br>
-  <i>Harder, Better, Faster, Stronger</i>
-</p>
+  <a href="https://modrinth.com/mod/catppuccin-theme-addon"><img src="https://img.shields.io/badge/Download%20from-Modrinth-00AF5C?style=for-the-badge&labelColor=363a4f&logo=modrinth&logoColor=white" alt="Download from Modrinth"></a>
+  <a href="https://github.com/X-C-0/catppuccin-addon/releases"><img src="https://img.shields.io/badge/Download%20from-Releases-8aadf4?style=for-the-badge&labelColor=363a4f&logo=github&logoColor=white" alt="Download from Releases"></a>
+  
+  <sub>⚠️ <strong>Note:</strong> The links above are the <strong>only official download sources</strong>. Any other third-party websites or mirrors are unauthorized and contain malware/viruses.</sub>
+  <br>
+</div>
 
 <p align="center">
   <img src="assets/preview.png" alt="Main preview"/>
