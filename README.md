@@ -14,12 +14,12 @@
   <br>
   <h3>Download</h3>
 
-  <a href="https://modrinth.com/mod/catppuccin-theme-addon"><img src="https://img.shields.io/badge/Download%20from-Modrinth-00AF5C?style=for-the-badge&labelColor=363a4f&logo=modrinth&logoColor=white" alt="Download from Modrinth"></a>
-  <a href="https://github.com/X-C-0/catppuccin-addon/releases"><img src="https://img.shields.io/badge/Download%20from-Releases-8aadf4?style=for-the-badge&labelColor=363a4f&logo=github&logoColor=white" alt="Download from Releases"></a>
-  
-  <sub>⚠️ <strong>Note:</strong> The links above are the <strong>only official download sources</strong>. Any other third-party websites or mirrors are unauthorized and contain malware/viruses.</sub>
-  <br>
+  <a href="https://modrinth.com/mod/catppuccin-theme-addon"><img src="https://img.shields.io/badge/Download%20from-Modrinth-a6da95?style=for-the-badge&labelColor=363a4f&logo=modrinth&logoColor=a6da95" alt="Download from Modrinth"></a>
+  <a href="https://github.com/X-C-0/catppuccin-addon/releases"><img src="https://img.shields.io/badge/Download%20from-Releases-cba6f7?style=for-the-badge&labelColor=363a4f&logo=github&logoColor=white" alt="Download from Releases"></a>
 </div>
+
+> [!WARNING]
+> </strong> The links above are the <strong>only official download sources</strong>. Any other third-party websites or mirrors are unauthorized and may contain malware/viruses.
 
 <p align="center">
   <img src="assets/preview.png" alt="Main preview"/>
