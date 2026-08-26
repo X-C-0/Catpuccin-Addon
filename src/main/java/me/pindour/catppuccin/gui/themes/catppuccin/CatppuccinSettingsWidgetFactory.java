@@ -2,7 +2,11 @@ package me.pindour.catppuccin.gui.themes.catppuccin;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
-import me.pindour.catppuccin.gui.themes.catppuccin.icons.CatppuccinBuiltinIcons;
+import me.pindour.catppuccin.gui.screens.settings.CatppuccinColorSettingScreen;
+import me.pindour.catppuccin.gui.themes.catppuccin.colors.CatppuccinAccentColor;
+import me.pindour.catppuccin.gui.themes.catppuccin.colors.ColorLink;
+import me.pindour.catppuccin.gui.themes.catppuccin.colors.ColorLinkRegistry;import me.pindour.catppuccin.gui.themes.catppuccin.icons.CatppuccinBuiltinIcons;
+import me.pindour.catppuccin.gui.themes.catppuccin.widgets.input.WCatppuccinColorGrid;
 import me.pindour.catppuccin.gui.screens.settings.CatppuccinEntityTypeListSettingScreen;
 import me.pindour.catppuccin.api.text.RichText;
 import me.pindour.catppuccin.api.text.TextScale;
@@ -11,7 +15,7 @@ import me.pindour.catppuccin.gui.themes.catppuccin.widgets.pressable.WCatppuccin
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.settings.WCatppuccinDoubleEdit;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.settings.WCatppuccinIntEdit;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.settings.WCatppuccinKeybind;
-import me.pindour.catppuccin.gui.widgets.container.WTreeTable;
+import me.pindour.catppuccin.gui.widgets.WGuiTexture;import me.pindour.catppuccin.gui.widgets.container.WTreeTable;
 import me.pindour.catppuccin.gui.widgets.pressable.WColorPicker;
 import me.pindour.catppuccin.mixin.meteorclient.SettingAccessor;
 import me.pindour.catppuccin.utils.SettingWatcher;
@@ -256,7 +260,7 @@ public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
 
         title(list, setting).padLeft(theme.pad());
 
-        CharFilter filter = setting.filter == null ? (text, c) -> true : setting.filter;
+        CharFilter filter = setting.filter == null ? (ignored, ignored2) -> true : setting.filter;
         Cell<WTextBox> cell = list.add(theme.textBox(setting.get(), "", setting.title, filter, setting.renderer));
 
         if (setting.wide) cell.minWidth(Utils.getWindowWidth() / 3.0d);
@@ -279,7 +283,14 @@ public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
         StringListSetting.fillTable(theme, wtable, setting);
     }
 
+    @SuppressWarnings("unchecked")
     private <T extends Enum<?>> void enumW(WTable table, EnumSetting<T> setting) {
+        if (setting.get() instanceof CatppuccinAccentColor) {
+            EnumSetting<CatppuccinAccentColor> accentSetting = (EnumSetting<CatppuccinAccentColor>) setting;
+            accentColorW(table, accentSetting);
+            return;
+        }
+
         WHorizontalList list = table.add(theme.horizontalList()).expandX().widget();
 
         WDropdown<T> dropdown = list.add(theme.dropdown(setting.title, setting.get())).expandCellX().widget();
@@ -287,6 +298,19 @@ public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
         dropdown.tooltip = setting.description;
 
         reset(table, setting, () -> dropdown.set(setting.get()), () -> list.mouseOver);
+    }
+
+    private void accentColorW(WTable table, EnumSetting<CatppuccinAccentColor> setting) {
+        WCatppuccinColorGrid<CatppuccinAccentColor> grid = table.add(theme.colorGrid(
+                setting.title,
+                CatppuccinAccentColor.values(),
+                accent -> theme.getColor(accent.toColor()),
+                6,
+                1
+        )).expandX().widget();
+
+        grid.select(setting.get());
+        grid.onColorSelected = setting::set;
     }
 
     private void providedStringW(WTable table, ProvidedStringSetting setting) {
@@ -314,11 +338,33 @@ public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
         WHorizontalList list = table.add(theme.horizontalList()).expandX().widget();
 
         WColorPicker colorPicker = list.add(theme.colorPicker(setting.get(), CatppuccinBuiltinIcons.EDIT.texture())).widget();
-        colorPicker.action = () -> mc.gui.setScreen(new ColorSettingScreen(theme, setting));
+        colorPicker.action = () -> mc.gui.setScreen(new CatppuccinColorSettingScreen(theme, setting));
 
-        title(list, setting).padLeft(theme.pad()).expandCellX();
+        WLabel title = list.add(theme.label(RichText.of(setting.title))).widget();
+        title.tooltip = setting.description;
 
-        reset(list, setting, () -> colorPicker.setColor(setting.get()), () -> list.mouseOver);
+        ColorLink link = ColorLinkRegistry.getLink(setting);
+
+        if (link != null) {
+            WGuiTexture linkIcon = list.add(theme.texture(
+                    CatppuccinBuiltinIcons.LINK.texture(),
+                    theme.textHeight()
+            ))
+            .padLeft(theme.pad())
+            .widget();
+
+            linkIcon.tooltip = "Linked to " + link.color().name();
+            linkIcon.color(theme.getColor(link.color()));
+        }
+
+        Runnable resetAndReload = () -> {
+            colorPicker.setColor(setting.get());
+            theme.reloadScreen();
+        };
+
+        reset(list, setting, resetAndReload, () -> list.mouseOver)
+                .expandCellX()
+                .right();
     }
 
     private void keybindW(WTable table, KeybindSetting setting) {
@@ -571,7 +617,7 @@ public class CatppuccinSettingsWidgetFactory extends SettingsWidgetFactory {
                 );
 
                 set.set(setting.get().get(_i));
-                mc.gui.setScreen(new ColorSettingScreen(theme, set));
+                mc.gui.setScreen(new CatppuccinColorSettingScreen(theme, set));
             };
 
             list.add(theme.label(RichText.of("Example Text").scale(TextScale.SMALL.get())).color(color)).expandX();

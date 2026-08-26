@@ -3,7 +3,7 @@ package me.pindour.catppuccin.gui.themes.catppuccin.widgets.container;
 import me.pindour.catppuccin.api.animation.Animation;
 import me.pindour.catppuccin.api.animation.Direction;
 import me.pindour.catppuccin.api.animation.Easing;
-import me.pindour.catppuccin.api.render.Corners;
+import me.pindour.catppuccin.api.render.style.Corners;
 import me.pindour.catppuccin.gui.screens.CatppuccinModulesScreen;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinWidget;
@@ -21,7 +21,7 @@ import meteordevelopment.meteorclient.utils.render.color.Color;
 import net.minecraft.client.input.MouseButtonEvent;
 
 public class WCatppuccinWindow extends WWindow implements CatppuccinWidget {
-    private static final int SHADOW_OFFSET = 2;
+    private static final Color TRANSLUCENT = Color.BLACK.copy().a(0);
 
     private CatppuccinModulesScreen modulesScreen;
     private boolean shouldSnap = false;
@@ -103,32 +103,27 @@ public class WCatppuccinWindow extends WWindow implements CatppuccinWidget {
         }
     }
 
-    @Override
-    protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
+    private void renderBackground() {
         CatppuccinGuiTheme theme = theme();
         Color backgroundColor = ColorUtils.withAlpha(theme.mantleColor(), theme.windowOpacity());
 
-        int shadowOffset = getShadowOffset();
         double windowHeight = Math.max((height - header.height) * animation.getProgress(), 0);
 
         // Shadow rectangle
         if (theme.windowShadow.get()) {
-            Color shadowColor = ColorUtils.withAlpha(theme.crustColor(), 0.4);
-
-            roundedRect().pos(x - shadowOffset, y - shadowOffset)
-                         .size(width + shadowOffset * 2,
-                                 header.height + windowHeight + shadowOffset * 2)
-                         .radius(radius() + shadowOffset / 2f)
-                         .color(shadowColor)
+            roundedRect().pos(x, y)
+                         .size(width, header.height + windowHeight)
+                         .radius(radius())
+                         .color(TRANSLUCENT)
+                         .shadow(theme.windowShadow())
                          .render();
-
         }
 
         // Inner rectangle
         if (expanded || animation.isRunning())
             roundedRect().pos(x, y + header.height)
                          .size(width, windowHeight)
-                         .radius(radius() - shadowOffset, Corners.BOTTOM)
+                         .radius(radius(), Corners.BOTTOM)
                          .color(backgroundColor)
                          .render();
     }
@@ -137,12 +132,15 @@ public class WCatppuccinWindow extends WWindow implements CatppuccinWidget {
     public boolean render(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
         if (!visible) return true;
 
-        double progress = animation.getProgress();
+        // Draw the background BEFORE scissors,
+        // so the shadow doesn't get cut off while inner widgets do
+        renderBackground();
+
         boolean isAnimating = animation.isRunning();
-        double contentHeight = height - header.height;
 
         if (isAnimating) {
-            int shadowOffset = getShadowOffset();
+            double progress = animation.getProgress();
+            double contentHeight = height - header.height;
             double windowHeight = Math.max(contentHeight * progress, 0);
 
             // Calculate overshot
@@ -157,10 +155,8 @@ public class WCatppuccinWindow extends WWindow implements CatppuccinWidget {
             }
 
             renderer.scissorStart(
-                    x - shadowOffset,
-                    y - shadowOffset,
-                    width + shadowOffset * 2,
-                    header.height + windowHeight + shadowOffset * 2
+                    x, y ,
+                    width, header.height + windowHeight
             );
         }
 
@@ -259,27 +255,6 @@ public class WCatppuccinWindow extends WWindow implements CatppuccinWidget {
                          .color(theme.crustColor())
                          .render();
 
-            // Shadow under the header
-            if (expanded || (animation.isRunning() && !cornerAnimation.isRunning())) {
-                Color transparentColor = ColorUtils.withAlpha(theme.baseColor(), 0);
-
-                Color semiTransparentColor = ColorUtils.withAlpha(
-                        theme.baseColor(),
-                        0.5 * theme.windowOpacity()
-                );
-
-                renderer.quad(
-                        x,
-                        y + height,
-                        width,
-                        12,
-                        semiTransparentColor,
-                        semiTransparentColor,
-                        transparentColor,
-                        transparentColor
-                );
-            }
-
             // Update open indicator
             openIndicator.rotation = 90 + 90 * animation.getProgress();
         }
@@ -352,9 +327,5 @@ public class WCatppuccinWindow extends WWindow implements CatppuccinWidget {
 
     private double snapToGrid(double value) {
         return Math.round(value / gridSize) * gridSize;
-    }
-
-    private int getShadowOffset() {
-        return theme().windowShadow.get() ? SHADOW_OFFSET : 0;
     }
 }

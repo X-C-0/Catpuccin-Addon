@@ -3,7 +3,7 @@ package me.pindour.catppuccin.gui.themes.catppuccin.widgets;
 import me.pindour.catppuccin.api.animation.Animation;
 import me.pindour.catppuccin.api.animation.Direction;
 import me.pindour.catppuccin.api.animation.Easing;
-import me.pindour.catppuccin.api.render.Corners;
+import me.pindour.catppuccin.api.render.style.Corners;
 import me.pindour.catppuccin.api.text.RichText;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinWidget;
@@ -169,7 +169,7 @@ public class WCatppuccinModule extends WPressable implements CatppuccinWidget {
             default -> x += pad + lineWidth + pad;
         }
 
-        Color color = ColorUtils.interpolateColor(
+        Color color = ColorUtils.lerp(
                 theme.textColor(),
                 theme.accentColor(),
                 highlightProgress

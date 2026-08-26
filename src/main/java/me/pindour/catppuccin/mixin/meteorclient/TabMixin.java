@@ -3,6 +3,7 @@ package me.pindour.catppuccin.mixin.meteorclient;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
+import me.pindour.catppuccin.gui.themes.catppuccin.widgets.WCatppuccinTopBar;
 import meteordevelopment.meteorclient.gui.GuiThemes;
 import meteordevelopment.meteorclient.gui.tabs.Tab;
 import meteordevelopment.meteorclient.gui.tabs.TabScreen;
@@ -22,9 +23,13 @@ public abstract class TabMixin {
         )
     )
     private Cell<?> catppuccin$addTopBarMargin(TabScreen screen, WWidget widget, Operation<Cell<?>> original) {
+        if (widget instanceof WCatppuccinTopBar topBar) {
+            topBar.onTabScreenOpen(screen.tab);
+        }
+
         Cell<?> cell = original.call(screen, widget);
 
-        // Add a small margin at the top, but only when our theme is active
+        // Add a small margin at the top, but only when the theme is active
         if (GuiThemes.get() instanceof CatppuccinGuiTheme)
             cell.marginTop(10);
 

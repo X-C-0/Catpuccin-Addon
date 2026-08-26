@@ -1,4 +1,4 @@
-package me.pindour.catppuccin.api.render;
+package me.pindour.catppuccin.api.render.style;
 
 public enum Corners {
     NONE(false, false, false, false),
@@ -6,11 +6,7 @@ public enum Corners {
     TOP(true, true, false, false),
     BOTTOM(false, false, true, true),
     LEFT(true, false, true, false),
-    RIGHT(false, true, false, true),
-    TOP_LEFT(true, false, false, false),
-    TOP_RIGHT(false, true, false, false),
-    BOTTOM_LEFT(false, false, true, false),
-    BOTTOM_RIGHT(false, false, false, true);
+    RIGHT(false, true, false, true);
 
     public final boolean topLeft;
     public final boolean topRight;

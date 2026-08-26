@@ -1,5 +1,9 @@
-package me.pindour.catppuccin.api.render;
+package me.pindour.catppuccin.api.render.shape;
 
+import me.pindour.catppuccin.api.render.style.Corners;
+import me.pindour.catppuccin.api.render.style.Outline;
+import me.pindour.catppuccin.api.render.RoundedRectRenderer;
+import me.pindour.catppuccin.api.render.style.Shadow;
 import meteordevelopment.meteorclient.gui.widgets.WWidget;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 import org.jetbrains.annotations.ApiStatus;
@@ -12,8 +16,8 @@ public class RoundedRect {
     private double x, y, width, height;
     private float rTopLeft, rTopRight, rBottomLeft, rBottomRight;
     private Color fillColor;
-    private Color outlineColor;
-    private float outlineWidth;
+    private Outline outline;
+    private Shadow shadow;
 
     private RoundedRect() {}
 
@@ -32,9 +36,9 @@ public class RoundedRect {
 
     private void reset() {
         this.fillColor = Color.BLACK;
-        this.outlineColor = Color.BLACK;
-        this.outlineWidth = 0;
         this.rTopLeft = this.rTopRight = this.rBottomLeft = this.rBottomRight = 0;
+        this.outline = Outline.none();
+        this.shadow = Shadow.none();
     }
 
     public RoundedRect pos(double x, double y) {
@@ -81,14 +85,28 @@ public class RoundedRect {
     }
 
     public RoundedRect outline(Color color, float width) {
-        this.outlineColor = color.copy();
-        this.outlineWidth = width;
+        this.outline = Outline.of(width, color.copy());
+        return this;
+    }
+
+    public RoundedRect shadow(Shadow shadow) {
+        this.shadow = shadow;
+        return this;
+    }
+
+    public RoundedRect shadow(double offsetX, double offsetY, double blur, double spread, Color color) {
+        this.shadow = Shadow.of(offsetX, offsetY, blur, spread, color.copy());
+        return this;
+    }
+
+    public RoundedRect shadow(double blur, double spread, Color color) {
+        this.shadow = Shadow.of(0, 0, blur, spread, color.copy());
         return this;
     }
 
     public void render() {
         if (width <= 0 || height <= 0) return;
-        if (fillColor.a == 0 && (outlineColor.a == 0 || outlineWidth <= 0)) return;
+        if (fillColor.a == 0 && !outline.isVisible() && !shadow.isVisible()) return;
 
         if (renderer != null) {
             renderer.renderRoundedRect(
@@ -96,7 +114,9 @@ public class RoundedRect {
                     width, height,
                     rTopLeft, rTopRight,
                     rBottomLeft, rBottomRight,
-                    fillColor, outlineColor, outlineWidth
+                    fillColor,
+                    outline,
+                    shadow
             );
         }
     }

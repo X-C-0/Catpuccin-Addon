@@ -2,15 +2,18 @@ package me.pindour.catppuccin.gui.themes.catppuccin;
 
 import me.pindour.catppuccin.CatppuccinAddon;
 import me.pindour.catppuccin.api.animation.Easing;
+import me.pindour.catppuccin.api.render.style.Shadow;
 import me.pindour.catppuccin.api.text.RichText;
 import me.pindour.catppuccin.api.text.RichTextSegment;
 import me.pindour.catppuccin.gui.screens.CatppuccinModuleScreen;
 import me.pindour.catppuccin.gui.screens.CatppuccinModulesScreen;
 import me.pindour.catppuccin.gui.themes.catppuccin.colors.CatppuccinAccentColor;
 import me.pindour.catppuccin.gui.themes.catppuccin.colors.CatppuccinColor;
+import me.pindour.catppuccin.gui.themes.catppuccin.colors.ColorLinkRegistry;
 import me.pindour.catppuccin.gui.themes.catppuccin.flavors.CatppuccinFlavors;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.*;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.container.WCatppuccinSection;
+import me.pindour.catppuccin.gui.themes.catppuccin.widgets.container.WCatppuccinTabView;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.container.WCatppuccinView;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.container.WCatppuccinWindow;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.input.*;
@@ -20,6 +23,8 @@ import me.pindour.catppuccin.gui.themes.catppuccin.widgets.settings.WCatppuccinI
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.settings.WCatppuccinKeybind;
 import me.pindour.catppuccin.gui.widgets.WGuiTexture;
 import me.pindour.catppuccin.gui.widgets.container.WTreeTable;
+import me.pindour.catppuccin.gui.widgets.tabs.CatppuccinTab;
+import me.pindour.catppuccin.gui.widgets.tabs.WTabView;
 import me.pindour.catppuccin.gui.widgets.input.WMultiSelect;
 import me.pindour.catppuccin.gui.widgets.input.WSearch;
 import me.pindour.catppuccin.gui.widgets.pressable.WColorPicker;
@@ -68,12 +73,15 @@ public class CatppuccinGuiTheme extends GuiTheme {
 
     private RichTextRenderer textRenderer;
 
+    private WCatppuccinTopBar topBar;
+
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
-    private final SettingGroup sgCorners = settings.createGroup("Corners");
     private final SettingGroup sgAnimations = settings.createGroup("Animations");
     private final SettingGroup sgColors = settings.createGroup("Colors");
-    private final SettingGroup sgSnapping = settings.createGroup("Snapping");
+    private final SettingGroup sgCorners = settings.createGroup("Corners");
+    private final SettingGroup sgShadows = settings.createGroup("Shadows");
     private final SettingGroup sgScreens = settings.createGroup("Screens");
+    private final SettingGroup sgSnapping = settings.createGroup("Snapping");
     private final SettingGroup sgStarscript = settings.createGroup("Starscript");
 
     // General
@@ -85,7 +93,7 @@ public class CatppuccinGuiTheme extends GuiTheme {
             .min(0.75)
             .sliderRange(0.75, 4)
             .onSliderRelease()
-            .onChanged(this::invalidateScreen)
+            .onChanged(ignored -> invalidateScreen())
             .build()
     );
 
@@ -105,9 +113,9 @@ public class CatppuccinGuiTheme extends GuiTheme {
 
     public final Setting<Boolean> tabIcons = sgGeneral.add(new BoolSetting.Builder()
             .name("tab-icons")
-            .description("Displays icons next to tabs in the top bar.")
+            .description("Displays icons next to tabs in the top bar. (Switch tabs to update the GUI)")
             .defaultValue(true)
-            .onChanged(this::invalidateScreen)
+            .onChanged(ignored -> topBar = null) // Rebuild the top bar on next tab switch
             .build()
     );
 
@@ -124,13 +132,6 @@ public class CatppuccinGuiTheme extends GuiTheme {
     public final Setting<Boolean> modulesHelpText = sgGeneral.add(new BoolSetting.Builder()
             .name("modules-help-text")
             .description("Toggle help text in the modules screen.")
-            .defaultValue(false)
-            .build()
-    );
-
-    public final Setting<Boolean> windowShadow = sgGeneral.add(new BoolSetting.Builder()
-            .name("window-shadow")
-            .description("Render a subtle shadow under windows.")
             .defaultValue(true)
             .build()
     );
@@ -139,24 +140,6 @@ public class CatppuccinGuiTheme extends GuiTheme {
             .name("indent-settings")
             .description("Indents setting that have conditional visibility like in a Tree View.")
             .defaultValue(true)
-            .build()
-    );
-
-    // Corners
-
-    public final Setting<Integer> cornerRadius = sgCorners.add(new IntSetting.Builder()
-            .name("corner-radius")
-            .description("The radius of corners for large UI elements.")
-            .defaultValue(10)
-            .sliderRange(1, 25)
-            .build()
-    );
-
-    public final Setting<Integer> smallCornerRadius = sgCorners.add(new IntSetting.Builder()
-            .name("small-corner-radius")
-            .description("The radius of corners for small UI elements.")
-            .defaultValue(6)
-            .sliderRange(1, 25)
             .build()
     );
 
@@ -180,7 +163,7 @@ public class CatppuccinGuiTheme extends GuiTheme {
     // Colors
 
     public final Setting<CatppuccinFlavors> flavor = sgColors.add(new EnumSetting.Builder<CatppuccinFlavors>()
-            .name("Flavor")
+            .name("flavor")
             .description("The specific Catppuccin flavor (palette) to use.")
             .defaultValue(CatppuccinFlavors.Macchiato)
             .onChanged(this::updateCache)
@@ -188,9 +171,10 @@ public class CatppuccinGuiTheme extends GuiTheme {
     );
 
     private final Setting<CatppuccinAccentColor> accentColor = sgColors.add(new EnumSetting.Builder<CatppuccinAccentColor>()
-            .name("Accent")
+            .name("accent")
             .description("The main accent color used throughout the UI.")
             .defaultValue(CatppuccinAccentColor.Mauve)
+            .onChanged(ignored -> ColorLinkRegistry.applyAll())
             .build()
     );
 
@@ -209,6 +193,72 @@ public class CatppuccinGuiTheme extends GuiTheme {
             .defaultValue(1)
             .sliderRange(0, 1)
             .decimalPlaces(2)
+            .build()
+    );
+
+    // Corners
+
+    public final Setting<Integer> cornerRadius = sgCorners.add(new IntSetting.Builder()
+            .name("corner-radius")
+            .description("The radius of corners for large UI elements.")
+            .defaultValue(10)
+            .sliderRange(1, 25)
+            .build()
+    );
+
+    public final Setting<Integer> smallCornerRadius = sgCorners.add(new IntSetting.Builder()
+            .name("small-corner-radius")
+            .description("The radius of corners for small UI elements.")
+            .defaultValue(6)
+            .sliderRange(1, 25)
+            .build()
+    );
+
+    // Shadows
+
+    public final Setting<Boolean> windowShadow = sgShadows.add(new BoolSetting.Builder()
+            .name("window-shadow")
+            .description("Render a shadow under windows.")
+            .defaultValue(true)
+            .build()
+    );
+
+    public final Setting<Integer> shadowOffsetX = sgShadows.add(new IntSetting.Builder()
+            .name("shadow-offset-x")
+            .description("Offset of the shadow on horizontal axis.")
+            .defaultValue(0)
+            .sliderRange(-50, 50)
+            .build()
+    );
+
+    public final Setting<Integer> shadowOffsetY = sgShadows.add(new IntSetting.Builder()
+            .name("shadow-offset-y")
+            .description("Offset of the shadow on vertical axis.")
+            .defaultValue(0)
+            .sliderRange(-50, 50)
+            .build()
+    );
+
+    public final Setting<Integer> shadowBlur = sgShadows.add(new IntSetting.Builder()
+            .name("shadow-blur")
+            .description("Softness of the shadow edge.")
+            .defaultValue(50)
+            .sliderRange(0, 200)
+            .build()
+    );
+
+    public final Setting<Integer> shadowSpread = sgShadows.add(new IntSetting.Builder()
+            .name("shadow-spread")
+            .description("Grows or shrinks the shadow size.")
+            .defaultValue(-15)
+            .sliderRange(-30, 30)
+            .build()
+    );
+
+    private final Setting<SettingColor> shadowColor = sgShadows.add(new ColorSetting.Builder()
+            .name("shadow-color")
+            .description("Color of the shadow.")
+            .defaultValue(Color.BLACK)
             .build()
     );
 
@@ -380,6 +430,14 @@ public class CatppuccinGuiTheme extends GuiTheme {
         return w(new WCatppuccinSlider(value, min, max));
     }
 
+    public WCatppuccinColorSlider colorSlider(double value, double min, double max, Color[] colors) {
+        return w(new WCatppuccinColorSlider(value, min, max, colors));
+    }
+
+    public <T> WCatppuccinColorGrid<T> colorGrid(String title, T[] values, Function<T, Color> colorOf, int columns, int maxVisibleRows) {
+        return w(new WCatppuccinColorGrid<>(title, values, colorOf, columns, maxVisibleRows));
+    }
+
     public WTextBox textBox(String text, String placeholder, String title, double padding, CharFilter filter, Class<? extends WTextBox.Renderer> renderer) {
         return w(new WCatppuccinTextBox(text, placeholder, title, padding, filter, renderer));
     }
@@ -433,6 +491,14 @@ public class CatppuccinGuiTheme extends GuiTheme {
         return w(new WCatppuccinSection(title, expanded, headerWidget));
     }
 
+    public WTabView tabView(List<CatppuccinTab> tabs, CatppuccinTab initialTab) {
+        return w(new WCatppuccinTabView(tabs, initialTab));
+    }
+
+    public WTabView tabView(List<CatppuccinTab> tabs) {
+        return tabView(tabs, tabs.getFirst());
+    }
+
     @Override
     public WAccount account(WidgetScreen screen, Account<?> account) {
         return w(new WCatppuccinAccount(screen, account));
@@ -456,7 +522,9 @@ public class CatppuccinGuiTheme extends GuiTheme {
 
     @Override
     public WTopBar topBar() {
-        return w(new WCatppuccinTopBar());
+        // Reuse the singleton TopBar to keep animations when switching screens
+        if (topBar == null) topBar = w(new WCatppuccinTopBar());
+        return topBar;
     }
 
     @Override
@@ -520,84 +588,95 @@ public class CatppuccinGuiTheme extends GuiTheme {
         return guiAnimationDuration.get();
     }
 
+    // Colors
+
+    /**
+     * Passing {@link CatppuccinColor#Accent} returns the theme's currently selected accent
+     * color, any other value returns the corresponding color from the active flavor.
+     */
+    public Color getColor(CatppuccinColor color) {
+        boolean isAccent = color == CatppuccinColor.Accent;
+        return isAccent ? colorCache.get(accentColor.get().toColor()) : colorCache.get(color);
+    }
+
     // Colors - Accent
 
     public Color accentColor() {
-        return colorCache.get(accentColor.get().toColor());
+        return getColor(CatppuccinColor.Accent);
     }
 
     // Colors - Main
 
     public Color greenColor() {
-        return colorCache.get(CatppuccinColor.Green);
+        return getColor(CatppuccinColor.Green);
     }
 
     public Color yellowColor() {
-        return colorCache.get(CatppuccinColor.Yellow);
+        return getColor(CatppuccinColor.Yellow);
     }
 
     public Color redColor() {
-        return colorCache.get(CatppuccinColor.Red);
+        return getColor(CatppuccinColor.Red);
     }
 
     public Color blueColor() {
-        return colorCache.get(CatppuccinColor.Blue);
+        return getColor(CatppuccinColor.Blue);
     }
 
     // Colors - Overlay
 
     public Color overlay2Color() {
-        return colorCache.get(CatppuccinColor.Overlay2);
+        return getColor(CatppuccinColor.Overlay2);
     }
 
     public Color overlay1Color() {
-        return colorCache.get(CatppuccinColor.Overlay1);
+        return getColor(CatppuccinColor.Overlay1);
     }
 
     public Color overlay0Color() {
-        return colorCache.get(CatppuccinColor.Overlay0);
+        return getColor(CatppuccinColor.Overlay0);
     }
 
     // Colors - Surface
 
     public Color surface2Color() {
-        return colorCache.get(CatppuccinColor.Surface2);
+        return getColor(CatppuccinColor.Surface2);
     }
 
     public Color surface1Color() {
-        return colorCache.get(CatppuccinColor.Surface1);
+        return getColor(CatppuccinColor.Surface1);
     }
 
     public Color surface0Color() {
-        return colorCache.get(CatppuccinColor.Surface0);
+        return getColor(CatppuccinColor.Surface0);
     }
 
     // Colors - Base
 
     public Color baseColor() {
-        return colorCache.get(CatppuccinColor.Base);
+        return getColor(CatppuccinColor.Base);
     }
 
     public Color mantleColor() {
-        return colorCache.get(CatppuccinColor.Mantle);
+        return getColor(CatppuccinColor.Mantle);
     }
 
     public Color crustColor() {
-        return colorCache.get(CatppuccinColor.Crust);
+        return getColor(CatppuccinColor.Crust);
     }
 
     // Colors - Text
 
     public Color textColor() {
-        return colorCache.get(CatppuccinColor.Text);
+        return getColor(CatppuccinColor.Text);
     }
 
     public Color textSecondaryColor() {
-        return colorCache.get(CatppuccinColor.Subtext0);
+        return getColor(CatppuccinColor.Subtext0);
     }
 
     public Color textHighlightColor() {
-        return colorCache.get(CatppuccinColor.Blue);
+        return getColor(CatppuccinColor.Blue);
     }
 
     // Opacity
@@ -608,6 +687,19 @@ public class CatppuccinGuiTheme extends GuiTheme {
 
     public double backgroundOpacity() {
         return backgroundOpacity.get();
+    }
+
+    // Shadow
+
+    public Shadow windowShadow() {
+        return windowShadow.get()
+                ? Shadow.of(
+                        shadowOffsetX.get(),
+                        shadowOffsetY.get(),
+                        shadowBlur.get(),
+                        shadowSpread.get(),
+                        shadowColor.get())
+                : Shadow.none();
     }
 
     // Starscript
@@ -668,9 +760,13 @@ public class CatppuccinGuiTheme extends GuiTheme {
         colorCache.clear();
 
         for (CatppuccinColor color : CatppuccinColor.values()) {
+            if (color == CatppuccinColor.Accent) continue;
+
             SettingColor settingColor = newFlavor.getColor(color);
             colorCache.put(color, settingColor);
         }
+
+        ColorLinkRegistry.applyAll();
     }
 
     // Screens
@@ -791,9 +887,12 @@ public class CatppuccinGuiTheme extends GuiTheme {
         return hideHUD.get();
     }
 
-    private void invalidateScreen(Object ignored) {
-        if (mc.gui.screen() instanceof WidgetScreen)
-            ((WidgetScreen) mc.gui.screen()).invalidate();
+    public void invalidateScreen() {
+        if (mc.gui.screen() instanceof WidgetScreen s) s.invalidate();
+    }
+
+    public void reloadScreen() {
+        if (mc.gui.screen() instanceof WidgetScreen s) s.reload();
     }
 
     public class ThreeStateColor {

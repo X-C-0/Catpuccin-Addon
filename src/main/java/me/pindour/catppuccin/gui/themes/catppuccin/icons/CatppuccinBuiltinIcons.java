@@ -31,6 +31,7 @@ public enum CatppuccinBuiltinIcons {
     EYE,
     GRID,
     IMPORT,
+    LINK,
     MINUS,
     MOUSE,
     MOVEMENT,

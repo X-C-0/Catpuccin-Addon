@@ -1,6 +1,6 @@
 package me.pindour.catppuccin.gui.themes.catppuccin.widgets.input;
 
-import me.pindour.catppuccin.api.render.Corners;
+import me.pindour.catppuccin.api.render.style.Corners;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinWidget;
 import me.pindour.catppuccin.gui.widgets.input.WMultiSelect;

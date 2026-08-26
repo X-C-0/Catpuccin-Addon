@@ -9,7 +9,7 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 public class CatppuccinMesh {
-    private static final int FLOATS_PER_VERTEX = 8;
+    private static final int FLOATS_PER_VERTEX = 6;
     private static final int VERTEX_COUNT = 4;
     private static final int STRIDE_BYTES = FLOATS_PER_VERTEX * Float.BYTES;
 
@@ -35,9 +35,7 @@ public class CatppuccinMesh {
         GL.enableVertexAttribute(0);
         GL.vertexAttribute(0, 2, GL32C.GL_FLOAT, false, STRIDE_BYTES, 0L);
         GL.enableVertexAttribute(1);
-        GL.vertexAttribute(1, 2, GL32C.GL_FLOAT, false, STRIDE_BYTES, 2L * Float.BYTES);
-        GL.enableVertexAttribute(2);
-        GL.vertexAttribute(2, 4, GL32C.GL_FLOAT, false, STRIDE_BYTES, 4L * Float.BYTES);
+        GL.vertexAttribute(1, 4, GL32C.GL_FLOAT, false, STRIDE_BYTES, 2L * Float.BYTES);
 
         GL.bindVertexArray(0);
         GL.bindVertexBuffer(0);
@@ -45,14 +43,11 @@ public class CatppuccinMesh {
     }
 
     public void render(float x, float y, float width, float height) {
-        float halfWidth = width * 0.5f;
-        float halfHeight = height * 0.5f;
-
         vertexBuffer.clear();
-        putVertex(x, y, -halfWidth, -halfHeight);
-        putVertex(x, y + height, -halfWidth, halfHeight);
-        putVertex(x + width, y + height, halfWidth, halfHeight);
-        putVertex(x + width, y, halfWidth, -halfHeight);
+        putVertex(x, y);
+        putVertex(x, y + height);
+        putVertex(x + width, y + height);
+        putVertex(x + width, y);
         vertexBuffer.flip();
 
         GL.bindVertexArray(vao);
@@ -64,8 +59,8 @@ public class CatppuccinMesh {
         GL.bindIndexBuffer(0);
     }
 
-    private void putVertex(float x, float y, float localX, float localY) {
-        vertexBuffer.put(x).put(y).put(localX).put(localY).put(1f).put(1f).put(1f).put(1f);
+    private void putVertex(float x, float y) {
+        vertexBuffer.put(x).put(y).put(1f).put(1f).put(1f).put(1f);
     }
 }
 *///?}

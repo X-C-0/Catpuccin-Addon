@@ -3,6 +3,8 @@ package me.pindour.catppuccin.renderer.rounded.legacy;
 //? if <=1.21.4 {
 /*import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import me.pindour.catppuccin.api.render.style.Outline;
+import me.pindour.catppuccin.api.render.style.Shadow;
 import me.pindour.catppuccin.renderer.CatppuccinRenderer;
 import me.pindour.catppuccin.renderer.rounded.RoundedRendererInternal;
 import meteordevelopment.meteorclient.renderer.GL;
@@ -14,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RoundedRendererLegacy implements RoundedRendererInternal {
-    private static final CatppuccinShader ROUNDED_SHADER = new CatppuccinShader("rounded_ui_legacy.vert", "rounded_ui_legacy.frag");
+    private static final CatppuccinShader ROUNDED_SHADER = new CatppuccinShader("rounded_ui.vert", "rounded_ui.frag");
     private final CatppuccinMesh roundedMesh = new CatppuccinMesh();
     private final Pool<RoundedUniformsLegacy.RoundedCall> roundedCallPool = new Pool<>(RoundedUniformsLegacy.RoundedCall::new);
     private final List<RoundedUniformsLegacy.RoundedCall> roundedCalls = new ArrayList<>();
@@ -33,28 +35,34 @@ public class RoundedRendererLegacy implements RoundedRendererInternal {
                        double width, double height,
                        float topLeft, float topRight,
                        float bottomLeft, float bottomRight,
-                       Color fillColor, Color outlineColor, float outlineWidth) {
+                       Color fillColor,
+                       Outline outline,
+                       Shadow shadow) {
 
         RoundedUniformsLegacy.RoundedCall call = roundedCallPool.get();
         CatppuccinRenderer renderer = CatppuccinRenderer.get();
+
         call.set(
                 (float) x,
                 (float) y,
                 (float) width,
                 (float) height,
+                (float) shadow.padX(),
+                (float) shadow.padY(),
                 topLeft,
                 topRight,
                 bottomLeft,
                 bottomRight,
                 fillColor,
-                outlineColor,
-                outlineWidth,
+                outline,
+                shadow,
                 renderer.isClipEnabled(),
                 renderer.getClipMinX(),
                 renderer.getClipMinY(),
                 renderer.getClipMaxX(),
                 renderer.getClipMaxY()
         );
+
         roundedCalls.add(call);
     }
 
@@ -79,7 +87,12 @@ public class RoundedRendererLegacy implements RoundedRendererInternal {
 
         for (RoundedUniformsLegacy.RoundedCall call : roundedCalls) {
             RoundedUniformsLegacy.update(ROUNDED_SHADER, call);
-            roundedMesh.render(call.x, call.y, call.width, call.height);
+            roundedMesh.render(
+                    call.x - call.padX,
+                    call.y - call.padY,
+                    call.width + call.padX * 2,
+                    call.height + call.padY * 2
+            );
             roundedCallPool.free(call);
         }
 

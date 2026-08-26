@@ -3,7 +3,7 @@ package me.pindour.catppuccin.gui.themes.catppuccin.widgets.container;
 import me.pindour.catppuccin.api.animation.Animation;
 import me.pindour.catppuccin.api.animation.Direction;
 import me.pindour.catppuccin.api.animation.Easing;
-import me.pindour.catppuccin.api.render.Corners;
+import me.pindour.catppuccin.api.render.style.Corners;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinWidget;
 import me.pindour.catppuccin.utils.ColorUtils;

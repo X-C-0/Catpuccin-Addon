@@ -10,6 +10,7 @@
     "defaultRequire": 1
   },
   "mixins": [
+    "meteorclient.ColorSettingMixin",
     "meteorclient.FontsMixin",
     "meteorclient.GuiRendererAccessor",
     "meteorclient.GuiRendererMixin",

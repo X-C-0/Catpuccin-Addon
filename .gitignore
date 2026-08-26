@@ -33,3 +33,6 @@ bin/
 
 run/
 /versions/
+
+# clanker!!!
+.kilo/

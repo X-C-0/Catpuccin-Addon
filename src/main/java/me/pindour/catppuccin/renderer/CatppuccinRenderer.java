@@ -1,7 +1,9 @@
 package me.pindour.catppuccin.renderer;
 
-import me.pindour.catppuccin.api.render.RoundedRect;
+import me.pindour.catppuccin.api.render.shape.RoundedRect;
 import me.pindour.catppuccin.api.render.RoundedRectRenderer;
+import me.pindour.catppuccin.api.render.style.Outline;
+import me.pindour.catppuccin.api.render.style.Shadow;
 import me.pindour.catppuccin.api.text.RichText;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import me.pindour.catppuccin.renderer.rounded.RoundedRendererInternal;
@@ -118,23 +120,27 @@ public class CatppuccinRenderer implements RoundedRectRenderer {
      * @param rTopRight    Top-right corner radius in pixels.
      * @param rBottomLeft  Bottom-left corner radius in pixels.
      * @param rBottomRight Bottom-right corner radius in pixels.
-     * @param fillColor    The inner color of the rectangle.
-     * @param outlineColor The color of the border outline.
-     * @param outlineWidth The width of the border in pixels.
+     * @param fillColor    The fill color of the rectangle.
+     * @param outline      Rectangle's outline data.
+     * @param shadow       Rectangle's shadow data.
      */
     @Override
     public void renderRoundedRect(double x, double y,
                                   double width, double height,
                                   float rTopLeft, float rTopRight,
                                   float rBottomLeft, float rBottomRight,
-                                  Color fillColor, Color outlineColor, float outlineWidth
+                                  Color fillColor,
+                                  Outline outline,
+                                  Shadow shadow
     ) {
         roundedRenderer.render(
                 x, y,
                 width, height,
                 rTopLeft, rTopRight,
                 rBottomLeft, rBottomRight,
-                fillColor, outlineColor, outlineWidth
+                fillColor,
+                outline,
+                shadow
         );
     }
 

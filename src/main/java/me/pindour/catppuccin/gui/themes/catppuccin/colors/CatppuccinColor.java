@@ -1,6 +1,7 @@
 package me.pindour.catppuccin.gui.themes.catppuccin.colors;
 
 public enum CatppuccinColor {
+    Accent,
     Rosewater,
     Flamingo,
     Pink,
@@ -26,5 +27,5 @@ public enum CatppuccinColor {
     Surface0,
     Base,
     Mantle,
-    Crust;
+    Crust
 }

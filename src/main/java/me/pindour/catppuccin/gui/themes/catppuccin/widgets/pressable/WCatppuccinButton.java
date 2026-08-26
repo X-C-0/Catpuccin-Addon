@@ -1,7 +1,6 @@
 package me.pindour.catppuccin.gui.themes.catppuccin.widgets.pressable;
 
 import me.pindour.catppuccin.api.animation.Animation;
-import me.pindour.catppuccin.api.animation.Direction;
 import me.pindour.catppuccin.api.animation.Easing;
 import me.pindour.catppuccin.api.text.RichText;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
@@ -16,10 +15,12 @@ import meteordevelopment.meteorclient.utils.render.color.Color;
 import java.util.function.BooleanSupplier;
 
 public class WCatppuccinButton extends WButton implements IConditionalWidget, CatppuccinWidget {
-    private BooleanSupplier visibilityCondition;
-    private RichText richText;
+    protected static final double ICON_GAP = 4;
 
-    private Animation hoverAnimation;
+    protected Animation hoverAnimation;
+    protected RichText richText;
+
+    private BooleanSupplier visibilityCondition;
 
     public WCatppuccinButton(RichText text, GuiTexture texture) {
         super(text.getPlainText(), texture);
@@ -37,55 +38,86 @@ public class WCatppuccinButton extends WButton implements IConditionalWidget, Ca
 
     @Override
     protected void onCalculateSize() {
-        double pad = pad();
+        Content content = content();
 
-        if (richText != null) {
+        if (content.hasText()) {
+            double pad = theme.scale(12);
+
             textWidth = theme().textWidth(richText);
+            width = pad + contentWidth(content) + pad;
 
-            width = pad + textWidth + pad;
-            height = pad + theme.textHeight() + pad;
+        } else {
+            width = theme.scale(32);
         }
-        else {
-            double s = theme.textHeight();
 
-            width = pad + s + pad;
-            height = pad + s + pad;
-        }
+        height = theme.scale(32);
     }
 
     @Override
     protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
         if (!shouldRender(mouseOver)) return;
 
-        double hoverProgress = hoverAnimation.getProgress();
+        double progress = hoverAnimation.getProgress();
 
-        if (mouseOver && hoverProgress == 0)
+        if (mouseOver && progress == 0) {
             hoverAnimation.start();
-
-        if (!mouseOver && hoverProgress > 0)
+        }
+        else if (!mouseOver && progress > 0) {
             hoverAnimation.reset();
+        }
 
         CatppuccinGuiTheme theme = theme();
+        double pad = pad();
 
         Color bg = theme.backgroundColor.get(pressed, mouseOver);
         Color accent = ColorUtils.withAlpha(theme.accentColor(), 0.8);
-        Color outline = ColorUtils.interpolateColor(bg, accent, hoverProgress);
-
-        double pad = pad();
+        Color outline = ColorUtils.lerp(bg, accent, hoverAnimation.getProgress());
 
         background(bg, outline).render();
 
-        if (richText != null) {
-            renderer().text(
-                    richText,
-                    x + width / 2 - textWidth / 2,
-                    y + pad, theme.textColor()
-            );
+        renderContent(renderer, pad);
+    }
+
+    protected void renderContent(GuiRenderer renderer, double pad) {
+        Content content = content();
+        double size = iconSize();
+        double contentX = x + (width - contentWidth(content)) / 2;
+
+        if (content.hasIcon()) {
+            renderer.quad(contentX, y + pad, size, size, texture, textColor());
+            contentX += size + iconGap();
         }
-        else {
-            double ts = theme.textHeight();
-            renderer.quad(x + width / 2 - ts / 2, y + pad, ts, ts, texture, theme.textColor());
+
+        if (content.hasText()) {
+            renderer().text(richText, contentX, y + pad, textColor());
         }
+    }
+
+    protected Content content() {
+        return Content.of(richText, texture);
+    }
+
+    protected double iconSize() {
+        return theme.textHeight();
+    }
+
+    protected double iconGap() {
+        return theme.scale(ICON_GAP);
+    }
+
+    protected double contentWidth(Content content) {
+        double width = content.hasIcon() ? iconSize() : 0;
+
+        if (content.hasText()) {
+            width += content.hasIcon() ? iconGap() : 0;
+            width += textWidth;
+        }
+
+        return width;
+    }
+
+    protected Color textColor() {
+        return theme().textColor();
     }
 
     public void set(RichText text) {
@@ -107,5 +139,22 @@ public class WCatppuccinButton extends WButton implements IConditionalWidget, Ca
     @Override
     public void setVisibilityCondition(BooleanSupplier condition) {
         visibilityCondition = condition;
+    }
+
+    protected enum Content {
+        TEXT, ICON, ICON_AND_TEXT;
+
+        static Content of(RichText text, GuiTexture texture) {
+            if (text == null) return ICON;
+            return texture == null ? TEXT : ICON_AND_TEXT;
+        }
+
+        public boolean hasIcon() {
+            return this != TEXT;
+        }
+
+        public boolean hasText() {
+            return this != ICON;
+        }
     }
 }

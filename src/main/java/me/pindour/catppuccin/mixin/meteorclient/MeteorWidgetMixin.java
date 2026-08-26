@@ -1,6 +1,6 @@
 package me.pindour.catppuccin.mixin.meteorclient;
 
-import me.pindour.catppuccin.api.render.RoundedRect;
+import me.pindour.catppuccin.api.render.shape.RoundedRect;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import meteordevelopment.meteorclient.gui.GuiThemes;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;

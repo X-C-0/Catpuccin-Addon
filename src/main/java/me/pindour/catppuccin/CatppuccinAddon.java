@@ -1,6 +1,6 @@
 package me.pindour.catppuccin;
 
-import me.pindour.catppuccin.api.render.RoundedRect;
+import me.pindour.catppuccin.api.render.shape.RoundedRect;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
 import com.mojang.logging.LogUtils;
 import me.pindour.catppuccin.renderer.CatppuccinRenderer;

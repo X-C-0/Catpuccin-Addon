@@ -5,6 +5,7 @@ import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinWidget;
 import me.pindour.catppuccin.utils.ColorUtils;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.widgets.input.WSlider;
+import meteordevelopment.meteorclient.utils.render.color.Color;
 
 public class WCatppuccinSlider extends WSlider implements CatppuccinWidget {
 
@@ -19,13 +20,13 @@ public class WCatppuccinSlider extends WSlider implements CatppuccinWidget {
 
     @Override
     protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
-        CatppuccinGuiTheme theme = theme();
-
-        renderBar(theme);
-        renderHandle(theme);
+        renderBar();
+        renderHandle();
     }
 
-    private void renderBar(CatppuccinGuiTheme theme) {
+    protected void renderBar() {
+        CatppuccinGuiTheme theme = theme();
+
         double halfHandleSize = handleSize() / 2;
         double backgroundY = y + height / 2 - halfHandleSize / 2;
         float smallerRadius = smallRadius() / 2;
@@ -51,7 +52,7 @@ public class WCatppuccinSlider extends WSlider implements CatppuccinWidget {
                      .render();
     }
 
-    private void renderHandle(CatppuccinGuiTheme theme) {
+    protected void renderHandle() {
         double size = handleSize();
         double handleX = x + valueWidth() + size / 2;
         double handleY = y + height / 2 - size / 2;
@@ -60,7 +61,11 @@ public class WCatppuccinSlider extends WSlider implements CatppuccinWidget {
         roundedRect().pos(handleX - handleWidth / 2, handleY)
                      .size(handleWidth, size)
                      .radius(smallRadius())
-                     .color(theme.accentColor())
+                     .color(handleColor())
                      .render();
+    }
+
+    protected Color handleColor() {
+        return theme().accentColor();
     }
 }

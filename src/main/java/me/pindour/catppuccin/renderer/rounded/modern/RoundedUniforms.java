@@ -4,6 +4,8 @@ package me.pindour.catppuccin.renderer.rounded.modern;
 import com.mojang.blaze3d.buffers.GpuBufferSlice;
 import com.mojang.blaze3d.buffers.Std140Builder;
 import com.mojang.blaze3d.buffers.Std140SizeCalculator;
+import me.pindour.catppuccin.api.render.style.Outline;
+import me.pindour.catppuccin.api.render.style.Shadow;
 import me.pindour.catppuccin.renderer.CatppuccinRenderer;
 import net.minecraft.client.renderer.DynamicUniformStorage;
 import meteordevelopment.meteorclient.utils.render.color.Color;
@@ -22,6 +24,11 @@ public class RoundedUniforms {
             .putVec4()
             .putVec2()
             .putVec4()
+            .putVec4()
+            .putVec2()
+            .putVec2()
+            .putInt()
+            .putVec2()
             .get();
 
     private static final RoundedRectData ROUNDED_DATA = new RoundedRectData();
@@ -35,17 +42,27 @@ public class RoundedUniforms {
         ROUNDED_STORAGE.endFrame();
     }
 
-    public static void update(double width, double height,
+    public static void update(double x, double y,
+                              double width, double height,
                               float topLeft, float topRight,
                               float bottomLeft, float bottomRight,
-                              Color fillColor, Color borderColor, float borderWidth) {
+                              Color fillColor,
+                              Outline outline,
+                              Shadow shadow) {
 
-        ROUNDED_DATA.fillColor.set(fillColor.r / 255f, fillColor.g / 255f, fillColor.b / 255f, fillColor.a / 255f);
-        ROUNDED_DATA.borderColor.set(borderColor.r / 255f, borderColor.g / 255f, borderColor.b / 255f, borderColor.a / 255f);
-        ROUNDED_DATA.borderData.set(borderWidth, 1f);
         ROUNDED_DATA.radii.set(topLeft, topRight, bottomRight, bottomLeft);
         ROUNDED_DATA.halfSize.set((float) (width * 0.5), (float) (height * 0.5));
+        ROUNDED_DATA.center.set((float) (x + width * 0.5), (float) (y + height * 0.5));
         applyClipRect(ROUNDED_DATA.clipRect);
+
+        setColor(ROUNDED_DATA.fillColor, fillColor);
+        setColor(ROUNDED_DATA.borderColor, outline.color);
+        ROUNDED_DATA.borderData.set(outline.width, 1f);
+
+        setColor(ROUNDED_DATA.shadowColor, shadow.color);
+        ROUNDED_DATA.shadowOffset.set((float) shadow.offsetX, (float) shadow.offsetY);
+        ROUNDED_DATA.shadowBlurSpread.set((float) shadow.blur, (float) shadow.spread);
+        ROUNDED_DATA.shadowEnabled = shadow.isVisible() ? 1 : 0;
     }
 
     private static void applyClipRect(Vector4f target) {
@@ -57,6 +74,10 @@ public class RoundedUniforms {
         }
     }
 
+    private static void setColor(Vector4f target, Color color) {
+        target.set(color.r / 255f, color.g / 255f, color.b / 255f, color.a / 255f);
+    }
+
     private static final class RoundedRectData implements DynamicUniformStorage.DynamicUniform {
         private final Vector4f fillColor = new Vector4f();
         private final Vector4f borderColor = new Vector4f();
@@ -64,6 +85,11 @@ public class RoundedUniforms {
         private final Vector4f radii = new Vector4f();
         private final Vector2f halfSize = new Vector2f();
         private final Vector4f clipRect = new Vector4f();
+        private final Vector4f shadowColor = new Vector4f();
+        private final Vector2f shadowOffset = new Vector2f();
+        private final Vector2f shadowBlurSpread = new Vector2f();
+        private int shadowEnabled;
+        private final Vector2f center = new Vector2f();
 
         @Override
         public void write(
@@ -77,7 +103,12 @@ public class RoundedUniforms {
                     .putVec2(borderData)
                     .putVec4(radii)
                     .putVec2(halfSize)
-                    .putVec4(clipRect);
+                    .putVec4(clipRect)
+                    .putVec4(shadowColor)
+                    .putVec2(shadowOffset)
+                    .putVec2(shadowBlurSpread)
+                    .putInt(shadowEnabled)
+                    .putVec2(center);
         }
 
         @Override

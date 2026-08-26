@@ -94,6 +94,10 @@ public class CatppuccinShader {
         GL.uniformFloat2(getLocation(name), (float) v1, (float) v2);
     }
 
+    public void set(String name, double v1, double v2, double v3, double v4) {
+        GL.uniformFloat4(getLocation(name), (float) v1, (float) v2, (float) v3, (float) v4);
+    }
+
     public void set(String name, Color color) {
         float r = (float) color.r / 255f;
         float g = (float) color.g / 255f;

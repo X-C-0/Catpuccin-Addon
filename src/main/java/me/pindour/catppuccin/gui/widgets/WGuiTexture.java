@@ -12,6 +12,7 @@ public abstract class WGuiTexture extends WWidget {
     public WGuiTexture(GuiTexture texture, double size) {
         this.texture = texture;
         this.size = size;
+        instantTooltips = true;
     }
 
     @Override

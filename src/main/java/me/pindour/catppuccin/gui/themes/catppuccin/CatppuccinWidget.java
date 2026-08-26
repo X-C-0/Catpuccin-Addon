@@ -1,8 +1,9 @@
 package me.pindour.catppuccin.gui.themes.catppuccin;
 
-import me.pindour.catppuccin.api.render.RoundedRect;
+import me.pindour.catppuccin.api.render.shape.RoundedRect;
+import me.pindour.catppuccin.api.render.style.Shadow;
 import me.pindour.catppuccin.renderer.CatppuccinRenderer;
-import me.pindour.catppuccin.api.render.Corners;
+import me.pindour.catppuccin.api.render.style.Corners;
 import me.pindour.catppuccin.utils.ColorUtils;
 import meteordevelopment.meteorclient.gui.utils.BaseWidget;
 import meteordevelopment.meteorclient.gui.widgets.WWidget;
@@ -40,6 +41,18 @@ public interface CatppuccinWidget extends BaseWidget {
 
     default float outlineWidth() {
         return 2f;
+    }
+
+    default Shadow shadow() {
+        CatppuccinGuiTheme theme = theme();
+        Color shadowColor = ColorUtils.withAlpha(Color.BLACK, theme.windowOpacity());
+
+        return Shadow.of(
+                0, 0,
+                theme.shadowBlur.get(),
+                theme.shadowSpread.get(),
+                shadowColor
+        );
     }
 
     // Rendering

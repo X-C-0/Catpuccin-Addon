@@ -101,7 +101,7 @@ public class WCatppuccinDropdown<T> extends WDropdown<T> implements CatppuccinWi
 
         Color bg = theme.backgroundColor.get(pressed, mouseOver);
         Color accent = ColorUtils.withAlpha(theme.accentColor(), 0.8);
-        Color outline = ColorUtils.interpolateColor(bg, accent, hoverProgress);
+        Color outline = ColorUtils.lerp(bg, accent, hoverProgress);
 
         background(bg, outline).render();
 

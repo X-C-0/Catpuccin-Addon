@@ -43,13 +43,13 @@ public class CatppuccinRenderPipelines {
         .withFragmentShader(CatppuccinAddon.identifier("shaders/rounded_ui.frag"))
 
         //? if >=26.2 {
-        .withVertexBinding(0, MeteorVertexFormats.POS2_TEXTURE_COLOR)
+        .withVertexBinding(0, MeteorVertexFormats.POS2_COLOR)
         .withPrimitiveTopology(PrimitiveTopology.TRIANGLES)
         .withBindGroupLayout(BindGroupLayout.builder()
                 .withUniform("RoundedRectData", UniformType.UNIFORM_BUFFER)
                 .build())
         //? } else {
-        /*.withVertexFormat(MeteorVertexFormats.POS2_TEXTURE_COLOR, VertexFormat.Mode.TRIANGLES)
+        /*.withVertexFormat(MeteorVertexFormats.POS2_COLOR, VertexFormat.Mode.TRIANGLES)
         .withUniform("RoundedRectData", UniformType.UNIFORM_BUFFER)
         *///? }
 

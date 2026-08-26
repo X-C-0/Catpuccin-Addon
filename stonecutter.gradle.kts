@@ -59,3 +59,7 @@ stonecutter parameters {
         }
     }
 }
+
+stonecutter handlers {
+    inherit("java", "frag", "vert")
+}

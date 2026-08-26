@@ -1,6 +1,6 @@
 package me.pindour.catppuccin.gui.themes.catppuccin.widgets.input;
 
-import me.pindour.catppuccin.api.render.Corners;
+import me.pindour.catppuccin.api.render.style.Corners;
 import me.pindour.catppuccin.api.text.RichText;
 import me.pindour.catppuccin.api.text.TextScale;
 import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinGuiTheme;
@@ -23,15 +23,11 @@ public class WCatppuccinSearch extends WSearch implements CatppuccinWidget {
 
     @Override
     protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
-        CatppuccinGuiTheme theme = theme();
-        Color shadowColor = ColorUtils.withAlpha(theme.crustColor(), 0.4);
-
-        // Shadow rectangle
-        int shadowOffset = 2;
-        roundedRect().pos(x - shadowOffset, y - shadowOffset)
-                     .size(width + shadowOffset * 2, height + shadowOffset * 2)
-                     .radius(radius() + shadowOffset)
-                     .color(shadowColor)
+        roundedRect().pos(x, y)
+                     .size(width, height)
+                     .radius(radius())
+                     .color(ColorUtils.withAlpha(theme().crustColor(), 0.4))
+                     .shadow(shadow())
                      .render();
     }
 
