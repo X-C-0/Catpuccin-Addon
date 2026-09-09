@@ -6,6 +6,7 @@ import me.pindour.catppuccin.gui.themes.catppuccin.CatppuccinWidget;
 import me.pindour.catppuccin.gui.themes.catppuccin.icons.CatppuccinBuiltinIcons;
 import me.pindour.catppuccin.gui.themes.catppuccin.widgets.pressable.WCatppuccinButton;
 import me.pindour.catppuccin.utils.ColorUtils;
+import me.pindour.catppuccin.utils.WidgetUtils;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.widgets.containers.WHorizontalList;
 import meteordevelopment.meteorclient.gui.widgets.containers.WTable;
@@ -131,8 +132,8 @@ public class WCatppuccinColorGrid<T> extends WVerticalList implements Catppuccin
 
         public WSwatch(int index) {
             this.index = index;
-            instantTooltips = true;
             tooltip = String.valueOf(values[index]);
+            WidgetUtils.enableInstantTooltips(this);
         }
 
         @Override

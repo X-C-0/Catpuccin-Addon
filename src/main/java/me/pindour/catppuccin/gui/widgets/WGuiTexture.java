@@ -1,5 +1,6 @@
 package me.pindour.catppuccin.gui.widgets;
 
+import me.pindour.catppuccin.utils.WidgetUtils;
 import meteordevelopment.meteorclient.gui.renderer.packer.GuiTexture;
 import meteordevelopment.meteorclient.gui.widgets.WWidget;
 import meteordevelopment.meteorclient.utils.render.color.Color;
@@ -12,7 +13,7 @@ public abstract class WGuiTexture extends WWidget {
     public WGuiTexture(GuiTexture texture, double size) {
         this.texture = texture;
         this.size = size;
-        instantTooltips = true;
+        WidgetUtils.enableInstantTooltips(this);
     }
 
     @Override

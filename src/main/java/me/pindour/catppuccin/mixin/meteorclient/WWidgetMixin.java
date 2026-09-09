@@ -5,6 +5,7 @@ import me.pindour.catppuccin.gui.widgets.IWidgetBackport;
 import meteordevelopment.meteorclient.gui.GuiTheme;
 import meteordevelopment.meteorclient.gui.GuiThemes;
 import meteordevelopment.meteorclient.gui.widgets.WWidget;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -12,7 +13,6 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 //? if <=1.21.10 {
 /*import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import meteordevelopment.meteorclient.gui.widgets.containers.WView;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -53,7 +53,7 @@ public abstract class WWidgetMixin implements IWidgetBackport {
         if (isOver(mouseX, mouseY)) {
             mouseOverTimer += delta;
 
-            if ((mouseOverTimer >= 1) && tooltip != null) {
+            if ((catppuccin$hasInstantTooltips() || mouseOverTimer >= 1) && tooltip != null) {
                 WView view = catppuccin$getView();
                 if (view == null || view.mouseOver) renderer.tooltip(tooltip);
             }
@@ -84,6 +84,38 @@ public abstract class WWidgetMixin implements IWidgetBackport {
     @Override
     public void catppuccin$setFocused(boolean focused) {
         if (this.focused != focused) this.focused = focused;
+    }
+
+    *///? }
+
+    //? if >=1.21.10 {
+    
+    @Shadow
+    protected boolean instantTooltips;
+
+    @Override
+    public boolean catppuccin$hasInstantTooltips() {
+        return instantTooltips;
+    }
+
+    @Override
+    public void catppuccin$setInstantTooltips(boolean instant) {
+        instantTooltips = instant;
+    }
+
+    //? } else {
+
+    /*@Unique
+    public boolean catppuccin$instantTooltips;
+
+    @Override
+    public boolean catppuccin$hasInstantTooltips() {
+        return catppuccin$instantTooltips;
+    }
+
+    @Override
+    public void catppuccin$setInstantTooltips(boolean instant) {
+        this.catppuccin$instantTooltips = instant;
     }
 
     *///? }

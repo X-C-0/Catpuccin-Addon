@@ -30,7 +30,12 @@ public class ColorLinkRegistry {
     }
 
     public static void linkFromTag(ColorSetting setting, CompoundTag settingTag) {
+        //? if <=1.21.4 {
+        /*CompoundTag linkTag = settingTag.get(KEY_LINK) instanceof CompoundTag tag ? tag : null;
+        *///? } else {
         CompoundTag linkTag = settingTag.getCompound(KEY_LINK).orElse(null);
+        //? }
+
         ColorLink link = linkTag == null ? null : new ColorLink().fromTag(linkTag);
 
         if (link == null) {

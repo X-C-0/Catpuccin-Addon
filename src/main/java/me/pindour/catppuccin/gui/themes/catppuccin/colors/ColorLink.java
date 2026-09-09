@@ -57,8 +57,13 @@ public class ColorLink implements ISerializable<ColorLink> {
 
     @Override
     public ColorLink fromTag(CompoundTag tag) {
+        //? if <=1.21.4 {
+        /*color = CatppuccinColor.valueOf(tag.getString(KEY_COLOR));
+        opacity = tag.contains(KEY_OPACITY) ? tag.getInt(KEY_OPACITY) : 255;
+        *///? } else {
         color = CatppuccinColor.valueOf(tag.getStringOr(KEY_COLOR, ""));
         opacity = tag.getIntOr(KEY_OPACITY, 255);
+        //? }
 
         return this;
     }

@@ -10,6 +10,9 @@ public interface IWidgetBackport {
 
     void catppuccin$setFocused(boolean focused);
 
+    boolean catppuccin$hasInstantTooltips();
+    void catppuccin$setInstantTooltips(boolean instant);
+
     WView catppuccin$getView();
     boolean catppuccin$isWidgetInView(WWidget widget);
 }

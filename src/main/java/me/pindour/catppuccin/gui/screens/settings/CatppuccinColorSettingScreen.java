@@ -26,10 +26,12 @@ import meteordevelopment.meteorclient.settings.ColorSetting;
 import meteordevelopment.meteorclient.utils.misc.NbtUtils;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 import meteordevelopment.meteorclient.utils.render.color.SettingColor;
-
 import java.util.List;
 
 import static meteordevelopment.meteorclient.MeteorClient.mc;
+
+//? if <=1.21.1
+//import net.minecraft.nbt.CompoundTag;
 
 public class CatppuccinColorSettingScreen extends WindowScreen {
     private static final Color WHITE = new Color(255, 255, 255);
@@ -360,11 +362,30 @@ public class CatppuccinColorSettingScreen extends WindowScreen {
 
     @Override
     public boolean toClipboard() {
+        //? if <=1.21.1 {
+        /*return NbtUtils.toClipboard(setting.name, setting.get().toTag());
+        *///? } else {
         return NbtUtils.toClipboard(setting.get());
+        //? }
     }
 
     @Override
     public boolean fromClipboard() {
+        //? if <=1.21.1 {
+        /*CompoundTag clipboardTag = NbtUtils.fromClipboard(setting.get().toTag());
+
+        if (clipboardTag == null) {
+            String clipboard = mc.keyboardHandler.getClipboard().trim();
+
+            SettingColor parsed = ColorUtils.parseRGBA(clipboard);
+            if (parsed == null) parsed = ColorUtils.parseHex(clipboard);
+            if (parsed == null) return false;
+
+            setting.set(parsed);
+        } else {
+            setting.get().fromTag(clipboardTag);
+        }
+        *///? } else {
         if (!NbtUtils.fromClipboard(setting.get())) {
             String clipboard = mc.keyboardHandler.getClipboard().trim();
 
@@ -374,6 +395,7 @@ public class CatppuccinColorSettingScreen extends WindowScreen {
 
             setting.set(parsed);
         }
+        //? }
 
         ColorLinkRegistry.unlink(setting);
         setting.get().validate();
